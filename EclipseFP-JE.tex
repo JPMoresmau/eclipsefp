@@ -1,21 +1,35 @@
 % EclipseFP-JE.tex
 \begin{hcarentry}[updated]{EclipseFP}
-\report{JP Moresmau}%05/13
+\report{JP Moresmau}%10/13
 \status{stable, maintained, and actively developed}
 \participants{building on code from B.\ Scott Michel, Alejandro Serrano, Thiago Arrais, Leif Frenzel, Thomas ten Cate, Martijn Schrage, Adam Foltzer and others}
 \makeheader
 
-%**<img width=500 src="./eclipsefp-screenshot1.jpg">
+%**<img width=500 src="./eclipsefp-screenshot2.jpg">
 %*ignore
 \begin{center}
 \includegraphics[width=0.47\textwidth]{html/eclipsefp-screenshot1.jpg}
 \end{center}
 %*endignore
 
-EclipseFP is a set of Eclipse plugins to allow working on Haskell code projects. Its goal is to offer a fully featured Haskell IDE in a platform developers coming from other languages may already be familiar with.
-It features Cabal integration (.cabal file editor, uses Cabal settings for compilation, allows the user to install Cabal packages from within the IDE), and GHC integration. Compilation is done via the GHC API, syntax coloring uses the GHC Lexer. Other standard Eclipse features like code outline, folding, and quick fixes for common errors are also provided. HLint suggestions can be applied in one click, and imports can be organized automatically. EclipseFP also allows launching GHCi sessions on any module including extensive debugging facilities: the management of breakpoints and the evaluation of variables and expressions uses the Eclipse debugging framework, and requires no knowledge of GHCi syntax. It uses the BuildWrapper Haskell tool to bridge between the Java code for Eclipse and the Haskell APIs. It also provides a full package and module browser to navigate the Haskell packages installed on your system, integrated with Hackage.
-EclipseFP integrates with Haskell test frameworks, most notably HTF, to provide UI feedback on test failures. It can also use cabal-dev to provide sandboxing and project dependencies inside an Eclipse workspace.
-The source code is fully open source (Eclipse License) on github and anyone can contribute. Current version is 2.5.2, released in March 2013, and more versions with additional features are planned and actively worked on. Feedback on what is needed is welcome! The website has information on downloading binary releases and getting a copy of the source code. Support and bug tracking is handled through Sourceforge forums and github issues. 
+EclipseFP is a set of Eclipse plugins to allow working on Haskell code projects. Its goal is to offer a fully featured Haskell IDE in a platform developers coming from other languages may already be familiar with. It provides the following features, among others:
+
+\begin{description}
+  \item[Cabal Integration] \hfill \\
+  Provides a .cabal file editor, uses Cabal settings for compilation, allows the user to install Cabal packages from within the IDE. Can also use cabal-dev to provide sandboxing and project dependencies inside an Eclipse workspace.
+  \item[GHC Integration] \hfill \\
+  Compilation is done via the GHC API, syntax coloring uses the GHC Lexer.
+  \item[Productive Coding] \hfill \\
+  Quick fixes for common errors, warnings, and HLint suggestions. Automatic organization of imports. Autocompletion. Find and rename across modules and projects. Stylish-haskell integration for consistent code formatting.
+  \item[Debugging] \hfill \\
+  Easy to launch GHCi sessions on any module with proper parameters. Manages breakpoints, the evaluation of variables and expressions uses the Eclipse debugging framework, and requires no knowledge of GHCi syntax. Also integrates with Yesod (launch the web application from EclipseFP). Running a program with profiling options results in profiling graphs being displayed in the UI for easy analysis.
+  \item[Browsing] \hfill \\
+  The Haskell Browser perspective allows the user to navigate the list of packages and their documentation. It integrates seamlessly with Hackage. The Haskell module editor provides code folding, outline view of the module, popup of types and documentation mouse hovers, etc.
+  \item[Testing] \hfill \\
+  EclipseFP integrates with Haskell test frameworks, most notably HTF, to provide UI feedback on test failures.
+\end{description}
+
+The source code is fully open source (Eclipse License) on github and anyone can contribute. Current version is 2.5.5, released in October 2013, and more versions with additional features are planned and actively worked on. Most notably, version 2.6 should include support for Cabal 1.8 sandboxes. Feedback on what is needed is welcome! The website has information on downloading binary releases and getting a copy of the source code. Support and bug tracking is handled through Sourceforge forums and github issues. 
 
 \FurtherReading
 \begin{compactitem}
