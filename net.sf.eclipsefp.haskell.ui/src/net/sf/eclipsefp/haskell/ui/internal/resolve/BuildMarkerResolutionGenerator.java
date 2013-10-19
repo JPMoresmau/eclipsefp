@@ -425,6 +425,14 @@ public class BuildMarkerResolutionGenerator implements
     return null;
   }
 
+  /**
+   * add a pragma
+   * @param res
+   * @param msg
+   * @param msgL
+   * @param toSearch
+   * @return true if a pragma was found
+   */
   private boolean addFlagPragma(final List<IMarkerResolution> res,final String msg,final String msgL,final String... toSearch){
     int ix=-1;
 
@@ -445,23 +453,35 @@ public class BuildMarkerResolutionGenerator implements
             break;
           }
         }
+        boolean ret=false;
          if (ix2<msg.length()){
           String flag=msg.substring( start,ix2 ).trim();
-          addPragma(res,flag);
+          ret=addPragma(res,flag);
         } else {
           String flag=msg.substring( start).trim();
-          addPragma(res,flag);
+          ret=addPragma(res,flag);
         }
-        return true;
+         // return if we foind something, otherwise look for another string
+         if (ret){
+           return true;
+         }
       }
     }
     return false;
   }
 
-  private void addPragma(final List<IMarkerResolution> res,final String flag){
+  /**
+   *
+   * @param res
+   * @param flag
+   * @return true if the pragam was valid, false otherwise
+   */
+  private boolean addPragma(final List<IMarkerResolution> res,final String flag){
     if (flag!=null && flag.length()>2 && flag.startsWith( "-X" )){ //$NON-NLS-1$
       res.add( new AddLanguagePragmaResolution( flag.substring( 2 ) ) );
+      return true;
     }
+    return false;
   }
 
   private static Set<String> getReferencedPackages(final IMarker marker){

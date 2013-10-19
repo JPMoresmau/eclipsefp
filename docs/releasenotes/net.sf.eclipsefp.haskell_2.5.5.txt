@@ -40,6 +40,7 @@ Features:
 	- Scion-browser debug mode enablement does not require a restart
 	- Cabal editor uses similar colors than Haskell editor, driven by the same properties
 	- Quick fix: take suggestions on misspelled packages
+	- Quick fix can suggest more pragmas (example: ScopedTypedVariables)
 
 Internal:
 	- Apache common-lang bundled
