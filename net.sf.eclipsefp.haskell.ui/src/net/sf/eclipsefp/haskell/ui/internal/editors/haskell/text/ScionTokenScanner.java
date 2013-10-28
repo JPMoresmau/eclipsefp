@@ -464,7 +464,7 @@ public class ScionTokenScanner implements IPartitionTokenScanner, IEditorPrefere
                 for (TaskTag tt:tags){
                   if (test.startsWith( tt.getName())){
 
-                    final Map<Object,Object> attributes=nextTokenDef.getLocation().getMarkerProperties( doc.getNumberOfLines() );
+                    final Map<Object,Object> attributes=nextTokenDef.getLocation().getMarkerProperties( doc );
                     attributes.put(IMarker.PRIORITY, tt.getMarkerPriority());
                     // use original text
                     attributes.put(IMarker.MESSAGE,orig);

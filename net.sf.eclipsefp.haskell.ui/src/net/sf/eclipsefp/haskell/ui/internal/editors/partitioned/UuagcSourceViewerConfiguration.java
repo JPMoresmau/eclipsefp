@@ -57,7 +57,7 @@ public class UuagcSourceViewerConfiguration extends
 //    ITokenScanner codeScanner = new PartitionedScionTokenScanner(
 //        getScannerManager(), file, new String[] { "{" },
 //        new String[] { "}" }, new String[] { "{-" }, new String[] { "-}" } );
-    ITokenScanner codeScanner = new ScionTokenScanner(
+    ScionTokenScanner codeScanner = new ScionTokenScanner(
         getScannerManager(), file );
     DefaultDamagerRepairer haskellDr = new DefaultDamagerRepairer( codeScanner );
     reconciler.setDamager( haskellDr, PartitionDocumentSetup.HASKELL );
@@ -67,7 +67,9 @@ public class UuagcSourceViewerConfiguration extends
         createUuagcScanner() );
     reconciler.setDamager( uuagcDr, IDocument.DEFAULT_CONTENT_TYPE );
     reconciler.setRepairer( uuagcDr, IDocument.DEFAULT_CONTENT_TYPE );
-
+    if (editor!=null){
+      editor.setTokenScanner( codeScanner );
+    }
     return reconciler;
   }
 

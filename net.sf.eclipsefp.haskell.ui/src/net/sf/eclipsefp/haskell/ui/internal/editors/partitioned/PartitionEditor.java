@@ -5,6 +5,7 @@
 package net.sf.eclipsefp.haskell.ui.internal.editors.partitioned;
 
 import net.sf.eclipsefp.haskell.ui.internal.editors.haskell.TabChecker;
+import net.sf.eclipsefp.haskell.ui.internal.editors.haskell.text.ScionTokenScanner;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.text.IDocument;
@@ -19,6 +20,10 @@ import org.eclipse.ui.texteditor.IDocumentProvider;
  *
  */
 public class PartitionEditor extends TextEditor {
+
+  private ScionTokenScanner tokenScanner;
+
+
 
   public PartitionEditor() {
     super();
@@ -52,6 +57,22 @@ public class PartitionEditor extends TextEditor {
     new TabChecker(this);
   }
 
+  @Override
+  protected void editorSaved() {
+    if (tokenScanner!=null){
+      tokenScanner.markTaskTags();
+    }
+    super.editorSaved();
+  }
 
+
+  public ScionTokenScanner getTokenScanner() {
+    return tokenScanner;
+  }
+
+
+  public void setTokenScanner( final ScionTokenScanner tokenScanner ) {
+    this.tokenScanner = tokenScanner;
+  }
 
 }

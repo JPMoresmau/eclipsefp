@@ -45,7 +45,7 @@ public class AlexSourceViewerConfiguration extends
     reconciler.setDocumentPartitioning( PartitionDocumentSetup.PARTITIONING );
 
     IFile file = ( editor != null ? editor.findFile() : null );
-    ITokenScanner codeScanner = new ScionTokenScanner(
+    ScionTokenScanner codeScanner = new ScionTokenScanner(
         getScannerManager(), file);
     DefaultDamagerRepairer haskellDr = new DefaultDamagerRepairer( codeScanner );
     reconciler.setDamager( haskellDr, PartitionDocumentSetup.HASKELL );
@@ -55,6 +55,10 @@ public class AlexSourceViewerConfiguration extends
         createAlexScanner() );
     reconciler.setDamager( alexDr, IDocument.DEFAULT_CONTENT_TYPE );
     reconciler.setRepairer( alexDr, IDocument.DEFAULT_CONTENT_TYPE );
+
+    if (editor!=null){
+      editor.setTokenScanner( codeScanner );
+    }
 
     return reconciler;
   }

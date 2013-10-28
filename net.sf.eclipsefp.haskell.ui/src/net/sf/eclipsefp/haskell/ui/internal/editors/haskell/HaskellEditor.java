@@ -529,6 +529,7 @@ public class HaskellEditor extends TextEditor implements IEditorPreferenceNames,
         tokenScanner.markTaskTags();
       }
     }
+    super.editorSaved();
   }
 
   @Override
