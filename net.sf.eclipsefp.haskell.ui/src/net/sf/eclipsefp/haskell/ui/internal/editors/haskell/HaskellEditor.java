@@ -504,7 +504,7 @@ public class HaskellEditor extends TextEditor implements IEditorPreferenceNames,
       }*/
       JobFacade jf=BuildWrapperPlugin.getJobFacade( file.getProject() );
       if (jf!=null){
-        jf.updateFromEditor( file, null, null, true, true );
+        jf.updateFromEditor( file,getDocument(), null, null, true, true );
       }
     }
 
@@ -706,7 +706,7 @@ public class HaskellEditor extends TextEditor implements IEditorPreferenceNames,
           needWrite=true;
         }*/
         //needWrite?getDocument():null
-        jf.updateFromEditor( file, outlineHandler,this,false,false );
+        jf.updateFromEditor( file,getDocument(), outlineHandler,this,false,false );
         /*if (!isDirty()){ // now we've written and not dirty
           needWrite=false;
         }*/

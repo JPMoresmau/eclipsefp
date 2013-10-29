@@ -56,6 +56,7 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
+import org.eclipse.jface.text.IDocument;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -258,7 +259,7 @@ public class BWFacade {
 			}
 			
 			JSONArray notes=arr.optJSONArray(1);
-			return parseNotes(notes,ress,null);
+			return parseNotes(notes,ress,null,null);
 		}
 		return true;
 	}
@@ -285,7 +286,7 @@ public class BWFacade {
 	 * @param file the file to build the temp contents
 	 * @return the names in scope or null if the build failed
 	 */
-	public Collection<NameDef> build1(IFile file){
+	public Collection<NameDef> build1(IFile file,IDocument d){
 		//BuildFlagInfo i=getBuildFlags(file);
 		String path=file.getProjectRelativePath().toOSString();
 		LinkedList<String> command=new LinkedList<String>();
@@ -305,8 +306,9 @@ public class BWFacade {
 			BuildWrapperPlugin.deleteProblems(file);
 			JSONArray notes=arr.optJSONArray(1);
 			//notes.putAll(i.getNotes());
-			
-			parseNotes(notes,ress,null);
+			Map<IResource,IDocument> m=new HashMap<>();
+			m.put(file, d);
+			parseNotes(notes,ress,m,null);
 			JSONArray names=arr.optJSONArray(0);
 			if(names!=null){
 				Collection<NameDef> ret=new ArrayList<NameDef>();
@@ -339,7 +341,7 @@ public class BWFacade {
 		}
 	}
 	
-	public Collection<NameDef> build1LongRunning(IFile file,boolean end){
+	public Collection<NameDef> build1LongRunning(IFile file,IDocument d,boolean end){
 		//BuildFlagInfo i=getBuildFlags(file);
 		//BuildWrapperPlugin.logInfo("build1LongRunning");
 
@@ -441,8 +443,9 @@ public class BWFacade {
 			BuildWrapperPlugin.deleteProblems(file);
 			JSONArray notes=arr.optJSONArray(1);
 			//notes.putAll(i.getNotes());
-			
-			parseNotes(notes,ress,null);
+			Map<IResource,IDocument> m=new HashMap<>();
+			m.put(file, d);
+			parseNotes(notes,ress,m,null);
 			JSONArray names=arr.optJSONArray(0);
 			if(names!=null){
 				Collection<NameDef> ret=new ArrayList<NameDef>();
@@ -788,7 +791,7 @@ public class BWFacade {
 		return packageDB;
 	}
 	
-	public OutlineResult outline(IFile file){
+	public OutlineResult outline(IFile file,IDocument d){
 
 		String path=file.getProjectRelativePath().toOSString();
 		OutlineResult or=outlines.get(path);
@@ -827,7 +830,9 @@ public class BWFacade {
 				JSONArray notes=arr.optJSONArray(1);
 				//notes.putAll(i.getNotes());
 				List<Note> ns=new ArrayList<Note>();
-				boolean b=parseNotes(notes,null,ns);
+				Map<IResource,IDocument> m=new HashMap<>();
+				m.put(file, d);
+				boolean b=parseNotes(notes,null,m,ns);
 				or.setNotes(ns);
 				or.setBuildOK(b);
 			}
@@ -1112,7 +1117,7 @@ public class BWFacade {
 	}
 	
 	private boolean parseNotes(JSONArray notes){
-		return parseNotes(notes,null,null);
+		return parseNotes(notes,null,null,null);
 	}
 	
 	private boolean isOK(JSONArray notes){
@@ -1133,7 +1138,7 @@ public class BWFacade {
 		return true;
 	}
 	
-	private boolean parseNotes(JSONArray notes,Set<IResource> ress,Collection<Note> collect){
+	private boolean parseNotes(JSONArray notes,Set<IResource> ress,Map<IResource,IDocument> m,Collection<Note> collect){
 		boolean buildOK=true;
 		if (notes!=null){
 			try {
@@ -1176,7 +1181,7 @@ public class BWFacade {
 								BuildWrapperPlugin.deleteProblems(res);
 							}
 							try {
-								n.applyAsMarker(res);
+								n.applyAsMarker(res,m!=null?m.get(res):null);
 							} catch (CoreException ce){
 								BuildWrapperPlugin.logError(BWText.process_apply_note_error, ce);
 							}

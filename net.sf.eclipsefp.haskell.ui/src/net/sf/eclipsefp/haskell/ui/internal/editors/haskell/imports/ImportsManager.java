@@ -76,7 +76,7 @@ public class ImportsManager {
       if (or==null){
         BWFacade f=BuildWrapperPlugin.getFacade( file.getProject() );
         if (f!=null){
-          or=f.outline( file );
+          or=f.outline( file ,doc);
 
         }
       }

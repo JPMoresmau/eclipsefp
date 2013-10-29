@@ -46,7 +46,7 @@ public class GhcOutputProcessor implements IGhcOutputProcessor {
   public void message( final Note note ) {
     IFile file = findFile( note.getLocation().getFileName() );
     try {
-      note.applyAsMarker( file );
+      note.applyAsMarker( file ,null);
     } catch( CoreException ex ) {
       GhcCompilerPlugin.log( UITexts.error_applyMarkers, IStatus.WARNING, ex );
     }

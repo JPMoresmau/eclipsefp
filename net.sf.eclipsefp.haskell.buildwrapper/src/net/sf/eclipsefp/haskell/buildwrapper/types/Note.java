@@ -8,6 +8,10 @@ import net.sf.eclipsefp.haskell.buildwrapper.util.BWText;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.jface.text.IDocument;
+import org.eclipse.ui.editors.text.TextFileDocumentProvider;
+import org.eclipse.ui.texteditor.IDocumentProvider;
 import org.eclipse.ui.texteditor.MarkerUtilities;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -67,11 +71,11 @@ public class Note {
 		return additionalInfo;
 	}
 	
-	public void applyAsMarker(IResource resource) throws CoreException {
-		applyAsMarker(resource,Integer.MAX_VALUE);
+	public void applyAsMarker(IResource resource,IDocument doc) throws CoreException {
+		applyAsMarker(resource,doc,Integer.MAX_VALUE);
 	}
 	
-	public void applyAsMarker(IResource resource,int maxLines) throws CoreException {
+	public void applyAsMarker(IResource resource,IDocument doc,int maxLines) throws CoreException {
 		if (resource != null && resource.isAccessible()) {
 			/**
 			 * this causes scheduling rule issues sometimes
@@ -93,12 +97,12 @@ public class Note {
 	        }
 	        String msg= message + (additionalInfo != null ? "\n" + additionalInfo : "");
 	        
-	        addMarker(resource, severity, maxLines, msg);
+	        addMarker(resource,doc, severity, maxLines, msg);
 		  
 		}
 	}
 
-	private void addMarker(final IResource resource, int severity, int maxLines, String msg) throws CoreException {
+	private void addMarker(final IResource resource,IDocument doc, int severity, int maxLines, String msg) throws CoreException {
 		int line= Math.min(location.getStartLine(),maxLines);
 		int start=location.getStartColumn();
 		// duplicate
@@ -110,18 +114,37 @@ public class Note {
 					)
 				return;
 		}
+		Map<Object,Object> attributes=null;
+		if (doc==null){
+		  IDocumentProvider prov=new TextFileDocumentProvider();
+	        try {
+	          prov.connect( resource );
+	          doc=prov.getDocument(  resource );
+	          try {
+	              attributes=location.getMarkerProperties(doc);
+	          } finally {
+	            prov.disconnect( resource );
+	          }
+	        } catch (Exception ce){
+	          BuildWrapperPlugin.log(IStatus.ERROR,ce.getLocalizedMessage(), ce );
+	        }
+		} else {
+			attributes=location.getMarkerProperties(doc);
+		}
 
-		final Map<Object,Object> attributes=location.getMarkerProperties(maxLines);
+		if (attributes==null){
+	     attributes=location.getMarkerProperties(maxLines);
+		}
 		attributes.put(IMarker.SEVERITY, severity);
 		attributes.put(IMarker.MESSAGE,msg);
-		
+		final Map<Object,Object> attributesf=attributes;
 		/**
 		 * this locks the workspace, so fire a new thread
 		 */
 		new Thread(new Runnable(){
 			public void run() {
 				try {
-					MarkerUtilities.createMarker(resource, attributes, BuildWrapperPlugin.PROBLEM_MARKER_ID);
+					MarkerUtilities.createMarker(resource, attributesf, BuildWrapperPlugin.PROBLEM_MARKER_ID);
 				} catch (CoreException ex){
 					BuildWrapperPlugin.logError(BWText.process_apply_note_error, ex);
 				}

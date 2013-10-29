@@ -256,7 +256,7 @@ public class AnImport {
       if (file!=null){
         BWFacade f=BuildWrapperPlugin.getFacade( file.getProject() );
         if (f!=null){
-          OutlineResult or=f.outline( file );
+          OutlineResult or=f.outline( file ,null);
           return getDeclarationsFromOutlineResult( file, or,visited );
         }
       }

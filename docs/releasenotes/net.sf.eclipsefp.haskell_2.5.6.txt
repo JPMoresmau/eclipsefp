@@ -14,6 +14,7 @@ Fixes:
 	
 Features:
 	- Enable task tags in Happy and Alex editors (https://sourceforge.net/p/eclipsefp/backlog/150/)
+	- More precise marker locations on errors/warnings
 
 Internal:
 

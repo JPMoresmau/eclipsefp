@@ -33,6 +33,7 @@ import org.eclipse.core.runtime.jobs.IJobChangeEvent;
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.core.runtime.jobs.JobChangeAdapter;
+import org.eclipse.jface.text.IDocument;
 import org.eclipse.osgi.util.NLS;
 import org.json.JSONArray;
 
@@ -282,7 +283,7 @@ public class JobFacade  {
 		realFacade.getSynchronizeJobQueue().addJob(getSynchronizeJob(force,true));
 	}
 	
-	public void outline(final IFile f,final OutlineHandler handler){
+	public void outline(final IFile f,final IDocument d,final OutlineHandler handler){
 		final String jobNamePrefix = NLS.bind(BWText.outline_job_name, getProject().getName());
 
 	      Job buildJob = new Job (jobNamePrefix) {
@@ -290,7 +291,7 @@ public class JobFacade  {
 	        protected IStatus run(IProgressMonitor monitor) {
 	          try {
 	            monitor.beginTask(jobNamePrefix, IProgressMonitor.UNKNOWN);
-	            OutlineResult or=realFacade.outline(f);
+	            OutlineResult or=realFacade.outline(f,d);
 	            if(!monitor.isCanceled()){
 	            	 handler.handleOutline(or);
 	            }
@@ -312,7 +313,7 @@ public class JobFacade  {
 	 * @param handler
 	 * @param ndhandler
 	 */
-	public void updateFromEditor(final IFile file,final OutlineHandler handler,final NameDefHandler ndhandler,final boolean sync1,final boolean end){
+	public void updateFromEditor(final IFile file,final IDocument d,final OutlineHandler handler,final NameDefHandler ndhandler,final boolean sync1,final boolean end){
 		final String jobNamePrefix = NLS.bind(BWText.editor_job_name, getProject().getName());
 	
 		/*
@@ -335,13 +336,13 @@ public class JobFacade  {
 	          }
 	          long t1=System.currentTimeMillis();
 	          if (handler!=null){
-	        	  OutlineResult or=realFacade.outline(file);
+	        	  OutlineResult or=realFacade.outline(file,d);
 	        	  handler.handleOutline(or); // avoid removing all outline on error
 	          }
 	          long t3=System.currentTimeMillis();
 	          
 	          
-         	  Collection<NameDef> ns=realFacade.build1LongRunning(file,end);
+         	  Collection<NameDef> ns=realFacade.build1LongRunning(file,d,end);
         	  long t35=System.currentTimeMillis();
 	          if (ndhandler!=null){
 	        	  ndhandler.handleNameDefs(ns);
