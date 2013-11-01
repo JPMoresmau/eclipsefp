@@ -10,7 +10,7 @@ Necessary Haskell packages:
  
 
 Fixes:
-
+	- Show proper types in monadic functions (like when) (http://sourceforge.net/p/eclipsefp/backlog/151/)
 	
 Features:
 	- Enable task tags in Happy and Alex editors (https://sourceforge.net/p/eclipsefp/backlog/150/)
