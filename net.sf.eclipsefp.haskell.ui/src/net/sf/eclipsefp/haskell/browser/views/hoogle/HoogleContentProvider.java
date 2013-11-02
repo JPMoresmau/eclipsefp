@@ -5,6 +5,7 @@
 package net.sf.eclipsefp.haskell.browser.views.hoogle;
 
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import net.sf.eclipsefp.haskell.browser.BrowserPlugin;
 import net.sf.eclipsefp.haskell.browser.Database;
@@ -25,7 +26,7 @@ import org.eclipse.swt.widgets.Button;
  */
 public class HoogleContentProvider implements ITreeContentProvider {
 
-  ArrayList<Map.Entry<String, ArrayList<HoogleResult>>> results = null;
+  Map<String, ArrayList<HoogleResult>> results = null;
   ArrayList<Object> shownElements = null;
 
   Button localDbCheck;
@@ -66,22 +67,16 @@ public class HoogleContentProvider implements ITreeContentProvider {
           initialResults = new HoogleResult[0];
         }
 
-        results = new ArrayList<Map.Entry<String,ArrayList<HoogleResult>>>();
+        results = new LinkedHashMap<String, ArrayList<HoogleResult>>();
         for( HoogleResult result: initialResults ) {
           if (!result.getType().equals( HoogleResultType.WARNING )){
             String key = result.getCompleteDefinition();
             // Try to find element
-            ArrayList<HoogleResult> entryList = null;
-            for (Map.Entry<String, ArrayList<HoogleResult>> middleResult : results) {
-              if (middleResult.getKey().equals( key )) {
-                entryList = middleResult.getValue();
-                break;
-              }
-            }
+            ArrayList<HoogleResult> entryList = results.get( key );
             // If we didn't find the key, add to list
             if (entryList == null) {
               entryList = new ArrayList<HoogleResult>();
-              results.add( new SimpleEntry<String, ArrayList<HoogleResult>>(key, entryList) );
+              results.put(key, entryList );
             }
             // Add element
             entryList.add(result);
@@ -91,13 +86,13 @@ public class HoogleContentProvider implements ITreeContentProvider {
 
         }
         shownElements = new ArrayList<Object>();
-        for( Map.Entry<String, ArrayList<HoogleResult>> entry: results ) {
+        for( Map.Entry<String, ArrayList<HoogleResult>> entry: results.entrySet() ) {
           if( entry.getValue().size() == 1 ) {
             // If only one element, we introduce just the result
             shownElements.add( entry.getValue().get( 0 ) );
           } else {
             // If not, we introduce a (element name, list of elements) item
-            shownElements.add( new SimpleEntry<String, ArrayList<HoogleResult>>( entry.getKey(), entry.getValue() ) );
+            shownElements.add( entry );
           }
         }
       } catch( Throwable ex ) {
