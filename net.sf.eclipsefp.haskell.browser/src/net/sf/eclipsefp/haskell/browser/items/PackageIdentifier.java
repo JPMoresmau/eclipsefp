@@ -73,6 +73,9 @@ public class PackageIdentifier {
 	}
 	
 	public String toString() {
+		if (this.version==null || this.version.trim().length()==0){
+			return this.name;
+		}
 		return this.name + "-" + this.version;
 	}
 }
