@@ -47,6 +47,7 @@ import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.browser.IWorkbenchBrowserSupport;
 import org.eclipse.ui.handlers.HandlerUtil;
 import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.progress.UIJob;
@@ -275,10 +276,10 @@ public class OpenDefinitionHandler extends AbstractHandler {
   public static boolean openExternalDefinition( final IWorkbenchPage page,
       final IProject project, final String pkg, final String module,
       final String shortName, final String type ) {
-    int ix = pkg.lastIndexOf( '-' );
+    int ix = pkg!=null?pkg.lastIndexOf( '-' ):-1;
     String packageName = pkg;
     String packageVersion = "";
-    if( ix > -1 ) {
+    if( ix > -1 && pkg!=null) {
       packageName = pkg.substring( 0, ix );
       if( ix < pkg.length() - 2 ) {
         packageVersion = pkg.substring( ix + 1 );
@@ -286,7 +287,7 @@ public class OpenDefinitionHandler extends AbstractHandler {
     }
 
     try {
-        if (project!=null){
+        if (project!=null && packageName!=null){
         // String moduleHSFile=module.replace( '.', '/' );
           for( IProject p: project.getReferencedProjects() ) {
             if( ResourceUtil.hasHaskellNature( p )) {
@@ -347,7 +348,7 @@ public class OpenDefinitionHandler extends AbstractHandler {
 
     IValueVariable[] vars = new IValueVariable[] {
         mgr.newValueVariable( "IMPL_BIN", "", true, hsImplBinDir ),
-        mgr.newValueVariable( "PACKAGE_NAME", "", true, packageName ),
+        mgr.newValueVariable( "PACKAGE_NAME", "", true, String.valueOf(packageName) ),
         mgr.newValueVariable( "PACKAGE_VERSION", "", true, packageVersion ),
         mgr.newValueVariable( "MODULE", "", true, module ),
         mgr.newValueVariable( "MODULE_HTML", "", true, moduleHTMLFile ),
@@ -390,7 +391,11 @@ public class OpenDefinitionHandler extends AbstractHandler {
                   public void run() {
                     try {
                       PlatformUI.getWorkbench().getBrowserSupport().createBrowser(
-                          pkg + " " + module ).openURL( url );
+                          IWorkbenchBrowserSupport.AS_EDITOR
+                          | IWorkbenchBrowserSupport.LOCATION_BAR
+                          | IWorkbenchBrowserSupport.NAVIGATION_BAR
+                          | IWorkbenchBrowserSupport.STATUS,
+                          pkg + " " + module,null,null ).openURL( url );
                     } catch( Exception ce ) {
                       HaskellUIPlugin.log( ce );
                     }
@@ -436,30 +441,6 @@ public class OpenDefinitionHandler extends AbstractHandler {
     return false;
   }
 
-  /**
-   * see Haddock.Utils makeAnchorId
-   * @param name
-   * @return
-   */
-  private static String toAnchorName(final String name){
-    if (name!=null){
-      StringBuilder sb=new StringBuilder();
-      for (int a=0;a<name.length();a++){
-        char c=name.charAt( a );
-        // ascii letter, digit, or . : _, ok
-        if ((Character.isLetterOrDigit( c ) && c<128) || c=='.' || c==':' || c=='_'){
-          sb.append( c );
-        } else {
-          // escape
-          sb.append( "-" );
-          sb.append(Integer.toString(c) );
-          sb.append( "-" );
-        }
-      }
-      return sb.toString();
-    }
-    return name;
-  }
 
   private static boolean exists( final URL url ) {
     try {
@@ -537,5 +518,31 @@ public class OpenDefinitionHandler extends AbstractHandler {
     } catch( BadLocationException ex ) {
       // ignore
     }
+  }
+
+
+  /**
+   * see Haddock.Utils makeAnchorId
+   * @param name
+   * @return
+   */
+  public static String toAnchorName(final String name){
+    if (name!=null){
+      StringBuilder sb=new StringBuilder();
+      for (int a=0;a<name.length();a++){
+        char c=name.charAt( a );
+        // ascii letter, digit, or . : _, ok
+        if ((Character.isLetterOrDigit( c ) && c<128) || c=='.' || c==':' || c=='_'){
+          sb.append( c );
+        } else {
+          // escape
+          sb.append( "-" );
+          sb.append(Integer.toString(c) );
+          sb.append( "-" );
+        }
+      }
+      return sb.toString();
+    }
+    return name;
   }
 }

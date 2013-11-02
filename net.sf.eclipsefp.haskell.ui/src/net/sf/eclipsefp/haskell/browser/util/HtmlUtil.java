@@ -130,47 +130,5 @@ public class HtmlUtil {
     return builder.toString();
   }
 
-  public static String generateKeywordUrl( final String keyword ) {
-    return "http://www.haskell.org/haskellwiki/Keywords#" + keyword;
-  }
 
-  public static String generatePackageUrl( final PackageIdentifier item ) {
-    if( item.getName().equals( "ghc" ) ) {
-      // GHC libraries are a special case
-      return "http://www.haskell.org/ghc/docs/" + item.getVersion()
-          + "/html/libraries/" + item.toString() + "/";
-    } else {
-      return "http://hackage.haskell.org/package/" + item.toString();
-    }
-  }
-
-  public static String generateModuleUrl( final PackageIdentifier pkg, final String module ) {
-    String url;
-    if( pkg.getName().equals( "ghc" ) ) {
-      // GHC libraries are a special case
-      url = "http://www.haskell.org/ghc/docs/" + pkg.getVersion()
-          + "/html/libraries/" + pkg.toString() + "/";
-    } else {
-      url = "http://hackage.haskell.org/packages/archive/" + pkg.getName()
-          + "/" + pkg.getVersion() + "/doc/html/";
-    }
-    // Add module name
-    url += module.replace( '.', '-' ) + ".html";
-    return url;
-  }
-
-  public static String generateElementUrl( final PackageIdentifier pkg, final String module, final boolean isFunctionLike, final String name ) {
-    String url = generateModuleUrl( pkg, module );
-    // Add declaration name
-    String itemName = name;
-    if( itemName.startsWith( "(" ) ) {
-      itemName = itemName.substring( 1, itemName.length() - 1 );
-    }
-    if( isFunctionLike ) {
-      url += "#v:" + itemName;
-    } else {
-      url += "#t:" + itemName;
-    }
-    return url;
-  }
 }

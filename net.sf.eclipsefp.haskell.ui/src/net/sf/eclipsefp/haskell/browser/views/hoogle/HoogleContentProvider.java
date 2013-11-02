@@ -10,6 +10,8 @@ import java.util.Map;
 import net.sf.eclipsefp.haskell.browser.BrowserPlugin;
 import net.sf.eclipsefp.haskell.browser.Database;
 import net.sf.eclipsefp.haskell.browser.items.HoogleResult;
+import net.sf.eclipsefp.haskell.browser.items.HoogleResultConstructor;
+import net.sf.eclipsefp.haskell.browser.items.HoogleResultDeclaration;
 import net.sf.eclipsefp.haskell.browser.items.HoogleResultType;
 import net.sf.eclipsefp.haskell.ui.HaskellUIPlugin;
 import net.sf.eclipsefp.haskell.ui.internal.util.UITexts;
@@ -74,12 +76,43 @@ public class HoogleContentProvider implements ITreeContentProvider {
             // Try to find element
             ArrayList<HoogleResult> entryList = results.get( key );
             // If we didn't find the key, add to list
+            boolean found=false;
             if (entryList == null) {
               entryList = new ArrayList<HoogleResult>();
               results.put(key, entryList );
+            } else if (result.getType().equals(HoogleResultType.DECLARATION)){
+              for (HoogleResult hr:entryList){
+                if (HoogleResultType.DECLARATION.equals( hr.getType() )){
+                  if (((HoogleResultDeclaration)result).getModule()!=null && ((HoogleResultDeclaration)result).getModule().equals( ((HoogleResultDeclaration)hr).getModule())){
+                    found=true;
+                    break;
+                  }
+                }
+              }
+            } else if(result.getType().equals(HoogleResultType.CONSTRUCTOR)){
+              for (HoogleResult hr:entryList){
+                if (HoogleResultType.CONSTRUCTOR.equals( hr.getType() )){
+                  if (((HoogleResultConstructor)result).getModule()!=null && ((HoogleResultConstructor)result).getModule().equals( ((HoogleResultConstructor)hr).getModule())){
+                    found=true;
+                    break;
+                  }
+                }
+              }
+            } else if (result.getType().equals( HoogleResultType.MODULE )){
+              /*for (HoogleResult hr:entryList){
+                if (HoogleResultType.MODULE.equals( hr.getType() )){
+                  if (((HoogleResultModule)result).getPackageIdentifiers().size()!=null && ((HoogleResultModule)result).getModule().equals( ((HoogleResultModule)hr).getModule())){
+                    found=true;
+                    break;
+                  }
+                }
+              }*/
+              found=true;
             }
-            // Add element
-            entryList.add(result);
+            if(!found){
+              // Add element
+              entryList.add(result);
+            }
           } else {
             HaskellUIPlugin.log(NLS.bind( UITexts.browser_hoogleWarning, result.getName()),IStatus.WARNING );
           }

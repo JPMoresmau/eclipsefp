@@ -4,7 +4,6 @@
  */
 package net.sf.eclipsefp.haskell.browser.views.packages;
 
-import java.net.URL;
 import net.sf.eclipsefp.haskell.browser.BrowserEvent;
 import net.sf.eclipsefp.haskell.browser.BrowserPlugin;
 import net.sf.eclipsefp.haskell.browser.DatabaseLoadedEvent;
@@ -13,6 +12,7 @@ import net.sf.eclipsefp.haskell.browser.util.HtmlUtil;
 import net.sf.eclipsefp.haskell.browser.views.NoDatabaseContentProvider;
 import net.sf.eclipsefp.haskell.browser.views.NoDatabaseLabelProvider;
 import net.sf.eclipsefp.haskell.browser.views.NoDatabaseRoot;
+import net.sf.eclipsefp.haskell.ui.handlers.OpenDefinitionHandler;
 import org.eclipse.jface.viewers.DoubleClickEvent;
 import org.eclipse.jface.viewers.IContentProvider;
 import org.eclipse.jface.viewers.IDoubleClickListener;
@@ -27,8 +27,6 @@ import org.eclipse.swt.browser.Browser;
 import org.eclipse.swt.custom.SashForm;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
-import org.eclipse.ui.browser.IWebBrowser;
-import org.eclipse.ui.browser.IWorkbenchBrowserSupport;
 import org.eclipse.ui.part.ViewPart;
 
 /**
@@ -157,14 +155,15 @@ public class PackagesView extends ViewPart implements IDatabaseLoadedListener,
     PackagesItem item = ( PackagesItem )o;
     // Open browser
     try {
-      IWorkbenchBrowserSupport browserSupport = this.getSite()
+      /*IWorkbenchBrowserSupport browserSupport = this.getSite()
           .getWorkbenchWindow().getWorkbench().getBrowserSupport();
       URL webUrl = new URL( HtmlUtil.generatePackageUrl( item.getPackage().getIdentifier() ) );
       IWebBrowser browser = browserSupport.createBrowser(
           IWorkbenchBrowserSupport.AS_EDITOR
               | IWorkbenchBrowserSupport.LOCATION_BAR, null, "Haskell Browser",
           "Haskell Browser" );
-      browser.openURL( webUrl );
+      browser.openURL( webUrl );*/
+      OpenDefinitionHandler.openExternalDefinition( this.getSite().getPage(), null,item.getPackage().getIdentifier().toString(), null, null, null );
     } catch( Throwable ex ) {
       // Do nothing
     }

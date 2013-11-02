@@ -4,7 +4,6 @@
  */
 package net.sf.eclipsefp.haskell.browser.views.hoogle;
 
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.Map;
 import net.sf.eclipsefp.haskell.browser.BrowserEvent;
@@ -24,6 +23,7 @@ import net.sf.eclipsefp.haskell.browser.util.HtmlUtil;
 import net.sf.eclipsefp.haskell.browser.views.NoDatabaseContentProvider;
 import net.sf.eclipsefp.haskell.browser.views.NoDatabaseRoot;
 import net.sf.eclipsefp.haskell.ui.HaskellUIPlugin;
+import net.sf.eclipsefp.haskell.ui.handlers.OpenDefinitionHandler;
 import net.sf.eclipsefp.haskell.ui.internal.util.UITexts;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.viewers.DoubleClickEvent;
@@ -52,8 +52,6 @@ import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.browser.IWebBrowser;
-import org.eclipse.ui.browser.IWorkbenchBrowserSupport;
 import org.eclipse.ui.part.ViewPart;
 
 /**
@@ -364,52 +362,31 @@ public class HoogleView extends ViewPart implements SelectionListener,
         result = ( ( ArrayList<HoogleResult> )entry.getValue() ).get( 0 );
       }
     }
+    IWorkbenchPage page=getSite().getPage();
 
-    String url = null;
     switch( result.getType() ) {
       case KEYWORD:
-        url = HtmlUtil.generateKeywordUrl( result.getName() );
+        OpenDefinitionHandler.openExternalDefinition( page, null, null,null,result.getName(), null );
         break;
       case PACKAGE:
         HoogleResultPackage pkg = ( HoogleResultPackage )result;
-        url = HtmlUtil.generatePackageUrl( pkg.getPackage().getIdentifier() );
+        OpenDefinitionHandler.openExternalDefinition( page, null, pkg.getPackage().getIdentifier().toString(),null,null, null );
         break;
       case MODULE:
         HoogleResultModule mod = ( HoogleResultModule )result;
-        url = HtmlUtil.generateModuleUrl( mod.getPackageIdentifiers().get( 0 ),
-            mod.getName() );
+        OpenDefinitionHandler.openExternalDefinition( page, null, mod.getPackageIdentifiers().get( 0 ).toString(),mod.getName(),null, null );
         break;
       case CONSTRUCTOR:
         HoogleResultConstructor con = ( HoogleResultConstructor )result;
-        url = HtmlUtil.generateElementUrl(
-            con.getPackageIdentifiers().get( 0 ), con.getModule(), true,
-            con.getName() );
+        OpenDefinitionHandler.openExternalDefinition( page, null, con.getPackageIdentifiers().get( 0 ).toString(),con.getModule(), con.getName(), "v" );
         break;
       case DECLARATION:
         HoogleResultDeclaration decl = ( HoogleResultDeclaration )result;
-        url = HtmlUtil.generateElementUrl(
-            decl.getPackageIdentifiers().get( 0 ), decl.getModule(), decl
-                .getDeclaration().getType() == DeclarationType.FUNCTION, decl
-                .getName() );
+        OpenDefinitionHandler.openExternalDefinition( page, null, decl.getPackageIdentifiers().get( 0 ).toString(),decl.getModule(), decl.getName(), decl
+          .getDeclaration().getType() == DeclarationType.FUNCTION?"v":"t");
         break;
       case WARNING: // not in tree
         break;
-    }
-
-    // Open browser
-    if( url != null ) {
-      try {
-        IWorkbenchBrowserSupport browserSupport = this.getSite()
-            .getWorkbenchWindow().getWorkbench().getBrowserSupport();
-        URL webUrl = new URL( url );
-        IWebBrowser browser = browserSupport.createBrowser(
-            IWorkbenchBrowserSupport.AS_EDITOR
-                | IWorkbenchBrowserSupport.LOCATION_BAR, null,
-            "Haskell Browser", "Haskell Browser" );
-        browser.openURL( webUrl );
-      } catch( Throwable ex ) {
-        // Do nothing
-      }
     }
   }
 

@@ -4,14 +4,13 @@
  */
 package net.sf.eclipsefp.haskell.browser.views.declarations;
 
-import java.net.URL;
 import net.sf.eclipsefp.haskell.browser.items.Constructor;
 import net.sf.eclipsefp.haskell.browser.items.DeclarationType;
-import net.sf.eclipsefp.haskell.browser.items.PackageIdentifier;
 import net.sf.eclipsefp.haskell.browser.items.QueryItem;
 import net.sf.eclipsefp.haskell.browser.util.HtmlUtil;
 import net.sf.eclipsefp.haskell.browser.views.modules.ModulesItem;
 import net.sf.eclipsefp.haskell.browser.views.packages.PackagesItem;
+import net.sf.eclipsefp.haskell.ui.handlers.OpenDefinitionHandler;
 import org.eclipse.jface.viewers.DoubleClickEvent;
 import org.eclipse.jface.viewers.IDoubleClickListener;
 import org.eclipse.jface.viewers.ISelection;
@@ -26,8 +25,6 @@ import org.eclipse.swt.custom.SashForm;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.ISelectionListener;
 import org.eclipse.ui.IWorkbenchPart;
-import org.eclipse.ui.browser.IWebBrowser;
-import org.eclipse.ui.browser.IWorkbenchBrowserSupport;
 import org.eclipse.ui.part.ViewPart;
 
 /**
@@ -150,27 +147,10 @@ public abstract class DeclarationsView extends ViewPart implements
     if( item.getDeclaration().getType() == DeclarationType.INSTANCE ) {
       return; // No documentation for instances
     }
-    // Open browser
-    try {
-      IWorkbenchBrowserSupport browserSupport = this.getSite()
-          .getWorkbenchWindow().getWorkbench().getBrowserSupport();
-      URL webUrl = new URL( generateUrl( item ) );
-      IWebBrowser browser = browserSupport.createBrowser(
-          IWorkbenchBrowserSupport.AS_EDITOR
-              | IWorkbenchBrowserSupport.LOCATION_BAR, null, "Haskell Browser",
-          "Haskell Browser" );
-      browser.openURL( webUrl );
-    } catch( Throwable ex ) {
-      // Do nothing
-    }
+
+    OpenDefinitionHandler.openExternalDefinition( getSite().getPage(), null, item.getPackages().get( 0 ).toString(),  lastModulesItem.getModule().getName(),
+        item.getName(),  (item.getType() == DeclarationType.FUNCTION)?"v":"t" );
+
   }
 
-  public String generateUrl( final QueryItem item ) {
-    PackageIdentifier pkg = item.getPackages().get( 0 );
-    String moduleName = lastModulesItem.getModule().getName();
-    String itemName = item.getName();
-    boolean isFunctionLike = (item.getType() == DeclarationType.FUNCTION);
-
-    return HtmlUtil.generateElementUrl( pkg, moduleName, isFunctionLike, itemName );
-  }
 }

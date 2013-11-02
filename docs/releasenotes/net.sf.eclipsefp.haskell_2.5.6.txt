@@ -12,10 +12,14 @@ Necessary Haskell packages:
 Fixes:
 	- Show proper types in monadic functions (like when) (http://sourceforge.net/p/eclipsefp/backlog/151/)
 	- Handle Hoogle warnings
+	- Avoid duplicates in Hoogle results when Local+Hackage are selected
+	- Reuse search paths when opening Hoogle resultd
 
 Features:
 	- Enable task tags in Happy and Alex editors (https://sourceforge.net/p/eclipsefp/backlog/150/)
 	- More precise marker locations on errors/warnings
+	- Double click on Modules view in Browser open module web page
+	- Proper Hackage search url for current package
 
 Internal:
 

@@ -7,6 +7,9 @@ package net.sf.eclipsefp.haskell.browser.views.modules;
 import net.sf.eclipsefp.haskell.browser.Database;
 import net.sf.eclipsefp.haskell.browser.util.HtmlUtil;
 import net.sf.eclipsefp.haskell.browser.views.packages.PackagesItem;
+import net.sf.eclipsefp.haskell.ui.handlers.OpenDefinitionHandler;
+import org.eclipse.jface.viewers.DoubleClickEvent;
+import org.eclipse.jface.viewers.IDoubleClickListener;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
@@ -30,7 +33,7 @@ import org.eclipse.ui.part.ViewPart;
  *
  */
 public class ModulesView extends ViewPart implements ISelectionListener,
-    ISelectionChangedListener {
+    ISelectionChangedListener,IDoubleClickListener {
 
   /**
    * The ID of the view as specified by the extension.
@@ -70,6 +73,7 @@ public class ModulesView extends ViewPart implements ISelectionListener,
     provider = new ModulesContentProvider( this.memento );
     viewer.setContentProvider( provider );
     viewer.setInput( null );
+    viewer.addDoubleClickListener( this );
     // Hook for changes in selection
     viewer.addPostSelectionChangedListener( this );
     // Register as selection provider
@@ -130,4 +134,30 @@ public class ModulesView extends ViewPart implements ISelectionListener,
       doc.setText( HtmlUtil.generateDocument( null, item.getModule().getDoc() ) );
     }
   }
+
+  @Override
+  public void doubleClick( final DoubleClickEvent event ) {
+    TreeSelection selection = ( TreeSelection )event.getSelection();
+    Object o = selection.getFirstElement();
+    if( o == null || !( o instanceof ModulesItem ) ) {
+      return;
+    }
+
+    ModulesItem item = ( ModulesItem )o;
+    Object dbInfo=item.getDatabaseInfo();
+    if (dbInfo instanceof PackagesItem){
+      PackagesItem pkg=(PackagesItem)dbInfo;
+      // Open browser
+      try {
+        OpenDefinitionHandler.openExternalDefinition( this.getSite().getPage(), null,pkg.getPackage().getIdentifier().toString(), item.getModule().getName(), null, null );
+      } catch( Throwable ex ) {
+        // Do nothing
+      }
+
+    }
+
+
+  }
+
+
 }
