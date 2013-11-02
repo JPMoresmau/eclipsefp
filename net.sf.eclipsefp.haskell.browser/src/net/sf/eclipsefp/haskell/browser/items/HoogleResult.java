@@ -38,6 +38,8 @@ public abstract class HoogleResult {
 			return new HoogleResultConstructor(o);
 		else if (type.equals("keyword"))
 			return new HoogleResultKeyword(o);
+		else if (type.equals("warning"))
+			return new HoogleResultWarning(o);
 		else
 			return null;
 	}

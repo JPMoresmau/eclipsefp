@@ -14,5 +14,6 @@ public enum HoogleResultType {
 	MODULE,
 	DECLARATION,
 	CONSTRUCTOR,
-	KEYWORD
+	KEYWORD,
+	WARNING
 }

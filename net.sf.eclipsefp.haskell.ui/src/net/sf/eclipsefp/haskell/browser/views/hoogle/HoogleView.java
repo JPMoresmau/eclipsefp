@@ -179,7 +179,7 @@ public class HoogleView extends ViewPart implements SelectionListener,
     textData.grabExcessHorizontalSpace = true;
     text.setLayoutData( textData );
     text.addSelectionListener( this );
-
+    text.setEnabled( false );
 
     SashForm form = new SashForm( parent, SWT.VERTICAL );
     GridData formData = new GridData();
@@ -276,6 +276,7 @@ public class HoogleView extends ViewPart implements SelectionListener,
           viewer.getControl().setFocus();
         }
       }
+
     }
   }
 
@@ -302,7 +303,7 @@ public class HoogleView extends ViewPart implements SelectionListener,
     }
 
     if( result != null ) {
-      String text = null;
+      String text = "";
       switch( result.getType() ) {
         case KEYWORD:
           text = HtmlUtil.generateDocument( "keyword "
@@ -329,6 +330,8 @@ public class HoogleView extends ViewPart implements SelectionListener,
           text = HtmlUtil.generateDocument( con.getConstructor()
               .getCompleteDefinition(), con.getPackageIdentifiers(), con
               .getModule(), false, con.getDeclaration().getDoc() );
+          break;
+        case WARNING: // not in tree
           break;
       }
 
@@ -388,6 +391,8 @@ public class HoogleView extends ViewPart implements SelectionListener,
             decl.getPackageIdentifiers().get( 0 ), decl.getModule(), decl
                 .getDeclaration().getType() == DeclarationType.FUNCTION, decl
                 .getName() );
+        break;
+      case WARNING: // not in tree
         break;
     }
 

@@ -6,7 +6,7 @@ import org.eclipse.jface.text.Document;
 import org.eclipse.jface.text.Position;
 
 /**
- * avoid concurrent modification exceptions on annotation position updates
+ * avoid concurrent modification exceptions on annotation position updates by synchronizing all methods
  * @author JP Moresmau
  *
  */
@@ -22,6 +22,10 @@ public class SynchronizableDocument extends Document{
   public synchronized Position[] getPositions( final String category, final int offset, final int length,
       final boolean canStartBefore, final boolean canEndAfter )
       throws BadPositionCategoryException {
+    // this will cause an assertion failure
+    if (offset<0 || length<0){
+      return new Position[0];
+    }
     return super.getPositions( category, offset, length, canStartBefore,
         canEndAfter );
   }

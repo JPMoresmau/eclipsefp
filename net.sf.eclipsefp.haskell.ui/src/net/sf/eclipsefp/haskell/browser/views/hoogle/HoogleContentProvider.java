@@ -9,9 +9,13 @@ import java.util.Map;
 import net.sf.eclipsefp.haskell.browser.BrowserPlugin;
 import net.sf.eclipsefp.haskell.browser.Database;
 import net.sf.eclipsefp.haskell.browser.items.HoogleResult;
+import net.sf.eclipsefp.haskell.browser.items.HoogleResultType;
 import net.sf.eclipsefp.haskell.ui.HaskellUIPlugin;
+import net.sf.eclipsefp.haskell.ui.internal.util.UITexts;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.Viewer;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.widgets.Button;
 
 /**
@@ -64,22 +68,27 @@ public class HoogleContentProvider implements ITreeContentProvider {
 
         results = new ArrayList<Map.Entry<String,ArrayList<HoogleResult>>>();
         for( HoogleResult result: initialResults ) {
-          String key = result.getCompleteDefinition();
-          // Try to find element
-          ArrayList<HoogleResult> entryList = null;
-          for (Map.Entry<String, ArrayList<HoogleResult>> middleResult : results) {
-            if (middleResult.getKey().equals( key )) {
-              entryList = middleResult.getValue();
-              break;
+          if (!result.getType().equals( HoogleResultType.WARNING )){
+            String key = result.getCompleteDefinition();
+            // Try to find element
+            ArrayList<HoogleResult> entryList = null;
+            for (Map.Entry<String, ArrayList<HoogleResult>> middleResult : results) {
+              if (middleResult.getKey().equals( key )) {
+                entryList = middleResult.getValue();
+                break;
+              }
             }
+            // If we didn't find the key, add to list
+            if (entryList == null) {
+              entryList = new ArrayList<HoogleResult>();
+              results.add( new SimpleEntry<String, ArrayList<HoogleResult>>(key, entryList) );
+            }
+            // Add element
+            entryList.add(result);
+          } else {
+            HaskellUIPlugin.log(NLS.bind( UITexts.browser_hoogleWarning, result.getName()),IStatus.WARNING );
           }
-          // If we didn't find the key, add to list
-          if (entryList == null) {
-            entryList = new ArrayList<HoogleResult>();
-            results.add( new SimpleEntry<String, ArrayList<HoogleResult>>(key, entryList) );
-          }
-          // Add element
-          entryList.add(result);
+
         }
         shownElements = new ArrayList<Object>();
         for( Map.Entry<String, ArrayList<HoogleResult>> entry: results ) {
@@ -125,7 +134,9 @@ public class HoogleContentProvider implements ITreeContentProvider {
       if (entry.getValue() instanceof ArrayList) {
         ArrayList<Map.Entry<String, HoogleResult>> results = new ArrayList<Map.Entry<String,HoogleResult>>();
         for (HoogleResult result : (ArrayList<HoogleResult>)entry.getValue()) {
-          results.add( new SimpleEntry( entry.getKey(), result ) );
+
+            results.add( new SimpleEntry( entry.getKey(), result ) );
+
         }
         return results.toArray();
       }
