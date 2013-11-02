@@ -180,6 +180,7 @@ public class HoogleView extends ViewPart implements SelectionListener,
     text.setLayoutData( textData );
     text.addSelectionListener( this );
 
+
     SashForm form = new SashForm( parent, SWT.VERTICAL );
     GridData formData = new GridData();
     formData.horizontalAlignment = SWT.FILL;
@@ -212,6 +213,7 @@ public class HoogleView extends ViewPart implements SelectionListener,
 
       @Override
       public void run() {
+
         provider = new HoogleContentProvider(localDb, hackageDb);
         //viewer.setLabelProvider( new HoogleLabelProvider() );
         if (!viewer.getTree().isDisposed()){
@@ -220,6 +222,9 @@ public class HoogleView extends ViewPart implements SelectionListener,
             viewer.setInput( text.getText() );
           }
           viewer.refresh();
+        }
+        if (!text.isDisposed()){
+          text.setEnabled( true );
         }
       }
     } );
@@ -233,6 +238,9 @@ public class HoogleView extends ViewPart implements SelectionListener,
 
       @Override
       public void run() {
+        if (!text.isDisposed()){
+          text.setEnabled( false );
+        }
         provider = new NoDatabaseContentProvider();
         //viewer.setLabelProvider( new NoDatabaseLabelProvider( true ) );
         viewer.setContentProvider( provider );
