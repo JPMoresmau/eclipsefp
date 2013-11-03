@@ -306,7 +306,7 @@ public class BWFacade {
 			BuildWrapperPlugin.deleteProblems(file);
 			JSONArray notes=arr.optJSONArray(1);
 			//notes.putAll(i.getNotes());
-			Map<IResource,IDocument> m=new HashMap<>();
+			Map<IResource,IDocument> m=new HashMap<IResource,IDocument>();
 			m.put(file, d);
 			parseNotes(notes,ress,m,null);
 			JSONArray names=arr.optJSONArray(0);
@@ -443,7 +443,7 @@ public class BWFacade {
 			BuildWrapperPlugin.deleteProblems(file);
 			JSONArray notes=arr.optJSONArray(1);
 			//notes.putAll(i.getNotes());
-			Map<IResource,IDocument> m=new HashMap<>();
+			Map<IResource,IDocument> m=new HashMap<IResource,IDocument>();
 			m.put(file, d);
 			parseNotes(notes,ress,m,null);
 			JSONArray names=arr.optJSONArray(0);
@@ -830,7 +830,7 @@ public class BWFacade {
 				JSONArray notes=arr.optJSONArray(1);
 				//notes.putAll(i.getNotes());
 				List<Note> ns=new ArrayList<Note>();
-				Map<IResource,IDocument> m=new HashMap<>();
+				Map<IResource,IDocument> m=new HashMap<IResource,IDocument>();
 				m.put(file, d);
 				boolean b=parseNotes(notes,null,m,ns);
 				or.setNotes(ns);
