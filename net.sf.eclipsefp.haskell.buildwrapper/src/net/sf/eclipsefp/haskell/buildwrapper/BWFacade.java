@@ -1691,6 +1691,7 @@ public class BWFacade {
 			};
 			waitForThread(r1, mon);
 			project.refreshLocal(IResource.DEPTH_ONE, mon);
+			setDerived();
 			if (mon!=null && mon.isCanceled()){
 				return;
 			}
