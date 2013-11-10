@@ -11,12 +11,14 @@ import net.sf.eclipsefp.haskell.core.cabalmodel.PackageDescriptionStanza;
 import net.sf.eclipsefp.haskell.ui.HaskellUIPlugin;
 import net.sf.eclipsefp.haskell.ui.internal.editors.cabal.forms.FormEntry;
 import net.sf.eclipsefp.haskell.ui.internal.util.UITexts;
+import net.sf.eclipsefp.haskell.util.FileUtil;
 import net.sf.eclipsefp.haskell.util.PlatformUtil;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IResourceVisitor;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.TableEditor;
 import org.eclipse.swt.events.SelectionEvent;
@@ -129,7 +131,7 @@ public class FormEntryModules extends FormEntry {
         //    .get( CabalSyntax.FIELD_HS_SOURCE_DIRS.getCabalName() );
         sourceDirs=root.getStanza().getSourceDirs();
       } else {
-        sourceDirs = Collections.emptyList();
+        sourceDirs = Collections.singleton( "" );
       }
 
       ArrayList<String> modules = new ArrayList<String>();
@@ -261,6 +263,7 @@ public class FormEntryModules extends FormEntry {
         }
         // ensure module names are visible
         table.getColumn( 2 ).pack();
+
         // Tell modifications
         if( changeToExposed && !blockNotification ) {
           notifyTextValueChanged();
@@ -394,22 +397,29 @@ public class FormEntryModules extends FormEntry {
       this.elts = whereAdd;
       this.possiblePrefixes = new Vector<String>();
       for( String dir: dirs ) {
-        this.possiblePrefixes.add( dir.trim() + "/" );
+        String d=dir.trim();
+        // current or empty -> empty
+        this.possiblePrefixes.add(d.length()>0 && !d.equals(".")? d + "/" :"");
       }
     }
 
     @Override
     public boolean visit( final IResource resource ) {
-      String path = resource.getProjectRelativePath().toString();
-      if( resource instanceof IFile ) {
+      if (resource.isDerived()){
+        return false;
+      }
+      if( resource instanceof IFile) {
+        IPath rel=resource.getProjectRelativePath();
+        String path = rel.toString();
         for( String dir: possiblePrefixes ) {
           if( path.startsWith( dir ) ) {
             String filePath = path.substring( dir.length() );
-            if( filePath.endsWith( ".hs" ) ) {
+
+            if(FileUtil.hasHaskellExtension( resource   )){
               String module = filePath.substring( 0, filePath.length() - 3 )
                   .replace( '/', '.' );
               this.elts.add( module );
-            } else if( filePath.endsWith( ".lhs" ) ) {
+            } else if( FileUtil.hasLiterateExtension( resource )) {
               String module = filePath.substring( 0, filePath.length() - 4 )
                   .replace( '/', '.' );
               this.elts.add( module );

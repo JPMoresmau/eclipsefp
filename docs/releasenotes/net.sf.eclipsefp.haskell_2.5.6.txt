@@ -14,6 +14,8 @@ Fixes:
 	- Handle Hoogle warnings
 	- Avoid duplicates in Hoogle results when Local+Hackage are selected
 	- Reuse search paths when opening Hoogle resultd
+	- Set .dist-buildwrapper to derived after clean
+	- Handle empty/. source dirs in cabal editor
 
 Features:
 	- Enable task tags in Happy and Alex editors (https://sourceforge.net/p/eclipsefp/backlog/150/)
