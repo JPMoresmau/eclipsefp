@@ -696,6 +696,7 @@ public final class UITexts extends NLS {
   public static String cabalPackagesView_action_update_error;
   public static String cabalPackagesView_action_update_running;
   public static String cabalPackagesView_action_install;
+  public static String cabalPackagesView_action_install_short;
   public static String cabalPackagesView_action_install_user;
   public static String cabalPackagesView_action_install_global;
   public static String cabalPackagesView_action_install_error;

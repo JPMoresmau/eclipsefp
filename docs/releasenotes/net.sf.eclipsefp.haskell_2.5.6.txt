@@ -22,7 +22,8 @@ Features:
 	- More precise marker locations on errors/warnings
 	- Double click on Modules view in Browser open module web page
 	- Proper Hackage search url for current package
-
+	- Install package contextual action on cabal packages view
+	
 Internal:
 
 Upgrade notes:

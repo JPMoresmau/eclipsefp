@@ -47,10 +47,15 @@ import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerFilter;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.DisposeEvent;
+import org.eclipse.swt.events.DisposeListener;
+import org.eclipse.swt.events.MenuEvent;
+import org.eclipse.swt.events.MenuListener;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
@@ -59,6 +64,8 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Link;
+import org.eclipse.swt.widgets.Menu;
+import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.IViewPart;
@@ -246,6 +253,52 @@ public class CabalPackagesView extends ViewPart {
         return true;
       }
     });
+
+    Menu m=new Menu( packageViewer.getTree() );
+    final Image img=HaskellUIImages.getImageDescriptor( IImageNames.HACKAGE_INSTALL ).createImage() ;
+    final MenuItem miInstallShort=new MenuItem( m, SWT.PUSH );
+    miInstallShort.setText( UITexts.cabalPackagesView_action_install_short );
+    miInstallShort.setImage(img );
+    miInstallShort.addSelectionListener( new SelectionAdapter() {
+      @Override
+      public void widgetSelected(final SelectionEvent arg0) {
+        install( false, "" );
+      }
+    } );
+
+    final MenuItem miInstallLong=new MenuItem( m, SWT.PUSH );
+    miInstallLong.setText( UITexts.cabalPackagesView_action_install );
+
+    miInstallLong.addSelectionListener( new SelectionAdapter() {
+      @Override
+      public void widgetSelected(final SelectionEvent arg0) {
+        new InstallDialog( getSite().getShell() ).open();
+      }
+    } );
+    miInstallLong.setImage( img);
+    m.addMenuListener( new MenuListener() {
+
+      @Override
+      public void menuShown( final MenuEvent arg0 ) {
+        miInstallShort.setEnabled( currentName!=null );
+        miInstallLong.setEnabled( currentName!=null );
+      }
+
+      @Override
+      public void menuHidden( final MenuEvent arg0 ) {
+
+      }
+    } );
+    m.addDisposeListener( new DisposeListener() {
+
+      @Override
+      public void widgetDisposed( final DisposeEvent arg0 ) {
+        img.dispose();
+
+      }
+    } );
+
+    packageViewer.getTree().setMenu( m );
 
     infoViewer=new Text(parent,SWT.MULTI | SWT.BORDER | SWT.H_SCROLL | SWT.V_SCROLL);
     infoViewer.setLayoutData( new GridData(GridData.FILL_BOTH) );
