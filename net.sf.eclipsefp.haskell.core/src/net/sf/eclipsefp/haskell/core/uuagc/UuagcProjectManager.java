@@ -72,7 +72,17 @@ public class UuagcProjectManager {
             for (String option : options.split( "[ ]*,[ ]*" )) { //$NON-NLS-1$
               optionsList.add( option );
             }
+            // several lines
+            for (int j=i++;j<lines.length;j++){
+             if (lines[j].length()>0 && Character.isWhitespace( lines[j].charAt( 0 ))){
+               i=j;
+               for (String option : lines[j].trim().split( "[ ]*,[ ]*" )) { //$NON-NLS-1$
+                 optionsList.add( option );
+               }
+             }
+            }
             files.add( new UuagcFile( filename, optionsList ) );
+
             break;
           }
         }
