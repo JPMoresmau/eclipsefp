@@ -16,6 +16,7 @@ Fixes:
 	- Reuse search paths when opening Hoogle resultd
 	- Set .dist-buildwrapper to derived after clean
 	- Handle empty/. source dirs in cabal editor
+	- Did you mean -X<Pragma>? quick fix support
 
 Features:
 	- Enable task tags in Happy and Alex editors (https://sourceforge.net/p/eclipsefp/backlog/150/)

@@ -141,6 +141,12 @@ public class BuildMarkerResolutionGenerator implements
               String flag=msg.substring( ix+GhcMessages.YOU_NEED.length()-2,ix2).trim();
               addPragma(res,flag);
             }
+          } else if ((ix=msgL.indexOf( GhcMessages.DID_YOU_MEAN ))>1){
+            int ix2=msg.indexOf("?",ix+GhcMessages.DID_YOU_MEAN.length());
+            if (ix2>-1){
+              String flag=msg.substring( ix+GhcMessages.DID_YOU_MEAN.length()-2,ix2).trim();
+              addPragma(res,flag);
+            }
           } else if ((ix=msgL.indexOf( GhcMessages.CAST_FROM_CHAR ))>1){
             addPragma( res, "-XOverloadedStrings" );
           } else if ((ix=msgL.indexOf( GhcMessages.CAST_FROM_CHAR_SHORT ))>1){
