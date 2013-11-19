@@ -12,11 +12,8 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
-import net.sf.eclipsefp.haskell.browser.BrowserEvent;
 import net.sf.eclipsefp.haskell.browser.BrowserPerspective;
 import net.sf.eclipsefp.haskell.browser.BrowserPlugin;
-import net.sf.eclipsefp.haskell.browser.DatabaseLoadedEvent;
-import net.sf.eclipsefp.haskell.browser.IDatabaseLoadedListener;
 import net.sf.eclipsefp.haskell.browser.views.packages.PackagesView;
 import net.sf.eclipsefp.haskell.core.cabal.CabalImplementationManager;
 import net.sf.eclipsefp.haskell.core.cabal.CabalPackageHelper;
@@ -63,7 +60,6 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
-import org.eclipse.swt.widgets.Link;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.swt.widgets.Shell;
@@ -121,12 +117,9 @@ public class CabalPackagesView extends ViewPart {
    */
   private String currentNameWithVersion;
   private Label lInstall;
-
+  boolean installed=false;
+  boolean installPossible=false;
   private Text infoViewer;
-
-  private Link lBrowser;
-  private Link lMore;
-
 
   private Label lSelected;
 
@@ -256,6 +249,7 @@ public class CabalPackagesView extends ViewPart {
 
     Menu m=new Menu( packageViewer.getTree() );
     final Image img=HaskellUIImages.getImageDescriptor( IImageNames.HACKAGE_INSTALL ).createImage() ;
+
     final MenuItem miInstallShort=new MenuItem( m, SWT.PUSH );
     miInstallShort.setText( UITexts.cabalPackagesView_action_install_short );
     miInstallShort.setImage(img );
@@ -276,17 +270,57 @@ public class CabalPackagesView extends ViewPart {
       }
     } );
     miInstallLong.setImage( img);
+
+    final Image browserImg=HaskellUIImages.getImageDescriptor( IImageNames.HASKELL_MISC ).createImage() ;
+
+
+    final MenuItem miBrowser=new MenuItem( m, SWT.PUSH );
+    miBrowser.setText( UITexts.cabalPackagesView_info_browser );
+
+    miBrowser.addSelectionListener( new SelectionAdapter() {
+      @Override
+      public void widgetSelected(final SelectionEvent arg0) {
+        try {
+          IWorkbenchPage page=getViewSite().getWorkbenchWindow().getWorkbench().showPerspective( BrowserPerspective.class.getName(), getViewSite().getWorkbenchWindow() );
+          PackagesView view=(PackagesView)page.showView( PackagesView.ID );
+          view.select(currentNameWithVersion);
+        } catch (Throwable t){
+          HaskellUIPlugin.log( t );
+        }
+      }
+    } );
+    miBrowser.setImage( browserImg);
+
+    final MenuItem miMore=new MenuItem( m, SWT.PUSH );
+    miMore.setText( UITexts.cabalPackagesView_info_more );
+
+    miMore.addSelectionListener( new SelectionAdapter() {
+      @Override
+      public void widgetSelected(final SelectionEvent arg0) {
+        new Job(UITexts.cabalPackagesView_info_more_running){
+          @Override
+          protected IStatus run( final IProgressMonitor arg0 ) {
+            OpenDefinitionHandler.openExternalDefinition( getSite().getPage(), null, currentName, null, null, " " );
+            return Status.OK_STATUS;
+          }
+        }.schedule();
+      }
+    } );
+    miMore.setImage( browserImg);
+
     m.addMenuListener( new MenuListener() {
 
       @Override
       public void menuShown( final MenuEvent arg0 ) {
-        miInstallShort.setEnabled( currentName!=null );
-        miInstallLong.setEnabled( currentName!=null );
+        miInstallShort.setEnabled( currentName!=null && installPossible);
+        miInstallLong.setEnabled( currentName!=null && installPossible);
+        miBrowser.setEnabled( currentNameWithVersion!=null && installed && BrowserPlugin.getDefault().isAnyDatabaseLoaded());
+        miMore.setEnabled( currentName!=null );
       }
 
       @Override
       public void menuHidden( final MenuEvent arg0 ) {
-
+        // NOOP
       }
     } );
     m.addDisposeListener( new DisposeListener() {
@@ -294,7 +328,7 @@ public class CabalPackagesView extends ViewPart {
       @Override
       public void widgetDisposed( final DisposeEvent arg0 ) {
         img.dispose();
-
+        browserImg.dispose();
       }
     } );
 
@@ -312,23 +346,6 @@ public class CabalPackagesView extends ViewPart {
 
     lUpdate=new Label(parent,SWT.NONE);
     lUpdate.setLayoutData(  new GridData(GridData.FILL_HORIZONTAL) );
-
-    Composite cMore=new Composite(parent,SWT.NONE);
-    cMore.setLayoutData( new GridData(GridData.FILL_HORIZONTAL) );
-    cMore.setLayout( new GridLayout(1,true) );
-
-
-    lBrowser=new Link(cMore,SWT.NONE);
-    GridData gdBrowser=new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING);
-    lBrowser.setLayoutData( gdBrowser );
-    lBrowser.setText("<a>"+ UITexts.cabalPackagesView_info_browser +"</a>");
-    lBrowser.setEnabled( false );
-
-    lMore=new Link(cMore,SWT.NONE);
-    GridData gdMore=new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING);
-    lMore.setLayoutData( gdMore );
-    lMore.setText("<a>"+ UITexts.cabalPackagesView_info_more +"</a>");
-    lMore.setEnabled( false );
 
     helper=CabalPackageHelper.getInstance();
 
@@ -368,7 +385,7 @@ public class CabalPackagesView extends ViewPart {
       @Override
       public void selectionChanged( final SelectionChangedEvent arg0 ) {
         IStructuredSelection sel=(IStructuredSelection)arg0.getSelection();
-        boolean installPossible=sel.size()==1 && bAll.getSelection(); // ignore for now the fact that all show also what's installed...
+        installPossible=sel.size()==1 && bAll.getSelection(); // ignore for now the fact that all show also what's installed...
         //bGlobal.setEnabled( installPossible );
         //bUser.setEnabled( installPossible );
         installAction.setEnabled( installPossible );
@@ -376,7 +393,7 @@ public class CabalPackagesView extends ViewPart {
           currentName=null;
           currentNameWithVersion=null;
           Object o=sel.getFirstElement();
-          boolean installed=false;
+          installed=false;
           if (o instanceof CabalPackageRef){
             currentName=((CabalPackageRef)o).getName();
             for (CabalPackageVersion v:((CabalPackageRef)o).getCabalPackageVersions()){
@@ -394,8 +411,6 @@ public class CabalPackagesView extends ViewPart {
               currentNameWithVersion=currentName;
             //}
           }
-          lMore.setEnabled( currentName!=null );
-          lBrowser.setEnabled( currentNameWithVersion!=null && installed && BrowserPlugin.getDefault().isAnyDatabaseLoaded());
           if (currentName!=null){
             showInfo();
           }
@@ -404,92 +419,8 @@ public class CabalPackagesView extends ViewPart {
       }
     });
 
-    // listen to changes in browser database
-    BrowserPlugin.getDefault().addDatabaseLoadedListener( new IDatabaseLoadedListener() {
-
-      @Override
-      public void databaseUnloaded( final BrowserEvent e ) {
-        if (getSite()!=null && getSite().getShell()!=null && getSite().getShell().getDisplay()!=null){
-          getSite().getShell().getDisplay().syncExec( new Runnable() {
-
-            @Override
-            public void run() {
-              if (lBrowser!=null && !lBrowser.isDisposed()){
-                lBrowser.setEnabled( BrowserPlugin.getSharedInstance().isAnyDatabaseLoaded() );
-              }
-            }
-          });
-        }
-      }
-
-      @Override
-      public void databaseLoaded( final DatabaseLoadedEvent e ) {
-        if (getSite()==null){
-          return;
-        }
-        getSite().getShell().getDisplay().syncExec( new Runnable() {
-
-          @Override
-          public void run() {
-            if (lBrowser!=null && !lBrowser.isDisposed() && !bInstalled.isDisposed()){
-              lBrowser.setEnabled( currentNameWithVersion!=null && bInstalled.getSelection());
-            }
-          }
-        });
-
-      }
-    });
 
 
-//    bUpdate.addSelectionListener( new SelectionAdapter() {
-//      @Override
-//      public void widgetSelected( final SelectionEvent e ) {
-//        update();
-//      }
-//    });
-
-//    bGlobal.addSelectionListener( new SelectionAdapter() {
-//      @Override
-//      public void widgetSelected( final SelectionEvent e ) {
-//       install( true, tOptions.getText() );
-//      }
-//    });
-//    bUser.addSelectionListener( new SelectionAdapter() {
-//      @Override
-//      public void widgetSelected( final SelectionEvent e ) {
-//       install( false, tOptions.getText() );
-//      }
-//    });
-
-    lBrowser.addSelectionListener( new SelectionAdapter() {
-      @Override
-      public void widgetSelected( final SelectionEvent e ) {
-        try {
-          IWorkbenchPage page=getViewSite().getWorkbenchWindow().getWorkbench().showPerspective( BrowserPerspective.class.getName(), getViewSite().getWorkbenchWindow() );
-          PackagesView view=(PackagesView)page.showView( PackagesView.ID );
-          view.select(currentNameWithVersion);
-        } catch (Throwable t){
-          HaskellUIPlugin.log( t );
-        }
-        //.getPerspectiveRegistry().findPerspectiveWithId( BrowserPerspective.class.getName() );
-
-      }
-    });
-
-    lMore.addSelectionListener( new SelectionAdapter() {
-      @Override
-      public void widgetSelected( final SelectionEvent e ) {
-        new Job(UITexts.cabalPackagesView_info_more_running){
-          @Override
-          protected IStatus run( final IProgressMonitor arg0 ) {
-            OpenDefinitionHandler.openExternalDefinition( getSite().getPage(), null, currentName, null, null, " " );
-            return Status.OK_STATUS;
-          }
-        }.schedule();
-
-
-      }
-    });
   }
 
   /**
@@ -499,8 +430,6 @@ public class CabalPackagesView extends ViewPart {
     lInstall.setText( "" );
     lSelected.setText( NLS.bind( UITexts.cabalPackagesView_selected, UITexts.none ) );
     infoViewer.setText("");
-    lMore.setEnabled( false );
-    lBrowser.setEnabled( false );
   }
 
   /**
