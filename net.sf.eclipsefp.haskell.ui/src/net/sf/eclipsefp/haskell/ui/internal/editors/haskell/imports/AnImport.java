@@ -139,7 +139,9 @@ public class AnImport {
   public Map<String, FileDocumented> getDeclarations( final IProject project,
       final IFile file, final IDocument doc ) {
     // ArrayList<String> items
-    String codeName =  importDef.getAlias() != null && importDef.getAlias().length()>0 ? importDef.getAlias() : importDef.getModule();
+    // we will put names qualified with alias if it exist and with the full module name
+    String aliasName =  importDef.getAlias() != null && importDef.getAlias().length()>0 ? importDef.getAlias() : null;
+
     HashMap<String, FileDocumented> r = new HashMap<String, FileDocumented>();
     try {
       List<FileDocumented> decls;
@@ -188,7 +190,8 @@ public class AnImport {
       if (importDef.getChildren()==null) {
         // Add everything
         for (FileDocumented decl : decls) {
-          addDeclaration( r, codeName, decl, importDef.isQualified() );
+          addDeclaration( r, aliasName, decl, importDef.isQualified() );
+          addDeclaration( r, importDef.getModule(), decl, importDef.isQualified() );
         }
       } else {
         //List<String> itemsExplode = Arrays.asList( this.items.split( "[ ]*,[ ]*" ) );
@@ -200,7 +203,8 @@ public class AnImport {
           boolean inList = itemsExplode.contains( decl.getDocumented().getName() );
           boolean toAdd = (importDef.isHiding() && !inList) || (!importDef.isHiding() && inList);
           if (toAdd) {
-            addDeclaration( r, codeName, decl, importDef.isQualified() );
+            addDeclaration( r, aliasName, decl, importDef.isQualified() );
+            addDeclaration( r, importDef.getModule(), decl, importDef.isQualified() );
           }
         }
       }
@@ -213,11 +217,13 @@ public class AnImport {
 
   private void addDeclaration(final HashMap<String, FileDocumented> r, final String codeName,
       final FileDocumented d, final boolean isQualified) {
-    String declName = d.getDocumented().getName();
-    declName = declName.startsWith( "(" ) ? declName.substring( 1, declName.length() - 1 ) : declName;
-    r.put( codeName + "." + declName, d );
-    if (!isQualified) {
-      r.put(declName, d);
+    if (codeName!=null){
+      String declName = d.getDocumented().getName();
+      declName = declName.startsWith( "(" ) ? declName.substring( 1, declName.length() - 1 ) : declName;
+      r.put( codeName + "." + declName, d );
+      if (!isQualified) {
+        r.put(declName, d);
+      }
     }
   }
 

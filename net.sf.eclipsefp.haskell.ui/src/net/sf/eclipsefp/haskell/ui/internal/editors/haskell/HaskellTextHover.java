@@ -207,7 +207,10 @@ public class HaskellTextHover extends DefaultTextHover implements ITextHoverExte
               sb.append(html ? "</div>" : "");
 
               ImportsManager im=editor.getImportsManager();
-              Documented d=im.getDeclarations().get( tap.getName() );
+              Documented d=im.getDeclarations().get( tap.getModule()+"."+tap.getName() );
+              if (d==null){
+                d=im.getDeclarations().get( tap.getName() );
+              }
               if (d!=null && d.getDoc()!=null && d.getDoc().length()>0){
                 sb.append(html ? "<hr/>" : "\n");
                 sb.append(html ? "<div style='padding:2px'>" : "");
