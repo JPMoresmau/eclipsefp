@@ -1309,8 +1309,10 @@ public class BWFacade {
 		}
 		args.add("--cabalfile="+cabalFile);
 		args.add("--cabalflags="+flags);
-		for (String s:extraOpts){
-			args.add("--cabaloption="+s);
+		if (!args.get(1).equals("build")){
+			for (String s:extraOpts){
+				args.add("--cabaloption="+s);
+			}
 		}
 		if (cabalImplDetails!=null){
 			for (String s:cabalImplDetails.getOptions()){
