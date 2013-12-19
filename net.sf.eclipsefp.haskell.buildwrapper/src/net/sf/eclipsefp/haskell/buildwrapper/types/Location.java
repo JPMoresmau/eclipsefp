@@ -305,8 +305,12 @@ public class Location {
 				int start=getStartColumn();
 				MarkerUtilities.setCharStart(attributes, offset+start);
 				offset=d.getLineOffset(Math.min(getEndLine(),d.getNumberOfLines())-1);
-				int end=getEndColumn();
-				MarkerUtilities.setCharEnd(attributes, offset+end);
+				int end=offset+getEndColumn();
+				if (end>=d.getLength()){
+					end=d.getLength()-1;
+				}
+				MarkerUtilities.setCharEnd(attributes, end);
+				
 			} catch (BadLocationException ble){
 				// ignore
 			}

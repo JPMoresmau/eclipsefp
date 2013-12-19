@@ -20,6 +20,7 @@ Fixes:
 	- Advanced syntax wasn't properly supported by syntax highlighting (things like family in type families, etc)
 	- UUAGC_options file: support options on several lines if indented
 	- Retrieve documentation in more cases on hover
+	- Use different build folder when installing into sandbox
 
 Features:
 	- Enable task tags in Happy and Alex editors (https://sourceforge.net/p/eclipsefp/backlog/150/)
