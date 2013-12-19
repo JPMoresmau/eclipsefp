@@ -73,8 +73,10 @@ public class CabalInstallAction implements IObjectActionDelegate {
       final List<String> commands = new ArrayList<String>();
       commands.add( cabalDev );
       commands.add( getCabalDevCommand());
+
    // options
-      commands.add("--builddir="+BWFacade.DIST_FOLDER_CABAL);
+      // use a different build dir so we don't pollute the cabal config file with a wrong sandbox path
+      commands.add("--builddir="+BWFacade.DIST_FOLDER_CABAL+sandbox.hashCode());
       ScionManager.addCabalInstallOptions( commands );
       commands.add("--force-reinstalls");
       commands.add("--sandbox="+sandbox);
