@@ -13,7 +13,7 @@ Fixes:
 	- Show proper types in monadic functions (like when) (http://sourceforge.net/p/eclipsefp/backlog/151/)
 	- Handle Hoogle warnings
 	- Avoid duplicates in Hoogle results when Local+Hackage are selected
-	- Reuse search paths when opening Hoogle resultd
+	- Reuse search paths when opening Hoogle results
 	- Set .dist-buildwrapper to derived after clean
 	- Handle empty/. source dirs in cabal editor
 	- Did you mean -X<Pragma>? quick fix support
@@ -21,7 +21,8 @@ Fixes:
 	- UUAGC_options file: support options on several lines if indented
 	- Retrieve documentation in more cases on hover
 	- Use different build folder when installing into sandbox
-
+	- Fix suggestions when unknown symbol contains a quote
+	
 Features:
 	- Enable task tags in Happy and Alex editors (https://sourceforge.net/p/eclipsefp/backlog/150/)
 	- More precise marker locations on errors/warnings

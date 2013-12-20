@@ -187,32 +187,14 @@ public class BuildMarkerResolutionGenerator implements
           }
           // Not in scope
           else if ((ix=msgL.indexOf( GhcMessages.NOT_IN_SCOPE_START) )>-1){
-            int start = msgL.indexOf( '`',ix);
-            int l=msgL.indexOf( "\n",start+1 );
-            List<String> suggestions=null;
-            if (l>-1){
-              String sug=msg.substring( l );
-              suggestions=ReplaceTextResolution.getSuggestionsFromGHCMessage( sug,msgL.substring( l ) );
-              msgL=msgL.substring( 0,l );
-            }
-            int end = msgL.lastIndexOf( GhcMessages.NOT_IN_SCOPE_END );
-            String notInScope = msg.substring( start + 1, end );
-            String name, qualified;
-            int pointPos = notInScope.lastIndexOf( '.' );
-            if (pointPos != -1) {
-              name = notInScope.substring( pointPos + 1 );
-              qualified = notInScope.substring( 0, pointPos );
-            } else {
-              name = notInScope;
-              qualified = null;
-            }
-            if (suggestions!=null){
-              for (String suggestion:suggestions){
-                res.add( new ReplaceTextResolution( notInScope, suggestion ) );
+            ResolutionSuggestion s=new ResolutionSuggestion( msg, ix,msgL );
+            if (s.getSuggestions()!=null){
+              for (String suggestion:s.getSuggestions()){
+                res.add( new ReplaceTextResolution( s.getOutOfScope(), suggestion ) );
               }
             }
-            addBrowserSuggestions( marker, name, qualified, res);
-            addUsageSuggestions( marker, name, qualified, res);
+            addBrowserSuggestions( marker, s.getOutOfScopeName(), s.getOutOfScopeQualifier(), res);
+            addUsageSuggestions( marker, s.getOutOfScopeName() , s.getOutOfScopeQualifier(), res);
           } else if (msgL.indexOf( GhcMessages.IS_A_DATA_CONSTRUCTOR )>-1){
             int btix=msg.indexOf('`');
             int sqix=msg.indexOf('\'',btix);
