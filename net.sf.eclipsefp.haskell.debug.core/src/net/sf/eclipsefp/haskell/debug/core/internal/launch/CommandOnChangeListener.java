@@ -1,5 +1,6 @@
 package net.sf.eclipsefp.haskell.debug.core.internal.launch;
 
+import net.sf.eclipsefp.haskell.buildwrapper.BWFacade;
 import net.sf.eclipsefp.haskell.debug.core.internal.HaskellDebugCore;
 import net.sf.eclipsefp.haskell.debug.core.internal.util.CoreTexts;
 import net.sf.eclipsefp.haskell.util.FileUtil;
@@ -9,6 +10,7 @@ import org.eclipse.core.resources.IResourceChangeListener;
 import org.eclipse.core.resources.IResourceDelta;
 import org.eclipse.core.resources.IResourceDeltaVisitor;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.debug.core.model.IProcess;
 
 /**
@@ -41,7 +43,12 @@ public class CommandOnChangeListener implements IResourceChangeListener {
             if( delta.getKind() == IResourceDelta.REMOVED || (delta.getKind() == IResourceDelta.CHANGED && (delta.getFlags() & IResourceDelta.CONTENT)>0  )) {
               if( delta.getResource() instanceof IFile
                   && FileUtil.hasHaskellExtension( delta.getResource() ) ) {
-                runCommand();
+                IPath relPath = delta.getResource().getProjectRelativePath();
+                boolean skip = relPath.segmentCount() > 0
+                    && relPath.segment( 0 ) == BWFacade.DIST_FOLDER;
+                if (!skip){
+                  runCommand();
+                }
                 return false;
               }
             }
