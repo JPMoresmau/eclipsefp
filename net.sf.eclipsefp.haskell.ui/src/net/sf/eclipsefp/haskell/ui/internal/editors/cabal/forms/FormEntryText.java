@@ -47,17 +47,25 @@ public class FormEntryText extends FormEntry {
     return this.textField;
   }
 
+  private boolean isMultiline(){
+    return  ( this.textField.getStyle() & SWT.MULTI ) > 0;
+  }
+
   @Override
   public int heightHint() {
     // Make more space for multiline editors
-    return ( this.textField.getStyle() & SWT.MULTI ) > 0 ? 45 : 15;
+    return isMultiline() ? 45 : 15;
   }
 
   @Override
   public void setValue( final String value, final boolean blockNotification ) {
     this.isIgnoreModify = blockNotification;
-    this.textField.setText( value != null ? value : "" ); //$NON-NLS-1$
-    this.value = ( value != null ) ? value : ""; //$NON-NLS-1$
+    // remove line separators if we're not multiline
+    this.value = ( value != null ) ? isMultiline()?
+        value
+        : value.replace( "\n", " " ).replace( "\r", "" )
+        : ""; //$NON-NLS-1$
+    this.textField.setText( this.value != null ? this.value : "" ); //$NON-NLS-1$
     this.isIgnoreModify = false;
   }
 
