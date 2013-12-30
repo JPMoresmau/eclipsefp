@@ -18,6 +18,7 @@ public enum CabalSyntax {
   SECTION_IF("if",true), //$NON-NLS-1$
   SECTION_ELSE("else",true), //$NON-NLS-1$
   SECTION_TESTSUITE("test-suite",true), //$NON-NLS-1$
+  SECTION_BENCHMARK("benchmark",true), //$NON-NLS-1$
 
   FIELD_CATEGORY("category"), //$NON-NLS-1$
   FIELD_EXPOSED_MODULES("exposed-modules"), //$NON-NLS-1$

@@ -38,6 +38,14 @@
             sourceLocatorId="net.sf.eclipsefp.haskell.debug.core.sourceLookupDirector"
             sourcePathComputerId="net.sf.eclipsefp.haskell.debug.core.sourcePathComputer">
       </launchConfigurationType>
+       <launchConfigurationType
+            delegate="net.sf.eclipsefp.haskell.debug.core.internal.launch.BenchmarkHaskellLaunchDelegate"
+            id="net.sf.eclipsefp.haskell.debug.core.internal.launch.BenchmarkHaskellLaunchDelegate"
+            modes="run"
+            name="%haskellBenchmarkLaunchType_name"
+            sourceLocatorId="net.sf.eclipsefp.haskell.debug.core.sourceLookupDirector"
+            sourcePathComputerId="net.sf.eclipsefp.haskell.debug.core.sourcePathComputer">
+      </launchConfigurationType>
       <launchConfigurationType
             delegate="net.sf.eclipsefp.haskell.debug.core.internal.launch.TestSuiteHaskellLaunchDelegate"
             id="net.sf.eclipsefp.haskell.debug.core.internal.launch.TestSuiteHaskellLaunchDelegate"

@@ -8,7 +8,8 @@ public class Component {
 		FILE,
 		LIBRARY,
 		EXECUTABLE ,
-		TESTSUITE
+		TESTSUITE,
+		BENCHMARK
 	}
 
 	private ComponentType type;
@@ -86,6 +87,8 @@ public class Component {
 		// this is equivalent to PackageDescriptionStanza getTypeName()
 		if (ComponentType.TESTSUITE.equals(getType())){
 			return "test-suite" +(getName()!=null?" "+getName():"");
+		} else if (ComponentType.BENCHMARK.equals(getType())){
+			return "benchmark" +(getName()!=null?" "+getName():"");
 		} else {
 			return getType().toString().toLowerCase() +(getName()!=null?" "+getName():"");
 		}

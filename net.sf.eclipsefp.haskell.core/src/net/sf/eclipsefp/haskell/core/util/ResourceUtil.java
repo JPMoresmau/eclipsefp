@@ -115,7 +115,9 @@ public class ResourceUtil {
     return getExecutablesOfComponentType( project, ComponentType.TESTSUITE );
   }
 
-
+  public static Map<String,IFile> getProjectBenchmarks( final IProject project)  {
+    return getExecutablesOfComponentType( project, ComponentType.BENCHMARK );
+  }
 
 //	public static boolean isProjectExecutable(final IProject project, final String exeName)
 //	{
@@ -151,6 +153,11 @@ public class ResourceUtil {
 	  Map<String,IFile> executables = getProjectTestSuites( project );
     return executables.values().toArray( new IFile[ executables.size() ] );
   }
+
+	 public static IFile[] getProjectBenchmarksArray( final IProject project ) {
+	    Map<String,IFile> executables = getProjectBenchmarks( project );
+	    return executables.values().toArray( new IFile[ executables.size() ] );
+	  }
 
 	/**
 	 * Get the output folder of the Haskell project.

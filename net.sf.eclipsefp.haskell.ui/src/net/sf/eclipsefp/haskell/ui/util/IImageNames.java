@@ -73,6 +73,7 @@ public interface IImageNames {
   String FLAG_STANZA       = ID + ".FLAG_STANZA"; //$NON-NLS-1$
   String TEMPLATE          = ID + ".TEMPLATE"; //$NON-NLS-1$
   String SOURCEREP_STANZA  = ID + "SOURCEREP_STANZA"; //$NON-NLS-1$
+  String BENCHMARK_STANZA  = ID + ".BENCHMARK_STANZA"; //$NON-NLS-1$
 
   // wizard banners
   String NEW_PROJECT          = ID + ".NEW_PROJECT"; //$NON-NLS-1$

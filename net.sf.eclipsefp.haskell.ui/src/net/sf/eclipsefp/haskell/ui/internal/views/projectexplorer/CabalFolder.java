@@ -38,6 +38,8 @@ public class CabalFolder {
           return getStanzas(descr.getExecutableStanzas());
         case TEST_SUITE:
           return getStanzas(descr.getTestSuiteStanzas());
+        case BENCHMARK:
+          return getStanzas(descr.getBenchmarkStanzas());
       }
       return new ArrayList<ProjectExplorerStanza>();
     } catch (Throwable e) {

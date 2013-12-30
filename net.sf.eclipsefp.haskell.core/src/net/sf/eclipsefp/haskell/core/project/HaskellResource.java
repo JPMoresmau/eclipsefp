@@ -67,6 +67,15 @@ public class HaskellResource {
     return false;
   }
 
+
+  public boolean isProjectBenchmark(){
+    if (fResource instanceof IProject){
+      IProject project=(IProject)fResource;
+       return !ResourceUtil.getProjectBenchmarks( project ).isEmpty();
+    }
+    return false;
+  }
+
   public boolean hasProjectBuilder(final String builderId) {
     if (fResource instanceof IProject){
       IProject project=(IProject)fResource;

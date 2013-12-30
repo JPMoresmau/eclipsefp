@@ -55,6 +55,9 @@ public class HaskellResourceExtensionLP extends OutlineLabelProvider {
         case TEST_SUITE:
           result = UITexts.cabalEditor_testSuites;
           break;
+        case BENCHMARK:
+          result = UITexts.cabalEditor_benchmarks;
+          break;
         default:
             result = "";
       }

@@ -53,6 +53,7 @@ public final class UITexts extends NLS {
   public static String profiling_name;
 
   public static String runExecutable;
+  public static String runBenchmark;
   public static String runProfiling;
   public static String runTestSuite;
   public static String runTestFramework;

@@ -73,6 +73,17 @@ public class PackageDescription {
     return result;
   }
 
+  public List<PackageDescriptionStanza> getBenchmarkStanzas() {
+    Vector<PackageDescriptionStanza> result = new Vector<PackageDescriptionStanza>();
+    for (PackageDescriptionStanza stanza : getStanzas()) {
+      if (stanza.getType() == CabalSyntax.SECTION_BENCHMARK) {
+        result.add( stanza );
+      }
+    }
+    return result;
+  }
+
+
   public PackageDescriptionStanza addStanza(final CabalSyntax type,final String name){
     int startLine=stanzas.get(stanzas.size()-1).getEndLine()+1;
     PackageDescriptionStanza pds=new PackageDescriptionStanza(this, type, name, startLine );
@@ -176,6 +187,9 @@ public class PackageDescription {
       if (CabalSyntax.SECTION_TESTSUITE.equals(pds.getType()) && c.getType().equals( ComponentType.TESTSUITE ) && pds.getName().equals(c.getName())){
         return pds;
       }
+      if (CabalSyntax.SECTION_BENCHMARK.equals(pds.getType()) && c.getType().equals( ComponentType.BENCHMARK ) && pds.getName().equals(c.getName())){
+        return pds;
+      }
     }
     return null;
   }
@@ -192,6 +206,9 @@ public class PackageDescription {
         return pds;
       }
       if (CabalSyntax.SECTION_TESTSUITE.equals(pds.getType()) && CabalSyntax.SECTION_TESTSUITE.equals(p.getType() ) && pds.getName().equals(p.getName())){
+        return pds;
+      }
+      if (CabalSyntax.SECTION_BENCHMARK.equals(pds.getType()) && CabalSyntax.SECTION_BENCHMARK.equals(p.getType() ) && pds.getName().equals(p.getName())){
         return pds;
       }
     }

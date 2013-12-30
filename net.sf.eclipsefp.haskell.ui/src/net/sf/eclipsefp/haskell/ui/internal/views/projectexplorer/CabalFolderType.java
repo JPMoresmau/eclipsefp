@@ -10,5 +10,6 @@ package net.sf.eclipsefp.haskell.ui.internal.views.projectexplorer;
  */
 public enum CabalFolderType {
   EXECUTABLE,
-  TEST_SUITE
+  TEST_SUITE,
+  BENCHMARK
 }

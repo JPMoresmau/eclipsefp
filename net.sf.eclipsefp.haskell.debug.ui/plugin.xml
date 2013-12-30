@@ -177,6 +177,11 @@
             icon="icons/eview16/haskell_test.png"
             id="net.sf.eclipsefp.haskell.ui.launch.launchHTFIcon">
       </launchConfigurationTypeImage>
+      <launchConfigurationTypeImage
+            configTypeID="net.sf.eclipsefp.haskell.debug.core.internal.launch.BenchmarkHaskellLaunchDelegate"
+            icon="icons/eview16/haskell_bench.png"
+            id="net.sf.eclipsefp.haskell.ui.launch.launchBenchIcon">
+      </launchConfigurationTypeImage>
    </extension>
    <extension
          point="org.eclipse.debug.ui.launchConfigurationTabGroups">
@@ -195,6 +200,11 @@
              id="net.sf.eclipsefp.haskell.debug.ui.internal.launch.ExecutableHaskellLaunchTabGroup"
              type="net.sf.eclipsefp.haskell.debug.core.internal.launch.TestSuiteHaskellLaunchDelegate">
        </launchConfigurationTabGroup>
+       <launchConfigurationTabGroup
+            type="net.sf.eclipsefp.haskell.debug.core.internal.launch.BenchmarkHaskellLaunchDelegate"
+            class="net.sf.eclipsefp.haskell.debug.ui.internal.launch.ExecutableTestSuiteHaskellLaunchTabGroup"
+            id="net.sf.eclipsefp.haskell.debug.ui.internal.launch.BenchmarkHaskellLaunchTabGroup">
+      </launchConfigurationTabGroup>
        <launchConfigurationTabGroup
              class="net.sf.eclipsefp.haskell.debug.ui.internal.launch.ExecutableTestSuiteHaskellLaunchTabGroup"
              id="net.sf.eclipsefp.haskell.debug.ui.internal.launch.ExecutableHaskellLaunchTabGroup"
@@ -246,6 +256,38 @@
             </enablement>
             <contextLabel
                   label="%appLaunchContextLabel_label"
+                  mode="run">
+            </contextLabel>
+         </contextualLaunch>
+      </shortcut>
+      <shortcut
+            label="%benchLaunchShortcut_label"
+            icon="icons/eview16/haskell_bench.png"
+            class="net.sf.eclipsefp.haskell.debug.ui.internal.launch.BenchmarkLaunchShortcut"
+            modes="run"
+            id="net.sf.eclipsefp.haskell.debug.ui.internal.launch.BenchmarkLaunchShortcut">
+         <contextualLaunch>
+            <enablement>
+               <with
+                     variable="selection">
+                  <count
+                        value="1">
+                  </count>
+                  <iterate>
+                  	<or>
+                  	 <and>
+                  	 	<instanceof value="org.eclipse.core.resources.IResource"/>
+	                  	 <test
+	                           property="net.sf.eclipsefp.haskell.core.isProjectBenchmark">
+	                     </test>
+                     </and>
+                     <instanceof value="net.sf.eclipsefp.haskell.ui.internal.views.projectexplorer.ProjectExplorerStanza"/>
+                     </or>
+                  </iterate>
+               </with>
+            </enablement>
+            <contextLabel
+                  label="%benchLaunchContextLabel_label"
                   mode="run">
             </contextLabel>
          </contextualLaunch>
@@ -416,6 +458,12 @@
             description="%runHaskellShortcut_desc"
             categoryId="org.eclipse.debug.ui.category.run"
             id="net.sf.eclipsefp.haskell.debug.ui.internal.launch.ExecutableLaunchShortcut.run">
+      </command>
+      <command
+            name="%runBenchmarkShortcut_name"
+            description="%runBenchmarkShortcut_desc"
+            categoryId="org.eclipse.debug.ui.category.run"
+            id="net.sf.eclipsefp.haskell.debug.ui.internal.launch.BenchmarkLaunchShortcut.run">
       </command>
       <command
             categoryId="org.eclipse.debug.ui.category.run"

@@ -13,7 +13,7 @@ Fixes:
 	- Remove commas when several dependent packages are missing
 	
 Features:
-
+	- Support benchmark stanzas in cabal files (https://github.com/JPMoresmau/eclipsefp/issues/109)
 	
 Internal:
 

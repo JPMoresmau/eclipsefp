@@ -1210,6 +1210,9 @@ public class BWFacade {
 			} else if (obj.has("TestSuite")){
 				buildable=obj.getBoolean("TestSuite");
 				return new Component(ComponentType.TESTSUITE, obj.getString("t"), getCabalFile(), buildable);
+			} else if (obj.has("Benchmark")){
+				buildable=obj.getBoolean("Benchmark");
+				return new Component(ComponentType.BENCHMARK, obj.getString("b"), getCabalFile(), buildable);
 			}
 		} catch (JSONException je){
 			BuildWrapperPlugin.logError(BWText.process_parse_component_error, je);

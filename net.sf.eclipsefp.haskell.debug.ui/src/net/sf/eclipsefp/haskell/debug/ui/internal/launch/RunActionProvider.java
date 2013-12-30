@@ -1,3 +1,8 @@
+/**
+ *  Copyright (c) 2013 by JP Moresmau
+ * This code is made available under the terms of the Eclipse Public License,
+ * version 1.0 (EPL). See http://www.eclipse.org/legal/epl-v10.html
+ */
 package net.sf.eclipsefp.haskell.debug.ui.internal.launch;
 
 import net.sf.eclipsefp.haskell.core.cabalmodel.CabalSyntax;
@@ -12,7 +17,12 @@ import org.eclipse.ui.navigator.ICommonMenuConstants;
 import org.eclipse.ui.navigator.ICommonViewerSite;
 import org.eclipse.ui.navigator.ICommonViewerWorkbenchSite;
 
-
+/**
+ * Provider for contextual run actions on stanzas
+ *
+ * @author JP Moresmau
+ *
+ */
 public class RunActionProvider extends CommonActionProvider {
 
   private RunExecutableAction execAction;
@@ -20,6 +30,7 @@ public class RunActionProvider extends CommonActionProvider {
   private RunTestSuiteAction testAction;
   private RunHTFAction htfAction;
   private RunTestExecutableAction testExecAction;
+  private RunBenchmarkAction benchAction;
 
   @Override
   public void init( final ICommonActionExtensionSite aSite ) {
@@ -27,11 +38,13 @@ public class RunActionProvider extends CommonActionProvider {
     ICommonViewerSite viewSite = aSite.getViewSite();
     if( viewSite instanceof ICommonViewerWorkbenchSite ) {
       ICommonViewerWorkbenchSite wSite = ( ICommonViewerWorkbenchSite )viewSite;
-      execAction = new RunExecutableAction( wSite.getSelectionProvider() );
-      profAction = new RunProfilingAction( wSite.getSelectionProvider() );
-      htfAction = new RunHTFAction( wSite.getSelectionProvider() );
-      testAction = new RunTestSuiteAction( wSite.getSelectionProvider() );
-      testExecAction = new RunTestExecutableAction( wSite.getSelectionProvider() );
+      ISelectionProvider selP=wSite.getSelectionProvider();
+      execAction = new RunExecutableAction( selP );
+      profAction = new RunProfilingAction( selP );
+      htfAction = new RunHTFAction( selP );
+      testAction = new RunTestSuiteAction( selP );
+      testExecAction = new RunTestExecutableAction( selP );
+      benchAction=new RunBenchmarkAction( selP );
     }
   }
 
@@ -52,6 +65,9 @@ public class RunActionProvider extends CommonActionProvider {
     if( testExecAction != null && testExecAction.isEnabled() ) {
       menu.appendToGroup( ICommonMenuConstants.GROUP_OPEN, testExecAction );
     }
+    if (benchAction!=null && benchAction.isEnabled()){
+      menu.appendToGroup( ICommonMenuConstants.GROUP_OPEN, benchAction );
+    }
   }
 
   private static class RunExecutableAction extends AbstractRunAction {
@@ -70,25 +86,6 @@ public class RunActionProvider extends CommonActionProvider {
       return new ExecutableLaunchShortcut();
     }
 
-//    @Override
-//    protected String getLaunchConfigName() {
-//      return BaseExecutableLaunchDelegate.class.getName();
-//    }
-//
-//    @Override
-//    protected ILaunchConfigurationWorkingCopy createLaunchConfig() throws CoreException {
-//      ILaunchConfigurationType type = LaunchOperation
-//          .getConfigType( getLaunchConfigName() );
-//      String id = LaunchOperation.createConfigId( project.getName()
-//          + "/" + stanza.getStanza().getName() ); //$NON-NLS-1$
-//      ILaunchConfigurationWorkingCopy wc = type.newInstance( null, id );
-//      wc.setAttribute( ILaunchAttributes.PROJECT_NAME, project.getName() );
-//      wc.setAttribute( ILaunchAttributes.STANZA, stanza.getStanza().getName() );
-//      wc.setAttribute( ILaunchAttributes.WORKING_DIRECTORY, project
-//          .getLocation().toOSString() );
-//      wc.setAttribute( ILaunchAttributes.SYNC_STREAMS, true );
-//      return wc;
-//    }
 
     @Override
     protected String getLaunchMode() {
@@ -112,26 +109,6 @@ public class RunActionProvider extends CommonActionProvider {
       return new ExecutableProfilingLaunchShortcut();
     }
 
-//
-//    @Override
-//    protected String getLaunchConfigName() {
-//      return ProfilingLaunchDelegate.class.getName();
-//    }
-//
-//    @Override
-//    protected ILaunchConfigurationWorkingCopy createLaunchConfig() throws CoreException {
-//      ILaunchConfigurationType type = LaunchOperation
-//          .getConfigType( getLaunchConfigName() );
-//      String id = LaunchOperation.createConfigId( project.getName()
-//          + "/" + stanza.getStanza().getName() ); //$NON-NLS-1$
-//      ILaunchConfigurationWorkingCopy wc = type.newInstance( null, id );
-//      wc.setAttribute( ILaunchAttributes.PROJECT_NAME, project.getName() );
-//      wc.setAttribute( ILaunchAttributes.STANZA, stanza.getStanza().getName() );
-//      wc.setAttribute( ILaunchAttributes.WORKING_DIRECTORY, project
-//          .getLocation().toOSString() );
-//      wc.setAttribute( ILaunchAttributes.SYNC_STREAMS, true );
-//      return wc;
-//    }
 
     @Override
     protected String getLaunchMode() {
@@ -155,25 +132,6 @@ public class RunActionProvider extends CommonActionProvider {
       return new TestSuiteLaunchShortcut();
     }
 
-//    @Override
-//    protected String getLaunchConfigName() {
-//      return TestSuiteLaunchDelegate.class.getName();
-//    }
-//
-//    @Override
-//    protected ILaunchConfigurationWorkingCopy createLaunchConfig() throws CoreException {
-//      ILaunchConfigurationType type = LaunchOperation
-//          .getConfigType( getLaunchConfigName() );
-//      String id = LaunchOperation.createConfigId( project.getName()
-//          + "/" + stanza.getStanza().getName() ); //$NON-NLS-1$
-//      ILaunchConfigurationWorkingCopy wc = type.newInstance( null, id );
-//      wc.setAttribute( ILaunchAttributes.PROJECT_NAME, project.getName() );
-//      wc.setAttribute( ILaunchAttributes.STANZA, stanza.getStanza().getName() );
-//      wc.setAttribute( ILaunchAttributes.WORKING_DIRECTORY, project
-//          .getLocation().toOSString() );
-//      wc.setAttribute( ILaunchAttributes.SYNC_STREAMS, true );
-//      return wc;
-//    }
 
     @Override
     protected String getLaunchMode() {
@@ -197,25 +155,6 @@ public class RunActionProvider extends CommonActionProvider {
       return new HTFLaunchShortcut();
     }
 
-//    @Override
-//    protected String getLaunchConfigName() {
-//      return TestSuiteLaunchDelegate.class.getName();
-//    }
-//
-//    @Override
-//    protected ILaunchConfigurationWorkingCopy createLaunchConfig() throws CoreException {
-//      ILaunchConfigurationType type = LaunchOperation
-//          .getConfigType( getLaunchConfigName() );
-//      String id = LaunchOperation.createConfigId( project.getName()
-//          + "/" + stanza.getStanza().getName() ); //$NON-NLS-1$
-//      ILaunchConfigurationWorkingCopy wc = type.newInstance( null, id );
-//      wc.setAttribute( ILaunchAttributes.PROJECT_NAME, project.getName() );
-//      wc.setAttribute( ILaunchAttributes.STANZA, stanza.getStanza().getName() );
-//      wc.setAttribute( ILaunchAttributes.WORKING_DIRECTORY, project
-//          .getLocation().toOSString() );
-//      wc.setAttribute( ILaunchAttributes.SYNC_STREAMS, true );
-//      return wc;
-//    }
 
     @Override
     protected String getLaunchMode() {
@@ -239,25 +178,29 @@ public class RunActionProvider extends CommonActionProvider {
       return new TestExecutableLaunchShortcut();
     }
 
-//    @Override
-//    protected String getLaunchConfigName() {
-//      return TestSuiteLaunchDelegate.class.getName();
-//    }
-//
-//    @Override
-//    protected ILaunchConfigurationWorkingCopy createLaunchConfig() throws CoreException {
-//      ILaunchConfigurationType type = LaunchOperation
-//          .getConfigType( getLaunchConfigName() );
-//      String id = LaunchOperation.createConfigId( project.getName()
-//          + "/" + stanza.getStanza().getName() ); //$NON-NLS-1$
-//      ILaunchConfigurationWorkingCopy wc = type.newInstance( null, id );
-//      wc.setAttribute( ILaunchAttributes.PROJECT_NAME, project.getName() );
-//      wc.setAttribute( ILaunchAttributes.STANZA, stanza.getStanza().getName() );
-//      wc.setAttribute( ILaunchAttributes.WORKING_DIRECTORY, project
-//          .getLocation().toOSString() );
-//      wc.setAttribute( ILaunchAttributes.SYNC_STREAMS, true );
-//      return wc;
-//    }
+
+    @Override
+    protected String getLaunchMode() {
+      return ILaunchManager.RUN_MODE;
+    }
+  }
+
+  private static class RunBenchmarkAction extends AbstractRunAction {
+
+    private RunBenchmarkAction( final ISelectionProvider selProvider ) {
+      super( UITexts.runBenchmark, selProvider );
+    }
+
+    @Override
+    protected CabalSyntax getTargetSection() {
+      return CabalSyntax.SECTION_BENCHMARK;
+    }
+
+    @Override
+    protected ILaunchShortcut2 getShortcut() {
+      return new BenchmarkLaunchShortcut();
+    }
+
 
     @Override
     protected String getLaunchMode() {

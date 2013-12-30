@@ -100,6 +100,9 @@ public class HaskellResourceExtensionCP implements ICommonContentProvider {
           if (descr.getTestSuiteStanzas().size() > 0) {
             result.add( new CabalFolder(f, CabalFolderType.TEST_SUITE ));
           }
+          if (descr.getBenchmarkStanzas().size() > 0) {
+            result.add( new CabalFolder(f, CabalFolderType.BENCHMARK ));
+          }
         }
       } else if (parentElement instanceof CabalFolder) {
         CabalFolder folder = ( CabalFolder )parentElement;

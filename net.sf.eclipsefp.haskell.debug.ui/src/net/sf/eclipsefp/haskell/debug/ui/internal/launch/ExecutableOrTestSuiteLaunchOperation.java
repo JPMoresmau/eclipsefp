@@ -1,3 +1,8 @@
+/**
+ *  Copyright (c) 2013 by JP Moresmau
+ * This code is made available under the terms of the Eclipse Public License,
+ * version 1.0 (EPL). See http://www.eclipse.org/legal/epl-v10.html
+ */
 package net.sf.eclipsefp.haskell.debug.ui.internal.launch;
 
 import java.io.File;
@@ -52,6 +57,7 @@ public abstract class ExecutableOrTestSuiteLaunchOperation extends LaunchOperati
     Map<String,IFile> m=new HashMap<String, IFile>();
     m.putAll(ResourceUtil.getProjectExecutables( project ));
     m.putAll(ResourceUtil.getProjectTestSuites( project ));
+    m.putAll(ResourceUtil.getProjectBenchmarks( project ));
     return m;
   }
 
