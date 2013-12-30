@@ -8,6 +8,7 @@ import net.sf.eclipsefp.haskell.core.cabalmodel.PackageDescription;
 import net.sf.eclipsefp.haskell.core.cabalmodel.PackageDescriptionStanza;
 import net.sf.eclipsefp.haskell.ui.HaskellUIPlugin;
 import net.sf.eclipsefp.haskell.ui.internal.editors.cabal.forms.overview.OverviewPage;
+import net.sf.eclipsefp.haskell.ui.internal.editors.cabal.forms.stanzas.BenchmarksPage;
 import net.sf.eclipsefp.haskell.ui.internal.editors.cabal.forms.stanzas.ExecutablesPage;
 import net.sf.eclipsefp.haskell.ui.internal.editors.cabal.forms.stanzas.LibraryPage;
 import net.sf.eclipsefp.haskell.ui.internal.editors.cabal.forms.stanzas.TestSuitesPage;
@@ -39,6 +40,7 @@ public class CabalFormEditor extends FormEditor implements ITextEditorExtension{
   private LibraryPage library;
   private ExecutablesPage executables;
   private TestSuitesPage testSuites;
+  private BenchmarksPage benchmarks;
   private IFileEditorInput fileInput;
 
   public PackageDescription getPackageDescription() {
@@ -53,6 +55,7 @@ public class CabalFormEditor extends FormEditor implements ITextEditorExtension{
     library.setPackageDescription( packageDescription );
     executables.setPackageDescription( packageDescription );
     testSuites.setPackageDescription( packageDescription );
+    benchmarks.setPackageDescription( packageDescription );
   }
 
   public IDocument getModel() {
@@ -84,6 +87,11 @@ public class CabalFormEditor extends FormEditor implements ITextEditorExtension{
     return testSuites;
   }
 
+
+  public BenchmarksPage getBenchmarks() {
+    return benchmarks;
+  }
+
   // interface methdods of FormEditor
   ///////////////////////////////////
 
@@ -99,9 +107,11 @@ public class CabalFormEditor extends FormEditor implements ITextEditorExtension{
       addPage(executables);
       testSuites = new TestSuitesPage( this, project );
       addPage(testSuites);
+      benchmarks = new BenchmarksPage( this, project );
+      addPage(benchmarks);
       cabalSourceEditor = new CabalEditor(this);
       addPage( cabalSourceEditor, getEditorInput() );
-      setPageText( 4, UITexts.cabalFormEditor_tabSource );
+      setPageText( 5, UITexts.cabalFormEditor_tabSource );
     } catch( final CoreException cex ) {
       HaskellUIPlugin.log( "Unable to create form pages.", cex ); //$NON-NLS-1$
     }
@@ -154,6 +164,9 @@ public class CabalFormEditor extends FormEditor implements ITextEditorExtension{
     } else if (CabalSyntax.SECTION_TESTSUITE.equals( stanza.getType() )){
       setActivePage( testSuites.getId() );
       testSuites.selectStanza( stanza );
+    } else if (CabalSyntax.SECTION_BENCHMARK.equals( stanza.getType() )){
+      setActivePage( benchmarks.getId() );
+      benchmarks.selectStanza( stanza );
     } else {
       setActivePage(pages.size()-1);
       cabalSourceEditor.selectAndReveal( stanza );

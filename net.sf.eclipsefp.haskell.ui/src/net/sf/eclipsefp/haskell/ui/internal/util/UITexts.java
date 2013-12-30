@@ -628,7 +628,10 @@ public final class UITexts extends NLS {
   public static String cabalEditor_newTestSuite_modules_col_test;
   public static String cabalEditor_newTestSuite_modules_col_mod;
   public static String cabalEditor_benchmarks;
-  
+  public static String cabalEditor_newBenchmarkString;
+  public static String cabalEditor_newBenchmarkBlankError;
+  public static String cabalEditor_newBenchmarkAlreadyExistsError;
+
   public static String cabalEditor_modules;
   public static String cabalEditor_module;
   public static String cabalEditor_exposed_modules;
