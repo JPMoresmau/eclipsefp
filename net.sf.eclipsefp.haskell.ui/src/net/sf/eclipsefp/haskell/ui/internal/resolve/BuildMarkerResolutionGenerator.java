@@ -434,6 +434,8 @@ public class BuildMarkerResolutionGenerator implements
         // we actually rely on -X to begin the pragma name later on
         if (s.endsWith( " -x" )){
           s=s.substring( s.length()-3 );
+        } else {
+          ix2+=3;
         }
         // we'll cut from start, but we'll look at the name from ix2...
         int start=ix+1+s.length();
