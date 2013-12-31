@@ -399,10 +399,9 @@ public class CabalImplsBlock implements ISelectionProvider {
   }
 
   private void editCabalImplementation() {
-    IStructuredSelection prev = ( IStructuredSelection )getSelection();
-    int selected = table.getSelectionIndex();
-    if (selected >= 0) {
-      CabalImplementation impl = impls.get(selected);
+    IStructuredSelection prev = ( IStructuredSelection )viewer.getSelection();
+    if (prev!=null) {
+      CabalImplementation impl = (CabalImplementation)prev.getFirstElement();
       String implIdent = impl.getUserIdentifier();
       CabalImplementationDialog dialog = new CabalImplementationDialog( table.getShell(), impl );
       dialog.setTitle( UITexts.cabalImplsBlock_dlgEdit );

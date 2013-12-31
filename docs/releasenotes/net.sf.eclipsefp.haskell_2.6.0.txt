@@ -12,6 +12,7 @@ Necessary Haskell packages:
 Fixes:
 	- Remove commas when several dependent packages are missing in quick fix
 	- Remove lines in values shown in single line text fields in cabal editor
+	- Edit cabal implementation in preferences could select the wrong one
 	
 Features:
 	- Support benchmark stanzas in cabal files (https://github.com/JPMoresmau/eclipsefp/issues/109)
