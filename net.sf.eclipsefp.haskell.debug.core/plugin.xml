@@ -70,6 +70,22 @@
             sourceLocatorId="net.sf.eclipsefp.haskell.debug.core.sourceLookupDirector"
             sourcePathComputerId="net.sf.eclipsefp.haskell.debug.core.sourcePathComputer">
       </launchConfigurationType>
+      <launchConfigurationType
+            delegate="net.sf.eclipsefp.haskell.debug.core.internal.launch.CabalTestLaunchDelegate"
+            id="net.sf.eclipsefp.haskell.debug.core.internal.launch.CabalTestLaunchDelegate"
+            modes="run"
+            name="%haskellCabalTestLaunchType_name"
+            sourceLocatorId="net.sf.eclipsefp.haskell.debug.core.sourceLookupDirector"
+            sourcePathComputerId="net.sf.eclipsefp.haskell.debug.core.sourcePathComputer">
+      </launchConfigurationType>
+      <launchConfigurationType
+            delegate="net.sf.eclipsefp.haskell.debug.core.internal.launch.CabalBenchLaunchDelegate"
+            id="net.sf.eclipsefp.haskell.debug.core.internal.launch.CabalBenchLaunchDelegate"
+            modes="run"
+            name="%haskellCabalBenchLaunchType_name"
+            sourceLocatorId="net.sf.eclipsefp.haskell.debug.core.sourceLookupDirector"
+            sourcePathComputerId="net.sf.eclipsefp.haskell.debug.core.sourcePathComputer">
+      </launchConfigurationType>
    </extension>
    <extension
          point="org.eclipse.debug.core.breakpoints">

@@ -182,6 +182,16 @@
             icon="icons/eview16/haskell_bench.png"
             id="net.sf.eclipsefp.haskell.ui.launch.launchBenchIcon">
       </launchConfigurationTypeImage>
+      <launchConfigurationTypeImage
+            configTypeID="net.sf.eclipsefp.haskell.debug.core.internal.launch.CabalTestLaunchDelegate"
+            icon="icons/eview16/haskell_test.png"
+            id="net.sf.eclipsefp.haskell.ui.launch.launchCabalTestIcon">
+      </launchConfigurationTypeImage>
+      <launchConfigurationTypeImage
+            configTypeID="net.sf.eclipsefp.haskell.debug.core.internal.launch.CabalBenchLaunchDelegate"
+            icon="icons/eview16/haskell_bench.png"
+            id="net.sf.eclipsefp.haskell.ui.launch.launchCabalBenchIcon">
+      </launchConfigurationTypeImage>
    </extension>
    <extension
          point="org.eclipse.debug.ui.launchConfigurationTabGroups">
@@ -204,6 +214,16 @@
             type="net.sf.eclipsefp.haskell.debug.core.internal.launch.BenchmarkHaskellLaunchDelegate"
             class="net.sf.eclipsefp.haskell.debug.ui.internal.launch.ExecutableTestSuiteHaskellLaunchTabGroup"
             id="net.sf.eclipsefp.haskell.debug.ui.internal.launch.BenchmarkHaskellLaunchTabGroup">
+      </launchConfigurationTabGroup>
+       <launchConfigurationTabGroup
+            type="net.sf.eclipsefp.haskell.debug.core.internal.launch.CabalTestLaunchDelegate"
+            class="net.sf.eclipsefp.haskell.debug.ui.internal.launch.ExecutableTestSuiteHaskellLaunchTabGroup"
+            id="net.sf.eclipsefp.haskell.debug.ui.internal.launch.CabalTestLaunchTabGroup">
+      </launchConfigurationTabGroup>
+       <launchConfigurationTabGroup
+            type="net.sf.eclipsefp.haskell.debug.core.internal.launch.CabalBenchLaunchDelegate"
+            class="net.sf.eclipsefp.haskell.debug.ui.internal.launch.ExecutableTestSuiteHaskellLaunchTabGroup"
+            id="net.sf.eclipsefp.haskell.debug.ui.internal.launch.CabalBenchLaunchTabGroup">
       </launchConfigurationTabGroup>
        <launchConfigurationTabGroup
              class="net.sf.eclipsefp.haskell.debug.ui.internal.launch.ExecutableTestSuiteHaskellLaunchTabGroup"
@@ -389,6 +409,60 @@
             </contextLabel>
          </contextualLaunch>
       </shortcut>
+      <shortcut
+            class="net.sf.eclipsefp.haskell.debug.ui.internal.launch.CabalTestLaunchShortcut"
+            icon="icons/eview16/haskell_test.png"
+            id="net.sf.eclipsefp.haskell.debug.ui.internal.launch.CabalTestLaunchShortcut"
+            label="%cabalTestLaunchShortcut_label"
+            modes="run">
+         <contextualLaunch>
+            <enablement>
+               <with
+                     variable="selection">
+                  <count
+                        value="1">
+                  </count>
+                  <iterate>
+						<instanceof value="org.eclipse.core.resources.IResource"/>
+	                  	 <test
+	                           property="net.sf.eclipsefp.haskell.core.isProjectTestSuite">
+	                     </test>
+                  </iterate>
+               </with>
+            </enablement>
+            <contextLabel
+                  label="%cabalTestLaunchContextLabel_label"
+                  mode="run">
+            </contextLabel>
+         </contextualLaunch>
+      </shortcut>
+      <shortcut
+            class="net.sf.eclipsefp.haskell.debug.ui.internal.launch.CabalBenchLaunchShortcut"
+            icon="icons/eview16/haskell_bench.png"
+            id="net.sf.eclipsefp.haskell.debug.ui.internal.launch.CabalBenchLaunchShortcut"
+            label="%cabalBenchLaunchShortcut_label"
+            modes="run">
+         <contextualLaunch>
+            <enablement>
+               <with
+                     variable="selection">
+                  <count
+                        value="1">
+                  </count>
+                  <iterate>
+						<instanceof value="org.eclipse.core.resources.IResource"/>
+	                  	 <test
+	                           property="net.sf.eclipsefp.haskell.core.isProjectBenchmark">
+	                     </test>
+                  </iterate>
+               </with>
+            </enablement>
+            <contextLabel
+                  label="%cabalBenchLaunchContextLabel_label"
+                  mode="run">
+            </contextLabel>
+         </contextualLaunch>
+      </shortcut>
             <shortcut
             class="net.sf.eclipsefp.haskell.debug.ui.internal.launch.HTFLaunchShortcut"
             icon="icons/eview16/haskell_test.png"
@@ -464,6 +538,18 @@
             description="%runBenchmarkShortcut_desc"
             categoryId="org.eclipse.debug.ui.category.run"
             id="net.sf.eclipsefp.haskell.debug.ui.internal.launch.BenchmarkLaunchShortcut.run">
+      </command>
+      <command
+            name="%runCabalTestShortcut_name"
+            description="%runCabalTestShortcut_desc"
+            categoryId="org.eclipse.debug.ui.category.run"
+            id="net.sf.eclipsefp.haskell.debug.ui.internal.launch.CabalTestLaunchShortcut.run">
+      </command>
+      <command
+            name="%runCabalBenchShortcut_name"
+            description="%runCabalBenchShortcut_desc"
+            categoryId="org.eclipse.debug.ui.category.run"
+            id="net.sf.eclipsefp.haskell.debug.ui.internal.launch.CabalBenchLaunchShortcut.run">
       </command>
       <command
             categoryId="org.eclipse.debug.ui.category.run"

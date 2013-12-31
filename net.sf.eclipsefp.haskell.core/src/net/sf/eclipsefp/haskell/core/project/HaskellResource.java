@@ -62,7 +62,7 @@ public class HaskellResource {
   public boolean isProjectTestSuite(){
     if (fResource instanceof IProject){
       IProject project=(IProject)fResource;
-       return !ResourceUtil.getProjectTestSuites( project ).isEmpty();
+      return !ResourceUtil.getProjectTestSuites( project ).isEmpty();
     }
     return false;
   }
