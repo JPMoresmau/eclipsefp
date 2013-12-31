@@ -848,6 +848,7 @@ public final class UITexts extends NLS {
   public static String executables_preferences_console_activateonwrite;
   public static String executables_preferences_browser_perspective;
   public static String executables_preferences_unique_sandbox;
+  public static String executables_preferences_cabal_sandbox;
 
   private static final String BUNDLE_NAME = UITexts.class.getPackage()
       .getName() + ".uitexts"; //$NON-NLS-1$

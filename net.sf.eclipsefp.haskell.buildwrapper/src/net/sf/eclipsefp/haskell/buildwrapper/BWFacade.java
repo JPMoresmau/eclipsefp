@@ -70,6 +70,7 @@ public class BWFacade {
 	public static final String DIST_FOLDER=".dist-buildwrapper";
 	public static final String DIST_FOLDER_CABAL=DIST_FOLDER+"/dist";
 	public static final String DIST_FOLDER_CABALDEV=DIST_FOLDER+"/cabal-dev";
+	public static final String DIST_FOLDER_CABALSANDBOX=DIST_FOLDER+"/.cabal-sandbox";
 	
 	private static final String prefix="build-wrapper-json:";
 	
@@ -761,7 +762,7 @@ public class BWFacade {
 		LinkedList<String> command=new LinkedList<String>();
 		command.add("dependencies");
 		if (SandboxHelper.isSandboxed(this)){
-			command.add("--sandbox="+DIST_FOLDER_CABALDEV);
+			command.add("--sandbox="+getCabalImplDetails().getSandboxPath());
 		}
 		JSONArray arr=run(command,ARRAY);
 		if (arr==null){
@@ -1432,8 +1433,8 @@ public class BWFacade {
 	 * run cabal with the given argument, using the flags defined on the project
 	 * @param args
 	 */
-	public void runCabal(LinkedList<String> args){
-		runCabal(args,flags);
+	public void runCabal(LinkedList<String> args,File workDir){
+		runCabal(args,flags,workDir);
 	}
 	
 	/**
@@ -1441,7 +1442,7 @@ public class BWFacade {
 	 * @param args 
 	 * @param explicitFlags
 	 */
-	public void runCabal(LinkedList<String> args,String explicitFlags){
+	public void runCabal(LinkedList<String> args,String explicitFlags,File workDir){
 		if (isCanceled()){
 			return;
 		}
@@ -1462,7 +1463,12 @@ public class BWFacade {
 		//File bd=new File (workingDir,BWFacade.DIST_FOLDER_CABAL);
 		//args.add("--builddir="+BWFacade.DIST_FOLDER_CABAL);
 		ProcessBuilder pb=new ProcessBuilder();
-		pb.directory(workingDir);
+		if (workDir==null){
+			pb.directory(workingDir);
+		} else {
+			workDir.mkdirs();
+			pb.directory(workDir);
+		}
 		pb.redirectErrorStream(true);
 		pb.command(args);
 		addBuildWrapperPath(pb);

@@ -8,6 +8,7 @@ import net.sf.eclipsefp.haskell.util.FileUtil;
 import net.sf.eclipsefp.haskell.util.QueryUtil;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
+import org.osgi.framework.Version;
 
 /**
  * Cabal implementation manager container.
@@ -194,5 +195,10 @@ public class CabalImplementation {
       fCabalExecutablePath = null;
       resetVersions();
     }
+  }
+
+  public boolean allowsSandbox(){
+    return new Version(getInstallVersion()).compareTo( new Version("1.18.0") )>=0;
+
   }
 }

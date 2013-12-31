@@ -15,14 +15,19 @@ import java.util.List;
  */
 public class CabalImplDetails {
 	public enum SandboxType {
-		NONE, CABAL_DEV;
+		NONE, CABAL_DEV, CABAL;
 	}
 
 	private String executable;
 	private final List<String> options = new ArrayList<String>();
 	private final List<String> installOptions = new ArrayList<String>();
-
+	private final List<String> initOptions = new ArrayList<String>();
+	
 	private SandboxType type = SandboxType.NONE;
+
+	private String sandboxPath;
+	
+
 
 	/**
 	 * do we have a unique sandbox?
@@ -61,6 +66,13 @@ public class CabalImplDetails {
 		return installOptions;
 	}
 
+	/**
+	 * @return the initOptions
+	 */
+	public List<String> getInitOptions() {
+		return initOptions;
+	}
+	
 	public boolean isUniqueSandbox() {
 		return uniqueSandbox;
 	}
@@ -69,4 +81,11 @@ public class CabalImplDetails {
 		this.uniqueSandbox = uniqueSandbox;
 	}
 
+	public String getSandboxPath() {
+		return sandboxPath;
+	}
+
+	public void setSandboxPath(String sandboxPath) {
+		this.sandboxPath = sandboxPath;
+	}
 }

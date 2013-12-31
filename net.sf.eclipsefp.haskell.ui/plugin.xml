@@ -341,8 +341,8 @@
        <page
             class="net.sf.eclipsefp.haskell.ui.internal.preferences.scion.CabalDevPP"
             id="net.sf.eclipsefp.haskell.ui.internal.preferences.scion.CabalDevPP"
-            name="%cabalDevPP_name"
-            category="net.sf.eclipsefp.haskell.ui.internal.preferences.scion.ScionPP">
+            name="%sandboxingPP_name"
+            category="net.sf.eclipsefp.haskell.ui.preferences.HaskellCategoryPP">
       </page>    
       
       <page

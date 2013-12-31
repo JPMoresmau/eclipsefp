@@ -949,8 +949,12 @@ public class ScionManager implements IResourceChangeListener {
     }
   }
 
-  private static IPath getUniqueSandboxLocation(){
+  private static IPath getUniqueCabalDevSandboxLocation(){
     return HaskellUIPlugin.getDefault().getStateLocation().append( ".cabal-dev" );
+  }
+
+  private static IPath getUniqueCabalSandboxLocation(){
+    return HaskellUIPlugin.getDefault().getStateLocation().append( ".cabal-sandbox" );
   }
 
   public static CabalImplDetails getCabalImplDetails(){
@@ -963,17 +967,33 @@ public class ScionManager implements IResourceChangeListener {
     if (cabalDev!=null && cabalDev.length()>0 && new File(cabalDev).exists()){
         details.setExecutable( cabalDev);
         details.setUniqueSandbox( preferenceStore.getBoolean( IPreferenceConstants.UNIQUE_SANDBOX ) );
-        if (details.isUniqueSandbox()){
-          details.getOptions().add("--sandbox="+getUniqueSandboxLocation().toOSString());
-        } else {
-          details.getOptions().add("--sandbox="+BWFacade.DIST_FOLDER_CABALDEV);
-        }
+        String sd=details.isUniqueSandbox()?
+            getUniqueCabalDevSandboxLocation().toOSString()
+            :BWFacade.DIST_FOLDER_CABALDEV;
+        details.setSandboxPath( sd );
+        details.getOptions().add("--sandbox="+sd);
         details.getOptions().add("--with-cabal-install="+cabal);
         details.setType( SandboxType.CABAL_DEV );
 
     } else { // standard cabal
+
       details.setExecutable(cabal);
-      details.setType( SandboxType.NONE );
+
+      boolean cabalSandbox=preferenceStore.getBoolean( IPreferenceConstants.CABAL_SANDBOX );
+      if (cabalSandbox){
+        details.setUniqueSandbox( preferenceStore.getBoolean( IPreferenceConstants.UNIQUE_SANDBOX ) );
+
+        String sd=details.isUniqueSandbox()?
+            getUniqueCabalSandboxLocation().toOSString()
+            :BWFacade.DIST_FOLDER_CABALSANDBOX;
+        details.setSandboxPath( sd );
+        details.getInitOptions().add("--sandbox");
+        details.getInitOptions().add(sd);
+
+        details.setType( SandboxType.CABAL );
+      } else {
+        details.setType( SandboxType.NONE );
+      }
     }
     addCabalInstallOptions( details.getInstallOptions() );
 

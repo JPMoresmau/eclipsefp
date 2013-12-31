@@ -5,6 +5,7 @@
  */
 package net.sf.eclipsefp.haskell.buildwrapper;
 
+import java.io.File;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.Set;
@@ -44,27 +45,59 @@ public class SandboxHelper {
 	public static void installDeps(BWFacade f) throws CoreException{
 		if (f!=null){
 			SandboxType st=f.getCabalImplDetails().getType();
+			IProject p=f.getProject();
+			
 			switch (st){
-			case CABAL_DEV:
-				IProject p=f.getProject();
-	
-				if (!f.getCabalImplDetails().isUniqueSandbox()){
-					Set<IProject> processed=new HashSet<IProject>();
-					processed.add(p);
-					for (IProject pR:p.getReferencedProjects()){
-						installDeps(f,pR,processed);
+				case CABAL_DEV:
+				{
+					if (!f.getCabalImplDetails().isUniqueSandbox()){
+						Set<IProject> processed=new HashSet<IProject>();
+						processed.add(p);
+						for (IProject pR:p.getReferencedProjects()){
+							installDeps(f,pR,processed);
+						}
 					}
+					
+					LinkedList<String> args=new LinkedList<String>();
+					args.add("install-deps");
+					// enable tests
+					args.add("--enable-tests");
+					// enable benchmarks
+					args.add("--enable-benchmarks");
+					// force reinstalls since we won't break anything outside of the sandbox
+					args.add("--force-reinstalls");
+					args.addAll(f.getCabalImplDetails().getInstallOptions());
+					f.runCabal(args,null);
+					break;
 				}
-				
-				LinkedList<String> args=new LinkedList<String>();
-				args.add("install-deps");
-				// enable tests
-				args.add("--enable-tests");
-				// force reinstalls since we won't break anything outside of the sandbox
-				args.add("--force-reinstalls");
-				args.addAll(f.getCabalImplDetails().getInstallOptions());
-				f.runCabal(args);
-				break;
+				case CABAL:
+				{
+					if (!f.getCabalImplDetails().isUniqueSandbox()){
+						Set<IProject> processed=new HashSet<IProject>();
+						processed.add(p);
+						for (IProject pR:p.getReferencedProjects()){
+							installDeps(f,pR,processed);
+						}
+					}
+					LinkedList<String> args=new LinkedList<String>();
+					args.add("sandbox");
+					args.add("init");
+					args.addAll(f.getCabalImplDetails().getInitOptions());
+					
+					f.runCabal(args,null);
+					
+					args=new LinkedList<String>();
+					args.add("install");
+					args.add("--only-dependencies");
+					// enable tests
+					args.add("--enable-tests");
+					// enable benchmarks
+					args.add("--enable-benchmarks");
+					// force reinstalls since we won't break anything outside of the sandbox
+					args.add("--force-reinstalls");
+					f.runCabal(args,null);
+					break;
+				}
 			}
 		}
 	}
@@ -91,8 +124,10 @@ public class SandboxHelper {
 			args.add("install");
 			args.add(p.getLocation().toOSString());
 			args.add("--force-reinstalls");
-			args.addAll(sandboxFacade.getCabalImplDetails().getInstallOptions());
-			sandboxFacade.runCabal(args);
+			if (SandboxType.CABAL_DEV.equals(sandboxFacade.getCabalImplDetails().getType())){
+				args.addAll(sandboxFacade.getCabalImplDetails().getInstallOptions());
+			}
+			sandboxFacade.runCabal(args,null);
 		}
 	}
 	
@@ -106,6 +141,7 @@ public class SandboxHelper {
 			SandboxType st=f.getCabalImplDetails().getType();
 			switch (st){
 			case CABAL_DEV:
+			case CABAL:	
 				Set<IProject> processed=new HashSet<IProject>();
 				if (!f.getCabalImplDetails().isUniqueSandbox()){
 					IProject p=f.getProject();
@@ -150,7 +186,7 @@ public class SandboxHelper {
 				if (changedF!=null){
 					expFlags=changedF.getFlags();
 				}
-				f.runCabal(args,expFlags); // install the changed project with its own flags
+				f.runCabal(args,expFlags,null); // install the changed project with its own flags
 				if (f.isCanceled()){
 					return false;
 				}
@@ -230,6 +266,8 @@ public class SandboxHelper {
 			switch (st){
 			case CABAL_DEV:
 				return f.getProject().getFolder(BWFacade.DIST_FOLDER_CABALDEV).exists();
+			case CABAL:
+				return f.getProject().getFolder(BWFacade.DIST_FOLDER_CABALSANDBOX).exists();
 			}
 		}
 		return false;
@@ -245,6 +283,7 @@ public class SandboxHelper {
 			SandboxType st=f.getCabalImplDetails().getType();
 			switch (st){
 			case CABAL_DEV:
+			case CABAL:	
 				return true;
 			}
 		}
