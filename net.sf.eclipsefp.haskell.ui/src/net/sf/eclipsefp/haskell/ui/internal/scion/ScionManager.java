@@ -350,10 +350,14 @@ public class ScionManager implements IResourceChangeListener {
         /** we get the dreaded message about mismatch cabal versions if the buildwrapper cabal library is not the same as the cabal library used to build the cabal executable **/
         List<String> ls=ProcessRunner.getExecutableAndCabalVersion( buildWrapperExecutablePath.toOSString(),true);
         if (ls!=null && ls.size()>1){
-          String cabalVersion=ls.get( 1 );
-          if (CabalImplementationManager.getCabalLibraryVersion()!=null && !CabalImplementationManager.getCabalLibraryVersion().toString().equals( cabalVersion )){
-            String msg=NLS.bind( UITexts.buildWrapperCabalVersionMismatch, new Object[]{CabalImplementationManager.getCabalLibraryVersion().toString(),cabalVersion,CabalImplementationManager.getCabalExecutable()} );
-            HaskellUIPlugin.log( msg, IStatus.ERROR );
+          String bwVersion=ls.get( 0 );
+          // in buildwrapper 0.8 and above, we use dynamic-cabal
+          if (CabalPackageVersion.compare( bwVersion, "0.8.0" )<0){
+            String cabalVersion=ls.get( 1 );
+            if (CabalImplementationManager.getCabalLibraryVersion()!=null && !CabalImplementationManager.getCabalLibraryVersion().toString().equals( cabalVersion )){
+              String msg=NLS.bind( UITexts.buildWrapperCabalVersionMismatch, new Object[]{CabalImplementationManager.getCabalLibraryVersion().toString(),cabalVersion,CabalImplementationManager.getCabalExecutable()} );
+              HaskellUIPlugin.log( msg, IStatus.ERROR );
+            }
           }
         }
       } catch (IOException ioe){
