@@ -465,6 +465,7 @@ public final class UITexts extends NLS {
   public static String scionServerProgress_subtask1;
   public static String scionServerProgress_subtask2;
   public static String cabalUpdateProgress;
+  public static String cabalInitProgress;
   public static String installExecutablesProgress;
   //public static String builWrapperInstallProgress;
   //public static String scionBrowserInstallProgress;

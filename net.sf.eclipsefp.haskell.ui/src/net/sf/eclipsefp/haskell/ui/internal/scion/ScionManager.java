@@ -20,6 +20,7 @@ import net.sf.eclipsefp.haskell.buildwrapper.types.CabalImplDetails;
 import net.sf.eclipsefp.haskell.buildwrapper.types.CabalImplDetails.SandboxType;
 import net.sf.eclipsefp.haskell.core.HaskellCorePlugin;
 import net.sf.eclipsefp.haskell.core.builder.HaskellBuilder;
+import net.sf.eclipsefp.haskell.core.cabal.CabalImplementation;
 import net.sf.eclipsefp.haskell.core.cabal.CabalImplementationManager;
 import net.sf.eclipsefp.haskell.core.cabal.CabalPackageVersion;
 import net.sf.eclipsefp.haskell.core.cabalmodel.CabalSyntax;
@@ -197,27 +198,35 @@ public class ScionManager implements IResourceChangeListener {
     if (serverExecutable!=null){
       browserExecutablePath = new Path(serverExecutable);
     }
+    CabalImplementation impl=CabalImplementationManager.getInstance().getDefaultCabalImplementation();
+    boolean sandboxed=impl!=null && impl.allowsSandbox();
+    boolean hasInstalledAll=false;
     // can't install if no cabal executable
-    if ((buildWrapperExecutablePath==null || browserExecutablePath==null) && CabalImplementationManager.getCabalExecutable()!=null){
+    if ((buildWrapperExecutablePath==null || browserExecutablePath==null) && impl!=null){
       boolean ignore=HaskellUIPlugin.getDefault().getPreferenceStore().getBoolean( IPreferenceConstants.IGNORE_MISSING_EXECUTABLE );
       if (!ignore){
-        final Display display = HaskellUIPlugin.getStandardDisplay();
-        display.asyncExec( new Runnable() {
-          @Override
-          public void run() {
-            Shell parent = display.getActiveShell();
+        if (sandboxed){
+          installAll();
+          hasInstalledAll=true;
+        } else {
+          final Display display = HaskellUIPlugin.getStandardDisplay();
+          display.asyncExec( new Runnable() {
+            @Override
+            public void run() {
+              Shell parent = display.getActiveShell();
 
-            InstallExecutableDialog ied=new InstallExecutableDialog(parent , buildWrapperExecutablePath==null, MINIMUM_BUILDWRAPPER, browserExecutablePath==null, MINIMUM_SCIONBROWSER );
-            ied.open();
-          }
-        });
+              InstallExecutableDialog ied=new InstallExecutableDialog(parent , buildWrapperExecutablePath==null, MINIMUM_BUILDWRAPPER, browserExecutablePath==null, MINIMUM_SCIONBROWSER );
+              ied.open();
+            }
+          });
+        }
       }
     }
 
     boolean doBuildWrapperSetup=true;
     boolean doBrowserSetup=true;
     boolean ignore=HaskellUIPlugin.getDefault().getPreferenceStore().getBoolean( IPreferenceConstants.IGNORE_TOOOLD_EXECUTABLE );
-    if (!ignore){
+    if (!hasInstalledAll && !ignore && impl!=null){
       final String buildwrapperVersion=buildWrapperExecutablePath!=null?getVersion( buildWrapperExecutablePath, true ):null;
       final String browserVersion=browserExecutablePath!=null?getVersion( browserExecutablePath, false ):null;
 
@@ -227,6 +236,9 @@ public class ScionManager implements IResourceChangeListener {
       doBuildWrapperSetup=buildwrapperVersionOK; // do not launch if too old
       doBrowserSetup=browserVersionOK;// do not launch if too old
       if (!buildwrapperVersionOK || !browserVersionOK){
+        if (sandboxed){
+          installAll();
+        } else {
           final Display display = HaskellUIPlugin.getStandardDisplay();
           display.asyncExec( new Runnable() {
             @Override
@@ -240,7 +252,7 @@ public class ScionManager implements IResourceChangeListener {
               ied.open();
             }
           });
-
+        }
       }
     }
     if (doBuildWrapperSetup){
@@ -279,6 +291,22 @@ public class ScionManager implements IResourceChangeListener {
     // POST_BUILD is similar to POST_CHANGE but the workspace tree is not locked, which is useful for some listeners
     workSpace.addResourceChangeListener( new CabalFileResourceChangeListener(), IResourceChangeEvent.POST_BUILD );
     workSpace.addResourceChangeListener( new ProjectDeletionListener(), IResourceChangeEvent.PRE_DELETE);
+  }
+
+  /**
+   *
+   */
+  private void installAll() {
+    final InstallExecutableRunnable j=new InstallExecutableRunnable();
+    j.getPackages().add( new InstallExecutableRunnable.Package( "buildwrapper", IPreferenceConstants.BUILDWRAPPER_EXECUTABLE) );
+    j.getPackages().add( new InstallExecutableRunnable.Package( "scion-browser", IPreferenceConstants.SCION_BROWSER_SERVER_EXECUTABLE) );
+    j.getPackages().add( new InstallExecutableRunnable.Package( "hoogle", IPreferenceConstants.SCION_BROWSER_EXTRA_HOOGLE_PATH) );
+    j.getPackages().add( new InstallExecutableRunnable.Package( "hlint", IPreferenceConstants.HLINT_EXECUTABLE) );
+    j.getPackages().add( new InstallExecutableRunnable.Package( "stylish-haskell",IPreferenceConstants.STYLISHHASKELL_EXECUTABLE) );
+    j.getPackages().add( new InstallExecutableRunnable.Package( "SourceGraph",IPreferenceConstants.SOURCEGRAPH_EXECUTABLE) );
+    j.setCabalUpdate( true );
+    j.setGlobal( false );
+    new Thread(j).start();
   }
 
   /**

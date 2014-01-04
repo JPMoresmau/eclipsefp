@@ -68,38 +68,48 @@ public class InstallExecutableRunnable implements Runnable {
       }
       return;
     }
-    final File folder=new File(cabalExecutable).getParentFile();
+    File folder=new File(cabalExecutable).getParentFile();
     final LinkedList<Command> commands=new LinkedList<Command>();
 
     File binDir=new File(CompilerManager.getCurrentHsImplementation().getBinDir());
-    if (!global){
-      File exe=new File(binDir,GHCSyntax.GHC);
-      StringWriter sw=new StringWriter();
-      try {
-        // we run ghc in execution mode to find the directory cabal is going to use
-        // no quotes around last arguments, as it breaks unixes (returns the command, as I suppose ghc evaluates the argument as a string value)
-        // windows: use old version!
-        new ProcessRunner().executeBlocking( binDir, sw, null, exe.getAbsolutePath(),"-e",ProcessRunner.getGHCArgument( "System.Directory.getAppUserDataDirectory \"cabal\"" ));
-        String s=sw.toString().trim(); // line return at end
-        if (s.startsWith( "\"" )){ // quotes
-          s=s.substring( 1 );
-        }
-        if (s.endsWith( "\"" )){// quotes
-          s=s.substring( 0,s.length()-1 );
-        }
-        binDir=new File(s,"bin");
-      } catch (Exception e){
-        logError( e );
-        if (getNextRunnable()!=null){
-          getNextRunnable().run();
-        }
-        return;
-      }
-    }
-
     if (cabalUpdate){
       commands.add(new Command(UITexts.cabalUpdateProgress,Arrays.asList( cabalExecutable , "update" )));
     }
+
+    if (CabalImplementationManager.getInstance().getDefaultCabalImplementation().allowsSandbox()){
+      folder=new File(HaskellUIPlugin.getDefault().getStateLocation().append( "sandbox" ).toOSString());
+      folder.mkdirs();
+      commands.add(new Command(UITexts.cabalInitProgress,Arrays.asList( cabalExecutable , "sandbox","init" )));
+      binDir=new File(new File(folder,".cabal-sandbox"),"bin");
+
+    } else {
+      if (!global){
+        File exe=new File(binDir,GHCSyntax.GHC);
+        StringWriter sw=new StringWriter();
+        try {
+          // we run ghc in execution mode to find the directory cabal is going to use
+          // no quotes around last arguments, as it breaks unixes (returns the command, as I suppose ghc evaluates the argument as a string value)
+          // windows: use old version!
+          new ProcessRunner().executeBlocking( binDir, sw, null, exe.getAbsolutePath(),"-e",ProcessRunner.getGHCArgument( "System.Directory.getAppUserDataDirectory \"cabal\"" ));
+          String s=sw.toString().trim(); // line return at end
+          if (s.startsWith( "\"" )){ // quotes
+            s=s.substring( 1 );
+          }
+          if (s.endsWith( "\"" )){// quotes
+            s=s.substring( 0,s.length()-1 );
+          }
+          binDir=new File(s,"bin");
+        } catch (Exception e){
+          logError( e );
+          if (getNextRunnable()!=null){
+            getNextRunnable().run();
+          }
+          return;
+        }
+      }
+    }
+
+
     /*
     if (buildWrapper){
       commands.add(new Command(UITexts.builWrapperInstallProgress,"buildwrapper",IPreferenceConstants.BUILDWRAPPER_EXECUTABLE,Arrays.asList( cabalExecutable , "install","buildwrapper", global?"--global": "--user" )));
@@ -108,7 +118,10 @@ public class InstallExecutableRunnable implements Runnable {
       commands.add(new Command(UITexts.scionBrowserInstallProgress,"scion-browser",IPreferenceConstants.SCION_BROWSER_SERVER_EXECUTABLE,Arrays.asList( cabalExecutable , "install","scion-browser", global?"--global": "--user" )));
     }*/
     for (Package p:packages){
-      List<String> args=new ArrayList<String>(Arrays.asList( cabalExecutable , "install",p.getPkgName(), global?"--global": "--user" ));
+      List<String> args=new ArrayList<String>(Arrays.asList( cabalExecutable , "install",p.getPkgName() ));
+      if (!CabalImplementationManager.getInstance().getDefaultCabalImplementation().allowsSandbox()){
+        args.add(global?"--global": "--user");
+      }
       ScionManager.addCabalInstallOptions( args );
       File f=new File(binDir,FileUtil.makeExecutableName( p.getExeName() ));
       if (!f.exists()){ // the exe does not exist, we force reinstall to make sure it wasn't deleted manually
@@ -117,7 +130,7 @@ public class InstallExecutableRunnable implements Runnable {
       commands.add(new Command(NLS.bind( UITexts.installExecutableProgress,p.getExeName()),p.getExeName(),p.getPreference(),args));
     }
     final File fBinDir=binDir;
-
+    final File ffolder=folder;
     Runnable r=new Runnable(){
       @Override
       public void run() {
@@ -155,7 +168,7 @@ public class InstallExecutableRunnable implements Runnable {
             @Override
             public void run() {
               try {
-                AbstractHaskellLaunchDelegate.runInConsole( null, c.commands, folder, c.title, true,fNext );
+                AbstractHaskellLaunchDelegate.runInConsole( null, c.commands, ffolder, c.title, true,fNext );
               } catch (CoreException ce){
                 logError( ce );
               }
