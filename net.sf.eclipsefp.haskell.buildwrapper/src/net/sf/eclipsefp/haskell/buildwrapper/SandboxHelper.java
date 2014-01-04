@@ -66,25 +66,34 @@ public class SandboxHelper {
 					args.add("--enable-benchmarks");
 					// force reinstalls since we won't break anything outside of the sandbox
 					args.add("--force-reinstalls");
+					
 					args.addAll(f.getCabalImplDetails().getInstallOptions());
 					f.runCabal(args,null);
 					break;
 				}
 				case CABAL:
 				{
-					if (!f.getCabalImplDetails().isUniqueSandbox()){
-						Set<IProject> processed=new HashSet<IProject>();
-						processed.add(p);
-						for (IProject pR:p.getReferencedProjects()){
-							installDeps(f,pR,processed);
-						}
+					// init unique sandbox
+					if (f.getCabalImplDetails().isUniqueSandbox()){
+						LinkedList<String> args=new LinkedList<String>();
+						args.add("sandbox");
+						args.add("init");
+						f.runCabal(args,f.getSandboxPath());
 					}
 					LinkedList<String> args=new LinkedList<String>();
 					args.add("sandbox");
 					args.add("init");
 					args.addAll(f.getCabalImplDetails().getInitOptions());
-					
 					f.runCabal(args,null);
+					
+					//if (!f.getCabalImplDetails().isUniqueSandbox()){
+						Set<IProject> processed=new HashSet<IProject>();
+						processed.add(p);
+						for (IProject pR:p.getReferencedProjects()){
+							addSource(f,pR,processed);
+						}
+					//}
+
 					
 					args=new LinkedList<String>();
 					args.add("install");
@@ -95,9 +104,12 @@ public class SandboxHelper {
 					args.add("--enable-benchmarks");
 					// force reinstalls since we won't break anything outside of the sandbox
 					args.add("--force-reinstalls");
+					
 					f.runCabal(args,null);
 					break;
 				}
+				case NONE:
+					break;
 			}
 		}
 	}
@@ -132,6 +144,33 @@ public class SandboxHelper {
 	}
 	
 	/**
+	 * install given project as a dependency on the given facade
+	 * @param sandboxFacade the facade
+	 * @param p the project
+	 * @param processed the set of already processed projects, in case of loops
+	 * @throws CoreException
+	 */
+	private static void addSource(BWFacade sandboxFacade,IProject p,Set<IProject> processed) throws CoreException{
+		if (sandboxFacade.isCanceled()){
+			return;
+		}
+		if (processed.add(p)){
+			for (IProject pR:p.getReferencedProjects()){
+				installDeps(sandboxFacade,pR,processed);
+			}
+			if (sandboxFacade.isCanceled()){
+				return;
+			}
+			LinkedList<String> args=new LinkedList<String>();
+			args.add("sandbox");
+			args.add("add-source");
+			args.add(p.getLocation().toOSString());
+			
+			sandboxFacade.runCabal(args,null);
+		}
+	}
+	
+	/**
 	 * update all projects using the project wrapped in the given facade
 	 * @param f the facade
 	 * @throws CoreException
@@ -139,10 +178,9 @@ public class SandboxHelper {
 	public static void updateUsing(BWFacade f) throws CoreException{
 		if (f!=null){
 			SandboxType st=f.getCabalImplDetails().getType();
+			Set<IProject> processed=new HashSet<IProject>();
 			switch (st){
 			case CABAL_DEV:
-			case CABAL:	
-				Set<IProject> processed=new HashSet<IProject>();
 				if (!f.getCabalImplDetails().isUniqueSandbox()){
 					IProject p=f.getProject();
 					processed.add(p);
@@ -157,6 +195,16 @@ public class SandboxHelper {
 						}
 					}
 				}
+				break;
+			case CABAL:
+				// in Cabal sandboxes, we have automatic updates
+				// either we build in the common sandbox, or we use addSource which maintain up to date packages
+				IProject p=f.getProject();
+				for (IProject pR:p.getReferencingProjects()){
+					build(p,pR,processed);
+				}
+				break;
+			case NONE:
 				break;
 			}
 		}
@@ -263,11 +311,17 @@ public class SandboxHelper {
 	public static boolean sandboxExists(BWFacade f){
 		if (f!=null){
 			SandboxType st=f.getCabalImplDetails().getType();
+			boolean uq=f.getCabalImplDetails().isUniqueSandbox();
 			switch (st){
 			case CABAL_DEV:
-				return f.getProject().getFolder(BWFacade.DIST_FOLDER_CABALDEV).exists();
+				return 
+						uq?new File(BuildWrapperPlugin.getUniqueCabalDevSandboxLocation().toOSString()).exists()
+						:f.getProject().getFolder(BWFacade.DIST_FOLDER_CABALDEV).exists();
 			case CABAL:
-				return f.getProject().getFolder(BWFacade.DIST_FOLDER_CABALSANDBOX).exists();
+				return uq?new File(BuildWrapperPlugin.getUniqueCabalSandboxLocation().toOSString()).exists()
+						:f.getProject().getFolder(".cabal-sandbox").exists();
+			case NONE:
+				return false;
 			}
 		}
 		return false;
@@ -285,6 +339,8 @@ public class SandboxHelper {
 			case CABAL_DEV:
 			case CABAL:	
 				return true;
+			case NONE:
+				return false;
 			}
 		}
 		return false;

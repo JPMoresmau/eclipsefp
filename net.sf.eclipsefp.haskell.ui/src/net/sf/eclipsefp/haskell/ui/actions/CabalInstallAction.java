@@ -114,6 +114,57 @@ public class CabalInstallAction implements IObjectActionDelegate {
     }
   }
 
+  /**
+   * add a snapshot source into given sandbox
+   * @param sandbox
+   */
+  protected void addSnapshot(final String sandbox){
+    final String cabalExecutable=CabalImplementationManager.getCabalExecutable();
+    if (cabalExecutable!=null){
+
+      final List<String> commands = new ArrayList<String>();
+      commands.add( cabalExecutable );
+      commands.add( "sandbox" );
+      commands.add( "add-source" );
+      commands.add( "--snapshot" );
+
+      File f=new File(sandbox);
+      if (f.getName().equals(".cabal-sandbox")){
+        f=f.getParentFile();
+      }
+
+      for (final IProject p:projects){
+        try {
+          List<String> prjCommands = new ArrayList<String>(commands);
+          prjCommands.add( p.getLocation().toOSString() );
+//          BWFacade bf=BuildWrapperPlugin.getFacade( p );
+//          // need to provide user supplied info
+//          if(bf!=null){
+//            String f=bf.getFlags();
+//            if (f!=null && f.length()>0){
+//              prjCommands.add("--flags="+f);
+//            }
+//            List<String> extraOpts=bf.getExtraOpts();
+//            if (extraOpts!=null){
+//              for (String eo:extraOpts){
+//                prjCommands.add(eo);
+//              }
+//            }
+//          }
+
+
+          AbstractHaskellLaunchDelegate.runInConsole(p, prjCommands, f, NLS.bind( getJobName(), p.getName() ),true,getAfter(p) );
+        } catch (Exception ioe){
+          HaskellUIPlugin.log(ioe);
+          final IStatus st=new Status( IStatus.ERROR, HaskellUIPlugin.getPluginId(),ioe.getLocalizedMessage(),ioe);
+          ErrorDialog.openError( currentShell, UITexts.install_error, UITexts.install_error_text, st);
+        }
+
+
+      }
+    }
+  }
+
   @Override
   public void run( final IAction arg0 ) {
     // this action and its subclasses use cabal executable directly
@@ -121,7 +172,7 @@ public class CabalInstallAction implements IObjectActionDelegate {
     // (dependencies and installation in dependent projects being handled automatically)
     CabalImplDetails cid=ScionManager.getCabalImplDetails();
     if (cid.isSandboxed()){
-      if (cid.getType().equals( SandboxType.CABAL_DEV )){
+      if (cid.getType().equals( SandboxType.CABAL_DEV ) || cid.getType().equals( SandboxType.CABAL)){
         MessageDialog md=new MessageDialog( currentShell, UITexts.install_sandbox_title, null, getSandboxWarningMessage(), MessageDialog.QUESTION,
             new String[] { IDialogConstants.OK_LABEL, IDialogConstants.CANCEL_LABEL, UITexts.install_sandbox_install_dest }, 2 );
         int ret=md.open();
@@ -135,7 +186,11 @@ public class CabalInstallAction implements IObjectActionDelegate {
 
           if (fileName!=null){
             lastSandbox=fileName;
-            runCabalDev(fileName);
+            if (cid.getType().equals( SandboxType.CABAL_DEV )){
+                runCabalDev(fileName);
+            } else {
+                addSnapshot(fileName);
+            }
           }
           return;
         }

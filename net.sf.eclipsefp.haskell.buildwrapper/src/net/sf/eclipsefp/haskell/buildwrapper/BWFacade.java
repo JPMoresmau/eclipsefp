@@ -70,7 +70,6 @@ public class BWFacade {
 	public static final String DIST_FOLDER=".dist-buildwrapper";
 	public static final String DIST_FOLDER_CABAL=DIST_FOLDER+"/dist";
 	public static final String DIST_FOLDER_CABALDEV=DIST_FOLDER+"/cabal-dev";
-	public static final String DIST_FOLDER_CABALSANDBOX=DIST_FOLDER+"/.cabal-sandbox";
 	
 	private static final String prefix="build-wrapper-json:";
 	
@@ -1870,5 +1869,17 @@ public class BWFacade {
 			return true;
 		}
 		return false;
+	}
+	
+	public File getSandboxPath(){
+		if (getCabalImplDetails().isSandboxed()){
+			if (getCabalImplDetails().isUniqueSandbox()){
+				return new File (getCabalImplDetails().getSandboxPath());
+			} else {
+				return new File(getProject().getLocation().toOSString(),getCabalImplDetails().getSandboxPath());
+			}
+		}
+		return null;
+		
 	}
 }

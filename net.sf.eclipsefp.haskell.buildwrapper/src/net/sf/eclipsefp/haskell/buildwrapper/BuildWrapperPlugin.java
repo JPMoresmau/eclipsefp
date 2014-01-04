@@ -377,7 +377,22 @@ public class BuildWrapperPlugin extends AbstractUIPlugin {
 	public static void setMaxConfigureFailures(int maxConfigureFailures) {
 		BuildWrapperPlugin.maxConfigureFailures = maxConfigureFailures;
 	}
-	
+
+	/**
+	 * get location of cabal-dev global sandbox
+	 * @return
+	 */
+	public static IPath getUniqueCabalDevSandboxLocation(){
+	    return getDefault().getStateLocation().append( ".cabal-dev" );
+	 }
+
+	/**
+	 * get location of cabal global sandbox
+	 * @return
+	 */
+	 public static IPath getUniqueCabalSandboxLocation(){
+	    return getDefault().getStateLocation().append( "sandbox" );
+	 }
 
 	  
 }

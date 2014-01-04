@@ -949,13 +949,6 @@ public class ScionManager implements IResourceChangeListener {
     }
   }
 
-  private static IPath getUniqueCabalDevSandboxLocation(){
-    return HaskellUIPlugin.getDefault().getStateLocation().append( ".cabal-dev" );
-  }
-
-  private static IPath getUniqueCabalSandboxLocation(){
-    return HaskellUIPlugin.getDefault().getStateLocation().append( ".cabal-sandbox" );
-  }
 
   public static CabalImplDetails getCabalImplDetails(){
     CabalImplDetails details=new CabalImplDetails();
@@ -968,7 +961,7 @@ public class ScionManager implements IResourceChangeListener {
         details.setExecutable( cabalDev);
         details.setUniqueSandbox( preferenceStore.getBoolean( IPreferenceConstants.UNIQUE_SANDBOX ) );
         String sd=details.isUniqueSandbox()?
-            getUniqueCabalDevSandboxLocation().toOSString()
+            BuildWrapperPlugin.getUniqueCabalDevSandboxLocation().toOSString()
             :BWFacade.DIST_FOLDER_CABALDEV;
         details.setSandboxPath( sd );
         details.getOptions().add("--sandbox="+sd);
@@ -984,12 +977,13 @@ public class ScionManager implements IResourceChangeListener {
         details.setUniqueSandbox( preferenceStore.getBoolean( IPreferenceConstants.UNIQUE_SANDBOX ) );
 
         String sd=details.isUniqueSandbox()?
-            getUniqueCabalSandboxLocation().toOSString()
-            :BWFacade.DIST_FOLDER_CABALSANDBOX;
+            BuildWrapperPlugin.getUniqueCabalSandboxLocation().toOSString()
+            :"";
         details.setSandboxPath( sd );
-        details.getInitOptions().add("--sandbox");
-        details.getInitOptions().add(sd);
-
+        if (details.isUniqueSandbox()){
+          details.getInitOptions().add("--sandbox");
+          details.getInitOptions().add(sd);
+        }
         details.setType( SandboxType.CABAL );
       } else {
         details.setType( SandboxType.NONE );
