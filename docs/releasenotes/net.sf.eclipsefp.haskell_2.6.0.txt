@@ -19,6 +19,7 @@ Features:
 	- Launch configurations for cabal test and cabal bench: allows you to run all test suites or all benchmarks	
 	- Extra license codes in cabal editor
 	- Category drop-down in cabal editor
+	- Generate license file for some licenses in cabal editor
 
 Internal:
 

@@ -200,6 +200,7 @@ public final class UITexts extends NLS {
   public static String legalSection_entryLicense;
   public static String legalSection_entryLicenseFile;
   public static String legalSection_title;
+  public static String legalSection_license_generate;
 
   public static String mkPointFree_refuseDlg_title;
   public static String mkPointFree_refuseDlg_message;

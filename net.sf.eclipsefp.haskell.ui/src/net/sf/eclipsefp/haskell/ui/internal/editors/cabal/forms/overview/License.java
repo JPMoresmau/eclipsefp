@@ -20,7 +20,7 @@ public enum License {
   LGPL ("LGPL", "GNU Lesser General Public License"),
   LGPL3 ("LGPL-3", "GNU Lesser General Public License, version 3"),
   LGPL2 ("LGPL-2.1", "GNU Lesser General Public License, version 2.1"),
-  BSD3 ("BSD3", "3-clause BSD license (no advertising clause)"),
+  BSD3 ("BSD3", "3-clause BSD license (no advertising clause)","bsd3.txt"),
   BSD4 ("BSD4", "4-clause BSD license (with advertising clause)"),
   Apache2 ("Apache-2", "Apache License, version 2.0"),
   MIT ("MIT", "MIT license"),
@@ -30,10 +30,17 @@ public enum License {
 
   private String cabalName;
   private String shownName;
+  private String fileName;
 
   License(final String cabalName, final String shownName) {
     this.cabalName = cabalName;
     this.shownName = shownName;
+  }
+
+  License(final String cabalName, final String shownName,final String fileName) {
+    this.cabalName = cabalName;
+    this.shownName = shownName;
+    this.fileName = fileName;
   }
 
   public String getCabalName() {
@@ -43,4 +50,14 @@ public enum License {
   public String getShownName() {
     return shownName;
   }
+
+
+  /**
+   * @return the fileName
+   */
+  public String getFileName() {
+    return fileName;
+  }
+
+
 }
