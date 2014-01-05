@@ -44,8 +44,8 @@ class DescriptionSection extends CabalFormSection {
     String text3 = UITexts.descriptionSection_entryHomepage;
     createFormEntry( CabalSyntax.FIELD_HOMEPAGE, toolkit, container, text3 );
     String text4 = UITexts.descriptionSection_entryCategory;
-    createFormEntry( CabalSyntax.FIELD_CATEGORY, toolkit, container, text4 );
-
+    createComboFormEntry( CabalSyntax.FIELD_CATEGORY, new CategoryChoice(),
+        toolkit, container, text4 );
     toolkit.paintBordersFor( container );
     getSection().setClient( container );
   }

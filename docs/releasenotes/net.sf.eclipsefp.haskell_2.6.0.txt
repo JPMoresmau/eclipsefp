@@ -17,6 +17,8 @@ Fixes:
 Features:
 	- Support benchmark stanzas in cabal files (https://github.com/JPMoresmau/eclipsefp/issues/109)
 	- Launch configurations for cabal test and cabal bench: allows you to run all test suites or all benchmarks	
+	- Extra license codes in cabal editor
+	- Category drop-down in cabal editor
 
 Internal:
 
