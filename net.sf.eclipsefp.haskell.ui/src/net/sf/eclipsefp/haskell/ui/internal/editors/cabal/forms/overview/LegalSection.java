@@ -16,6 +16,7 @@ import net.sf.eclipsefp.haskell.ui.internal.editors.cabal.forms.CabalFormSection
 import net.sf.eclipsefp.haskell.ui.internal.editors.cabal.forms.FormEntry;
 import net.sf.eclipsefp.haskell.ui.internal.editors.cabal.forms.IFormEntryListener;
 import net.sf.eclipsefp.haskell.ui.internal.util.UITexts;
+import net.sf.eclipsefp.haskell.util.LangUtil;
 import net.sf.eclipsefp.haskell.util.StreamRedirect;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
@@ -187,6 +188,7 @@ class LegalSection extends CabalFormSection {
           IValueVariable[] vars = new IValueVariable[] {
               mgr.newValueVariable( "year", "", true, String.valueOf(Calendar.getInstance().get( Calendar.YEAR )) ),
               mgr.newValueVariable( "owner", "", true, getStanza().getProperties().get( CabalSyntax.FIELD_AUTHOR.toString() )),
+              mgr.newValueVariable( "OWNER", "", true, LangUtil.toUpper( getStanza().getProperties().get( CabalSyntax.FIELD_AUTHOR.toString()))),
           };
           try {
             mgr.addVariables( vars );

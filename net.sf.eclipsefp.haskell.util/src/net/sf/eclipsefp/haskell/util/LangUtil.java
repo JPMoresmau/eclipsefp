@@ -6,6 +6,7 @@
 package net.sf.eclipsefp.haskell.util;
 
 import java.util.Collection;
+import java.util.Locale;
 
 /**
  * Small utility methods, usually to do with Strings or Collections
@@ -68,4 +69,15 @@ public class LangUtil {
 	    return s.substring(0,i+1);
 	}
 
+	/**
+	 * return string in upper case
+	 * @param s
+	 * @return the upper case string, or null if the given string was null
+	 */
+	public static String toUpper(String s){
+		if (s==null || s.length()==0){
+			return s;
+		}
+		return s.toUpperCase(Locale.ENGLISH);
+	}
 }
