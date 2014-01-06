@@ -53,7 +53,9 @@ public class HaskellDocumentProvider extends FileDocumentProvider {
 
   @Override
     protected IDocument createEmptyDocument() {
-      SynchronizableDocument sd= new SynchronizableDocument();
+      org.eclipse.core.internal.filebuffers.SynchronizableDocument sd= new org.eclipse.core.internal.filebuffers.SynchronizableDocument();
+      Object lock= new Object();
+      sd.setLockObject(lock);
       return sd;
     }
 

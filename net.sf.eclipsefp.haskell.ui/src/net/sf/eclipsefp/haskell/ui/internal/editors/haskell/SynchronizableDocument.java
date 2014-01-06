@@ -8,8 +8,9 @@ import org.eclipse.jface.text.Position;
 /**
  * avoid concurrent modification exceptions on annotation position updates by synchronizing all methods
  * @author JP Moresmau
- *
+ * @deprecated let's use filebuffer's implementation
  */
+@Deprecated
 public class SynchronizableDocument extends Document{
 
   @Override

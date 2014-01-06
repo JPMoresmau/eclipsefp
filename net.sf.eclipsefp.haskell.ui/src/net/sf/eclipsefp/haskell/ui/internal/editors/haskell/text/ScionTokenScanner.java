@@ -139,7 +139,7 @@ public class ScionTokenScanner implements IPartitionTokenScanner, IEditorPrefere
   }
 
   @Override
-  public IToken nextToken() {
+  public synchronized IToken nextToken() {
 
      do {
        if (tokenDefs!=null && tokenDefs.hasNext()){
@@ -308,7 +308,7 @@ public class ScionTokenScanner implements IPartitionTokenScanner, IEditorPrefere
   }
 
   @Override
-  public void setRange( final IDocument document, final int offset, final int length ) {
+  public synchronized void setRange( final IDocument document, final int offset, final int length ) {
     currentTokenDef = null;
     // currentToken=null;
 
