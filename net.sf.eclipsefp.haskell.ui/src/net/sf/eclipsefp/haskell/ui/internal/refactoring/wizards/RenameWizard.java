@@ -33,13 +33,9 @@ public class RenameWizard extends RefactoringWizard {
 
   @Override
   protected void addUserInputPages() {
-
-    // TODO lf page for new name
-    // no particular pages - just have the usual preview page
     setDefaultPageTitle( getRefactoring().getName() );
-
     addPage( new RenamePage1( delegate ) );
-  }
 
+  }
 
 }

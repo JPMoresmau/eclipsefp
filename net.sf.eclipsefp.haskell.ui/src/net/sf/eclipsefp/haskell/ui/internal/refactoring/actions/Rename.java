@@ -19,9 +19,21 @@ import org.eclipse.ui.IEditorActionDelegate;
   */
 public class Rename extends RefAction implements IEditorActionDelegate {
 
+  /* (non-Javadoc)
+   * @see org.eclipse.core.commands.AbstractHandler#isEnabled()
+   */
+  @Override
+  public boolean isEnabled() {
+    // cannot rename if we're still analyzing usage
+    UsageThread ut=BuildWrapperPlugin.getDefault().getUsageThread();
+    if (ut!=null && ut.isWorking()){
+      return false;
+    }
+    return super.isEnabled();
+  }
 
   @Override
-  void openWizard() {
+  synchronized void openWizard() {
 
     RenameWizard wizard = new RenameWizard( new RenameDelegate( info ));
     RefactoringWizardOpenOperation op = new RefactoringWizardOpenOperation( wizard );

@@ -8,6 +8,7 @@ package net.sf.eclipsefp.haskell.buildwrapper.usage;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import net.sf.eclipsefp.haskell.buildwrapper.BWFacade;
 import net.sf.eclipsefp.haskell.buildwrapper.BuildWrapperPlugin;
@@ -25,6 +26,10 @@ public class UsageThread extends Thread {
 	private boolean shouldStop=false;
 	
 	private LinkedHashSet<IProject> ps=new LinkedHashSet<IProject>();
+	/**
+	 * are we currently working?
+	 */
+	private AtomicBoolean working=new AtomicBoolean(false);
 	
 	public UsageThread() {
 		super("UsageThread");
@@ -48,6 +53,7 @@ public class UsageThread extends Thread {
 				}
 			}
 			if (!shouldStop){
+				working.set(true);
 				IProject p=getNext();
 					
 				while (p!=null && !shouldStop){
@@ -64,9 +70,13 @@ public class UsageThread extends Thread {
 					}
 				}
 			}
-			
+			working.set(false);
 		}
 		
+	}
+	
+	public boolean isWorking(){
+		return working.get();
 	}
 	
 	private IProject getNext(){
@@ -87,6 +97,8 @@ public class UsageThread extends Thread {
 			ps.notifyAll();
 		}
 	}
+	
+
 	
 	/**
 	 * @param shouldStop the shouldStop to set
