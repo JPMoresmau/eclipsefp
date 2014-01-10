@@ -9,6 +9,7 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
 import java.io.Writer;
 import java.util.ArrayList;
@@ -48,6 +49,7 @@ import net.sf.eclipsefp.haskell.util.LangUtil;
 import net.sf.eclipsefp.haskell.util.OutputWriter;
 import net.sf.eclipsefp.haskell.util.PlatformUtil;
 import net.sf.eclipsefp.haskell.util.SingleJobQueue;
+import net.sf.eclipsefp.haskell.util.StreamRedirect;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
@@ -1077,16 +1079,40 @@ public class BWFacade {
 	 * @return
 	 */
 	public List<ThingAtPoint> getLocals(IFile file,Location location){
-		String path=file.getProjectRelativePath().toOSString();
-		LinkedList<String> command=new LinkedList<String>();
-		command.add("locals");
-		command.add("--file="+path);
-		command.add("--sline="+location.getStartLine());
-		command.add("--scolumn="+(location.getStartColumn()+1));
-		command.add("--eline="+location.getEndLine());
-		command.add("--ecolumn="+(location.getEndColumn()+1));
-		addEditorStanza(file,command);
-		JSONArray arr=run(command,ARRAY);
+		long t0=System.currentTimeMillis();
+		JSONArray arr=null;
+		boolean run=false;
+		if (runningFiles.add(file)){
+			try {
+				Process p=buildProcesses.get(file);
+				if (p!=null){
+					//BuildWrapperPlugin.logInfo("getThingAtPoint longrunning start");
+					String command="l("+location.getStartLine()+","+(location.getStartColumn()+1)+","+location.getEndLine()+","+(location.getEndColumn()+1)+")";
+					p.getOutputStream().write((command+PlatformUtil.NL).getBytes(FileUtil.UTF8));
+					p.getOutputStream().flush();
+					arr=readArrayBW(p);
+					run=true;
+				}
+			} catch (IOException ioe){
+				BuildWrapperPlugin.logError(BWText.process_launch_error, ioe);
+			} finally {
+				//BuildWrapperPlugin.logInfo("getThingAtPoint longrunning end");
+				runningFiles.remove(file);
+			}
+		} 
+		if (arr==null){
+			String path=file.getProjectRelativePath().toOSString();
+			LinkedList<String> command=new LinkedList<String>();
+			command.add("locals");
+			command.add("--file="+path);
+			command.add("--sline="+location.getStartLine());
+			command.add("--scolumn="+(location.getStartColumn()+1));
+			command.add("--eline="+location.getEndLine());
+			command.add("--ecolumn="+(location.getEndColumn()+1));
+			addEditorStanza(file,command);
+			arr=run(command,ARRAY);
+			
+		}
 		List<ThingAtPoint> taps=new ArrayList<ThingAtPoint>();
 		if (arr!=null){
 			if (arr.length()>1){
@@ -1106,6 +1132,8 @@ public class BWFacade {
 				}
 			}
 		}
+		long t1=System.currentTimeMillis();
+		BuildWrapperPlugin.logInfo("getLocals:"+(t1-t0)+"ms ("+taps.size()+","+run+")");
 		return taps;
 	}
 	
