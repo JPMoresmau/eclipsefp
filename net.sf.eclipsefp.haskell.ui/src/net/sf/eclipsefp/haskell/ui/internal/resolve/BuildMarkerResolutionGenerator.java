@@ -240,14 +240,14 @@ public class BuildMarkerResolutionGenerator implements
               for (String s:msg.substring( nlid ).split( "\\n" )){
                 s=s.trim();
                 if (s.length()>0){
-                  if (s.endsWith( "," )){
-                    s=s.substring( 0,s.length()-1 ).trim();
+                  for (String p:s.split( "," )){
+                    p=p.trim();
+                    if (p.endsWith( CabalMessages.ANY)){
+                      p=p.substring( 0,p.length()-CabalMessages.ANY.length() ).trim();
+                    }
+                    all.add(p);
+                    res.add(new InstallMissingPackage( Collections.singleton( p ) ));
                   }
-                  if (s.endsWith( CabalMessages.ANY)){
-                    s=s.substring( 0,s.length()-CabalMessages.ANY.length() ).trim();
-                  }
-                  all.add(s);
-                  res.add(new InstallMissingPackage( Collections.singleton( s ) ));
                 }
               }
               if (all.size()>1){
