@@ -218,6 +218,7 @@
 			<viewShortcut id="net.sf.eclipsefp.haskell.browser.views.declarations.TypesView"/>
 			<viewShortcut id="net.sf.eclipsefp.haskell.browser.views.declarations.FunctionsView"/>
 			<viewShortcut id="net.sf.eclipsefp.haskell.ui.views.CabalPackagesView"/>
+			<viewShortcut id="net.sf.eclipsefp.haskell.ui.internal.views.worksheet.WorkSheetView"/>
 			
 			<newWizardShortcut id="net.sf.eclipsefp.haskell.ui.wizards.NewAlexWizard"/>
 			<newWizardShortcut id="net.sf.eclipsefp.haskell.ui.wizards.NewHappyWizard"/>
@@ -1414,6 +1415,14 @@
             name="%haskellBrowser_cabalPackagesView"
             restorable="true">
       </view>
+      <view
+            category="net.sf.eclipsefp.haskell"
+            class="net.sf.eclipsefp.haskell.ui.internal.views.worksheet.WorkSheetView"
+            icon="icons/eview16/worksheet.png"
+            id="net.sf.eclipsefp.haskell.ui.internal.views.worksheet.WorkSheetView"
+            name="%worksheet.title"
+            restorable="true">
+      </view>
    </extension>
    <extension
          point="org.eclipse.ui.viewActions">
@@ -1763,4 +1772,11 @@
 		<description>%theme.tooltip.font.description</description>
 	</fontDefinition>
  </extension>
+ 
+    <extension
+         id="worksheet"
+         name="%worksheet.marker.name"
+         point="org.eclipse.core.resources.markers">
+      <persistent value="true"/>
+   </extension>
 </plugin>

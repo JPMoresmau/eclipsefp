@@ -9,7 +9,6 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
 import java.io.Writer;
 import java.util.ArrayList;
@@ -32,6 +31,7 @@ import net.sf.eclipsefp.haskell.buildwrapper.types.CabalMessages;
 import net.sf.eclipsefp.haskell.buildwrapper.types.CabalPackage;
 import net.sf.eclipsefp.haskell.buildwrapper.types.Component;
 import net.sf.eclipsefp.haskell.buildwrapper.types.Component.ComponentType;
+import net.sf.eclipsefp.haskell.buildwrapper.types.EvalResult;
 import net.sf.eclipsefp.haskell.buildwrapper.types.ImportClean;
 import net.sf.eclipsefp.haskell.buildwrapper.types.Location;
 import net.sf.eclipsefp.haskell.buildwrapper.types.NameDef;
@@ -49,7 +49,6 @@ import net.sf.eclipsefp.haskell.util.LangUtil;
 import net.sf.eclipsefp.haskell.util.OutputWriter;
 import net.sf.eclipsefp.haskell.util.PlatformUtil;
 import net.sf.eclipsefp.haskell.util.SingleJobQueue;
-import net.sf.eclipsefp.haskell.util.StreamRedirect;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
@@ -1908,6 +1907,60 @@ public class BWFacade {
 			}
 		}
 		return null;
-		
+	}
+	
+	/**
+	 * evaluate an expression
+	 * @param file
+	 * @param expression
+	 * @return a (possibly multiple) list of results
+	 */
+	public List<EvalResult> eval(IFile file,String expression){
+		long t0=System.currentTimeMillis();
+		JSONArray arr=null;
+		if (runningFiles.add(file)){
+			try {
+				Process p=buildProcesses.get(file);
+				if (p!=null){
+					//BuildWrapperPlugin.logInfo("getThingAtPoint longrunning start");
+					String command="e "+expression;
+					p.getOutputStream().write((command+PlatformUtil.NL).getBytes(FileUtil.UTF8));
+					p.getOutputStream().flush();
+					arr=readArrayBW(p);
+				}
+			} catch (IOException ioe){
+				BuildWrapperPlugin.logError(BWText.process_launch_error, ioe);
+			} finally {
+				//BuildWrapperPlugin.logInfo("getThingAtPoint longrunning end");
+				runningFiles.remove(file);
+			}
+		} 
+		if (arr==null){
+			String path=file.getProjectRelativePath().toOSString();
+			LinkedList<String> command=new LinkedList<String>();
+			command.add("eval");
+			command.add("--file="+path);
+			command.add("--expression="+expression);
+			addEditorStanza(file,command);
+			arr=run(command,ARRAY);
+			
+		}
+		List<EvalResult> ers=new ArrayList<EvalResult>();
+		if (arr!=null){
+			JSONArray locs=arr.optJSONArray(0);
+			if (locs!=null){
+				for (int a=0;a<locs.length();a++){
+					try {
+						JSONObject o=locs.getJSONObject(a);
+						ers.add(new EvalResult(o));
+					} catch (JSONException je){
+						BuildWrapperPlugin.logError(BWText.process_parse_thingatpoint_error, je);
+					}
+				}
+			}
+		}
+		long t1=System.currentTimeMillis();
+		BuildWrapperPlugin.logInfo("eval:"+(t1-t0)+"ms ("+ers.size()+")");
+		return ers;
 	}
 }

@@ -6,8 +6,11 @@
 package net.sf.eclipsefp.haskell.buildwrapper;
 
 import java.util.Collection;
+import java.util.List;
 
 import net.sf.eclipsefp.haskell.buildwrapper.types.BuildOptions;
+import net.sf.eclipsefp.haskell.buildwrapper.types.EvalHandler;
+import net.sf.eclipsefp.haskell.buildwrapper.types.EvalResult;
 import net.sf.eclipsefp.haskell.buildwrapper.types.ImportCleanHandler;
 import net.sf.eclipsefp.haskell.buildwrapper.types.Location;
 import net.sf.eclipsefp.haskell.buildwrapper.types.NameDef;
@@ -313,7 +316,7 @@ public class JobFacade  {
 	 * @param handler
 	 * @param ndhandler
 	 */
-	public void updateFromEditor(final IFile file,final IDocument d,final OutlineHandler handler,final NameDefHandler ndhandler,final boolean sync1,final boolean end){
+	public void updateFromEditor(final IFile file,final IDocument d,final OutlineHandler handler,final NameDefHandler ndhandler,final boolean sync1,final boolean end,final List<? extends EvalHandler> handlers){
 		final String jobNamePrefix = NLS.bind(BWText.editor_job_name, getProject().getName());
 	
 		/*
@@ -343,13 +346,22 @@ public class JobFacade  {
 	          
 	          
          	  Collection<NameDef> ns=realFacade.build1LongRunning(file,d,end);
-        	  long t35=System.currentTimeMillis();
+        	  long t4=System.currentTimeMillis();
 	          if (ndhandler!=null){
 	        	  ndhandler.handleNameDefs(ns);
 	          }
+	          long t5=System.currentTimeMillis();
+	          if (!end && handlers!=null){
+	        	  for (EvalHandler h:handlers){
+		        	  List<EvalResult> lers=realFacade.eval(file, h.getExpression());
+		        	  if (lers!=null && lers.size()>0){
+		        		  h.handleResult(lers.get(0));
+		        	  }
+		          }
+	          }
 	          if (BWFacade.logBuildTimes){
-		    	 long t4=System.currentTimeMillis();
-	             BuildWrapperPlugin.logInfo("sync:"+(t1-t0)+"ms,outline:"+(t3-t1)+"ms,build:"+(t35-t3)+"ms,handleNameDefs:"+(t4-t35)+"ms");
+		    	 long t6=System.currentTimeMillis();
+	             BuildWrapperPlugin.logInfo("sync:"+(t1-t0)+"ms,outline:"+(t3-t1)+"ms,build:"+(t4-t3)+"ms,handleNameDefs:"+(t5-t4)+"ms,eval:"+(t6-t5)+"ms");
 		      }
 	        } finally {
 	          monitor.done();
@@ -441,4 +453,38 @@ public class JobFacade  {
 	    //buildJob.schedule();
 	    realFacade.getThingAtPointJobQueue(file).addJob(buildJob);
 	}
+	
+	/**
+	 * launch evaluation of all handlers
+	 * @param file
+	 * @param handlers
+	 */
+	public void eval(final IFile file,final List<? extends EvalHandler> handlers){
+		final String jobNamePrefix = NLS.bind(BWText.job_eval, file.getName());
+		Job buildJob = new Job (jobNamePrefix) {
+		      @Override
+		      protected IStatus run(IProgressMonitor monitor) {
+		        try {
+		          monitor.beginTask(jobNamePrefix, IProgressMonitor.UNKNOWN);
+		          //long t0=System.currentTimeMillis();
+		          for (EvalHandler h:handlers){
+		        	  List<EvalResult> lers=realFacade.eval(file, h.getExpression());
+		        	  if (lers!=null && lers.size()>0){
+		        		  h.handleResult(lers.get(0));
+		        	  }
+		          }
+		          //long t1=System.currentTimeMillis();
+		          //BuildWrapperPlugin.logInfo("thingAtPoint:"+(t1-t0)+"ms");
+		        } finally {
+		          monitor.done();
+		        }
+		        return Status.OK_STATUS;
+		      }
+		    };
+	    buildJob.setRule( file );
+	    buildJob.setPriority(Job.SHORT);
+	    //buildJob.schedule();
+	    realFacade.getThingAtPointJobQueue(file).addJob(buildJob);
+	}
+	
 }

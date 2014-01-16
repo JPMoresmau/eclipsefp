@@ -45,6 +45,8 @@ import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.swt.widgets.Sash;
 import org.eclipse.swt.widgets.Text;
+import org.eclipse.ui.ISharedImages;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.part.ViewPart;
 
 
@@ -312,7 +314,7 @@ public class TestResultView extends ViewPart {
         /** clear all terminated **/
         MenuItem mi=new MenuItem(m,SWT.PUSH);
         mi.setText( UITexts.test_history_clear);
-        mi.setImage( HaskellUIImages.getImage( IImageNames.REMOVE_ALL ) );
+        mi.setImage( PlatformUI.getWorkbench().getSharedImages().getImage( ISharedImages.IMG_ELCL_REMOVEALL ) );
         mi.addSelectionListener( new SelectionAdapter() {
           @Override
           public void widgetSelected(final SelectionEvent e) {

@@ -132,7 +132,7 @@ public class HaskellUIImages implements IImageNames {
     declare(TEST_OK,OBJECT+"testok.gif");
     declare(TEST_RUN,OBJECT+"testrun.gif");
     declare(HISTORY_LIST,ACTION_E+"history_list.gif");
-    declare(REMOVE_ALL,ACTION_E+"removeall.gif");
+    declare(WORKSHEET_OK,OBJECT+"worksheet_ok.png");
   }
 
   private final static void declare( final String key,

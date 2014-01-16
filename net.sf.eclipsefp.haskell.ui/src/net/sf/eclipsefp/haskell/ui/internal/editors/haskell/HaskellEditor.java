@@ -19,6 +19,7 @@ import java.util.ResourceBundle;
 import net.sf.eclipsefp.haskell.buildwrapper.BWFacade;
 import net.sf.eclipsefp.haskell.buildwrapper.BuildWrapperPlugin;
 import net.sf.eclipsefp.haskell.buildwrapper.JobFacade;
+import net.sf.eclipsefp.haskell.buildwrapper.types.EvalHandler;
 import net.sf.eclipsefp.haskell.buildwrapper.types.Location;
 import net.sf.eclipsefp.haskell.buildwrapper.types.NameDef;
 import net.sf.eclipsefp.haskell.buildwrapper.types.NameDefHandler;
@@ -47,6 +48,7 @@ import net.sf.eclipsefp.haskell.ui.internal.resolve.SelectAnnotationForQuickFix;
 import net.sf.eclipsefp.haskell.ui.internal.scion.CabalFileChangeListenerManager;
 import net.sf.eclipsefp.haskell.ui.internal.util.UITexts;
 import net.sf.eclipsefp.haskell.ui.internal.views.outline.HaskellOutlinePage;
+import net.sf.eclipsefp.haskell.ui.internal.views.worksheet.WorkSheetView;
 import net.sf.eclipsefp.haskell.ui.util.CabalFileChangeListener;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.CoreException;
@@ -79,7 +81,9 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorSite;
 import org.eclipse.ui.IFileEditorInput;
+import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.PartInitException;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.contexts.IContextService;
 import org.eclipse.ui.editors.text.EditorsUI;
 import org.eclipse.ui.editors.text.TextEditor;
@@ -504,7 +508,7 @@ public class HaskellEditor extends TextEditor implements IEditorPreferenceNames,
       }*/
       JobFacade jf=BuildWrapperPlugin.getJobFacade( file.getProject() );
       if (jf!=null){
-        jf.updateFromEditor( file,getDocument(), null, null, true, true );
+        jf.updateFromEditor( file,getDocument(), null, null, true, true,null );
       }
     }
 
@@ -528,6 +532,7 @@ public class HaskellEditor extends TextEditor implements IEditorPreferenceNames,
       if (tokenScanner!=null){
         tokenScanner.markTaskTags();
       }
+
     }
     super.editorSaved();
   }
@@ -706,7 +711,15 @@ public class HaskellEditor extends TextEditor implements IEditorPreferenceNames,
           needWrite=true;
         }*/
         //needWrite?getDocument():null
-        jf.updateFromEditor( file,getDocument(), outlineHandler,this,false,false );
+        List<? extends EvalHandler> handlers=null;
+        if (!isDirty() && PlatformUI.getWorkbench().getActiveWorkbenchWindow()!=null && PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage()!=null){
+          IViewPart v=PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().findView( WorkSheetView.ID );
+          if (v instanceof WorkSheetView){
+            handlers=((WorkSheetView)v).getEvalComposites( this );
+          }
+        }
+
+        jf.updateFromEditor( file,getDocument(), outlineHandler,this,false,false,handlers );
         /*if (!isDirty()){ // now we've written and not dirty
           needWrite=false;
         }*/

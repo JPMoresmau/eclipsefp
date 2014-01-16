@@ -1,9 +1,11 @@
 // Copyright (c) 2003-2007 by Leif Frenzel - see http://leiffrenzel.de
 // Copyright (c) 2011 by Alejandro Serrano
+// Copyright (c) 2009-2014 by JP Moresmau
 package net.sf.eclipsefp.haskell.ui;
 
 import net.sf.eclipsefp.haskell.browser.BrowserPerspective;
 import net.sf.eclipsefp.haskell.browser.views.hoogle.HoogleView;
+import net.sf.eclipsefp.haskell.ui.internal.views.worksheet.WorkSheetView;
 import net.sf.eclipsefp.haskell.ui.views.CabalPackagesView;
 import net.sf.eclipsefp.haskell.ui.wizards.NewModuleWizard;
 import org.eclipse.debug.ui.IDebugUIConstants;
@@ -17,6 +19,7 @@ import org.eclipse.ui.progress.IProgressConstants;
 /** <p>The perspective for Haskell development.</p>
   *
   * @author Leif Frenzel
+  * @author JP Moresmau
   */
 public class HaskellPerspective implements IPerspectiveFactory {
 
@@ -46,6 +49,7 @@ public class HaskellPerspective implements IPerspectiveFactory {
     layout.addShowViewShortcut( IPageLayout.ID_OUTLINE );
     layout.addShowViewShortcut( IConsoleConstants.ID_CONSOLE_VIEW );
     layout.addShowViewShortcut( CabalPackagesView.ID );
+    layout.addShowViewShortcut( WorkSheetView.ID );
     layout.addShowViewShortcut( "net.sf.eclipsefp.haskell.debug.ui.test.TestResultView" );
     // Add toolbar and menu actions
     layout.addActionSet( IDebugUIConstants.LAUNCH_ACTION_SET );
@@ -74,6 +78,7 @@ public class HaskellPerspective implements IPerspectiveFactory {
                                                0.75f,
                                                editorArea );
     right.addView( IPageLayout.ID_OUTLINE );
+    right.addView( WorkSheetView.ID);
     right.addView( HoogleView.ID );
     right.addView( CabalPackagesView.ID);
   }
