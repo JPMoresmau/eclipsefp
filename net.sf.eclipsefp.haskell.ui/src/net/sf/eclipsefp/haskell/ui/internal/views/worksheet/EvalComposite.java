@@ -70,6 +70,7 @@ public class EvalComposite extends Composite implements EvalHandler{
     ToolBar tb=new ToolBar( this, SWT.FLAT );
     ToolItem tiRemove=new ToolItem( tb, SWT.PUSH );
     tiRemove.setImage( PlatformUI.getWorkbench().getSharedImages().getImage( ISharedImages.IMG_ELCL_REMOVE ) );
+    tiRemove.setToolTipText( UITexts.worksheet_removeexpression_tooltip );
 
     lResultIcon=new Label( this, SWT.NONE );
     lResultIcon.setBackground( getBackground() );
@@ -131,7 +132,9 @@ public class EvalComposite extends Composite implements EvalHandler{
   public void setToolTipText( final String arg0 ) {
     super.setToolTipText( arg0 );
     for (Control c:getChildren()){
-      c.setToolTipText( arg0 );
+      if (!(c instanceof ToolBar)){
+        c.setToolTipText( arg0 );
+      }
     }
   }
 

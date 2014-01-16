@@ -858,6 +858,7 @@ public final class UITexts extends NLS {
   public static String worksheet_editexpression_title;
   public static String worksheet_removeexpression_title;
   public static String worksheet_removeexpression_message;
+  public static String worksheet_removeexpression_tooltip;
 
   private static final String BUNDLE_NAME = UITexts.class.getPackage()
       .getName() + ".uitexts"; //$NON-NLS-1$
