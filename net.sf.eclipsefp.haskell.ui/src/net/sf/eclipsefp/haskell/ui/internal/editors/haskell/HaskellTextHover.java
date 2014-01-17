@@ -42,6 +42,10 @@ public class HaskellTextHover extends DefaultTextHover implements ITextHoverExte
   private static final String ERROR_ANNOTATION_TYPE = "org.eclipse.ui.workbench.texteditor.error"; //$NON-NLS-1$
   private static final String WARNING_ANNOTATION_TYPE = "org.eclipse.ui.workbench.texteditor.warning"; //$NON-NLS-1$
   private static final String SPELLING_ANNOTATION_TYPE = "org.eclipse.ui.workbench.texteditor.spelling"; //$NON-NLS-1$
+  /**
+   * when name + type is less than this constant in characters, with keep them on the same line
+   */
+  private static final int SHORT_LENGTH=150;
 
   private final DefaultMarkerAnnotationAccess fMarkerAnnotationAccess;
 
@@ -192,10 +196,16 @@ public class HaskellTextHover extends DefaultTextHover implements ITextHoverExte
               String moduleColor = HaskellUIPlugin.getDefault().getPreferenceStore().getString( IEditorPreferenceNames.EDITOR_CON_COLOR );
 
               if (tap.getType()!=null){
+                String t=tap.getType();
+                // if name + type has less than SHORT_LENGTH characters, we keep it on one line
+                boolean tshort=tap.getName().length()+t.length()<SHORT_LENGTH;
+                sb.append(html && tshort ? "<nobr>" : "");
+
                 sb.append(" :: ");
                 sb.append(html ? "<b>" : "");
                 sb.append(tap.getType());
                 sb.append(html ? "</b>" : "");
+                sb.append(html && tshort ? "</nobr>" : "");
               }
               sb.append(html ? "</nobr>" : "");
               if (tap.getModule()!=null){
