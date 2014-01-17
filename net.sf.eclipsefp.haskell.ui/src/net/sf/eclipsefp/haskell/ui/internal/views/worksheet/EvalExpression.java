@@ -29,6 +29,9 @@ public class EvalExpression implements Comparable<EvalExpression>{
    * the index in the list of evaluation for that file
    */
   private int index;
+
+  private ResultType resultType=ResultType.TEXT;
+
   /**
    *
    */
@@ -39,7 +42,12 @@ public class EvalExpression implements Comparable<EvalExpression>{
   public EvalExpression(final IMarker m){
     expression=m.getAttribute( WorkSheetViewPage.MARKER_EXPRESSION, "" );
     index=m.getAttribute( WorkSheetViewPage.MARKER_INDEX, 0 );
-  }
+    try {
+      resultType=ResultType.valueOf( m.getAttribute( WorkSheetViewPage.MARKER_RESULT_TYPE, ResultType.TEXT.toString() ) );
+    } catch (IllegalArgumentException ignore){
+      // noop
+    }
+   }
 
   /**
    * save the expression as a marker on the file
@@ -51,6 +59,7 @@ public class EvalExpression implements Comparable<EvalExpression>{
     IMarker m=f.createMarker( WorkSheetViewPage.MARKER_TYPE );
     m.setAttribute( WorkSheetViewPage.MARKER_EXPRESSION, expression );
     m.setAttribute( WorkSheetViewPage.MARKER_INDEX, index );
+    m.setAttribute( WorkSheetViewPage.MARKER_RESULT_TYPE, String.valueOf(resultType ));
     return m;
   }
 
@@ -99,6 +108,16 @@ public class EvalExpression implements Comparable<EvalExpression>{
 
   public void setIndex( final int index ) {
     this.index = index;
+  }
+
+
+  public ResultType getResultType() {
+    return resultType;
+  }
+
+
+  public void setResultType( final ResultType resultType ) {
+    this.resultType = resultType;
   }
 
 

@@ -19,7 +19,6 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IToolBarManager;
-import org.eclipse.jface.dialogs.InputDialog;
 import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
@@ -51,6 +50,10 @@ public class WorkSheetViewPage extends Page {
    * the index attribute, to ensure consistent ordering over restarts
    */
   public static String MARKER_INDEX="index";
+  /**
+   * type of result
+   */
+  public static String MARKER_RESULT_TYPE="resultType";
 
   /**
    * the hooked editor
@@ -65,6 +68,8 @@ public class WorkSheetViewPage extends Page {
    * the list of evaluation composite, one for each expression, in index order
    */
   private final List<EvalComposite> evalComposites=new ArrayList<EvalComposite>();
+
+  private final AddExpressionAction addAction=new AddExpressionAction();
   /**
    *
    */
@@ -78,17 +83,30 @@ public class WorkSheetViewPage extends Page {
   @Override
   public void createControl( final Composite parent ) {
     mainComposite=new Composite( parent, SWT.NONE );
-    mainComposite.setLayout( new GridLayout( 1, true ));
-    mainComposite.setBackground( parent.getBackground() );
-    build();
+    //RowLayout l=new RowLayout(SWT.VERTICAL);
+    //l.fill=true;
+    //l.pack=true;
+    GridLayout l=new GridLayout( 1, true );
+    l.marginBottom=0;
+    l.marginHeight=0;
+    l.marginLeft=0;
+    l.marginRight=0;
+    l.marginTop=0;
+    l.marginWidth=0;
 
+
+    mainComposite.setLayout( l );
+    mainComposite.setBackground( mainComposite.getDisplay().getSystemColor( SWT.COLOR_LIST_BACKGROUND ) );
+    //mainComposite.setBackground( parent.getBackground() );
+    build();
+    addAction.setEnabled(false);
     IActionBars actionBars= getSite().getActionBars();
     registerToolbarActions(actionBars);
   }
 
   private void registerToolbarActions( final IActionBars actionBars ) {
     IToolBarManager toolBarManager= actionBars.getToolBarManager();
-    toolBarManager.add(new AddExpressionAction());
+    toolBarManager.add(addAction);
 
   }
 
@@ -126,6 +144,7 @@ public class WorkSheetViewPage extends Page {
 
   public void setEditor( final HaskellEditor editor ) {
     this.editor = editor;
+    addAction.setEnabled( this.editor!=null );
     build();
   }
 
@@ -133,31 +152,33 @@ public class WorkSheetViewPage extends Page {
    * build UI from file markers
    */
   private void build(){
-    if (this.editor!=null && mainComposite!=null && !mainComposite.isDisposed()){
+    if (mainComposite!=null && !mainComposite.isDisposed()){
       for (Control c:mainComposite.getChildren()){
         c.dispose();
       }
       evalComposites.clear();
-      final IFile f=this.editor.findFile();
-      if (f!=null){
+      if (this.editor!=null){
+        final IFile f=this.editor.findFile();
+        if (f!=null){
 
 
-        try {
-          IMarker[] mks=f.findMarkers( MARKER_TYPE, true, IResource.DEPTH_ZERO );
-          List<EvalExpression> exprs=new ArrayList<EvalExpression>();
-          for (IMarker mk:mks){
-            EvalExpression expr=new EvalExpression(mk);
-            if (expr.isValid()){
-              exprs.add( expr );
+          try {
+            IMarker[] mks=f.findMarkers( MARKER_TYPE, true, IResource.DEPTH_ZERO );
+            List<EvalExpression> exprs=new ArrayList<EvalExpression>();
+            for (IMarker mk:mks){
+              EvalExpression expr=new EvalExpression(mk);
+              if (expr.isValid()){
+                exprs.add( expr );
+              }
             }
+            Collections.sort( exprs );
+            for (EvalExpression expr:exprs){
+              addComposite(expr);
+            }
+            eval();
+          } catch (CoreException ce){
+            HaskellUIPlugin.log( ce );
           }
-          Collections.sort( exprs );
-          for (EvalExpression expr:exprs){
-            addComposite(expr);
-          }
-          eval();
-        } catch (CoreException ce){
-          HaskellUIPlugin.log( ce );
         }
       }
     }
@@ -286,11 +307,12 @@ public class WorkSheetViewPage extends Page {
      */
     @Override
     public void run() {
-     InputDialog id=new InputDialog( getSite().getShell(), UITexts.worksheet_addexpression_title, UITexts.worksheet_addexpression_message, "", null );
+     EvalExpressionDialog id=new EvalExpressionDialog( getSite().getShell(), UITexts.worksheet_addexpression_title, UITexts.worksheet_addexpression_message, new EvalExpression() );
      if (id.open()==Window.OK){
        EvalExpression expr=new EvalExpression();
        expr.setExpression( id.getValue() );
        expr.setIndex( evalComposites.size() );
+       expr.setResultType( id.getResultType() );
        EvalComposite ec= addComposite( expr );
        final IFile f=editor.findFile();
        if (f!=null){

@@ -10,16 +10,20 @@ import net.sf.eclipsefp.haskell.buildwrapper.types.EvalResult;
 import net.sf.eclipsefp.haskell.ui.internal.util.UITexts;
 import net.sf.eclipsefp.haskell.ui.util.HaskellUIImages;
 import net.sf.eclipsefp.haskell.ui.util.IImageNames;
-import org.eclipse.jface.dialogs.InputDialog;
+import net.sf.eclipsefp.haskell.util.LangUtil;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.window.Window;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.browser.Browser;
+import org.eclipse.swt.browser.ProgressEvent;
+import org.eclipse.swt.browser.ProgressListener;
 import org.eclipse.swt.events.MouseAdapter;
 import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.MouseListener;
 import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
@@ -41,7 +45,7 @@ import org.eclipse.ui.PlatformUI;
  */
 public class EvalComposite extends Composite implements EvalHandler{
   private final EvalExpression expression;
-  private final Text lResult;
+  private Control lResult;
   private final Label lResultIcon;
   /**
    * @param arg0
@@ -75,13 +79,8 @@ public class EvalComposite extends Composite implements EvalHandler{
     lResultIcon=new Label( this, SWT.NONE );
     lResultIcon.setBackground( getBackground() );
     lResultIcon.setLayoutData( new GridData(GridData.VERTICAL_ALIGN_BEGINNING) );
-    lResult=new Text(this,SWT.MULTI | SWT.WRAP);
-    lResult.setEditable( false );
-    lResult.setBackground( getBackground() );
-    lResult.setLayoutData( new GridData(GridData.FILL_HORIZONTAL) );
-    GridData gdResult=new GridData(GridData.FILL_HORIZONTAL);
-    gdResult.horizontalSpan=2;
-    lResult.setLayoutData( gdResult );
+    buildEmptyControl();
+
 
     tiRemove.addSelectionListener( new SelectionAdapter() {
       @Override
@@ -97,9 +96,10 @@ public class EvalComposite extends Composite implements EvalHandler{
 
       @Override
       public void mouseDoubleClick( final MouseEvent event ) {
-         InputDialog id=new InputDialog( getShell(), UITexts.worksheet_editexpression_title, UITexts.worksheet_addexpression_message, getExpression(), null );
+        EvalExpressionDialog id=new EvalExpressionDialog( getShell(), UITexts.worksheet_editexpression_title, UITexts.worksheet_addexpression_message, expression );
           if (id.open()==Window.OK){
             expression.setExpression( id.getValue() );
+            expression.setResultType( id.getResultType() );
             lExpr.setText( getExpression() );
             page.save();
             page.eval();
@@ -111,10 +111,23 @@ public class EvalComposite extends Composite implements EvalHandler{
     lResult.addMouseListener( dbl );
     lResultIcon.addMouseListener( dbl );
     this.addMouseListener( dbl );
+
+    setBackground( getDisplay().getSystemColor( SWT.COLOR_LIST_BACKGROUND ) );
   }
 
   public EvalExpression getEvalExpression() {
     return expression;
+  }
+
+  /* (non-Javadoc)
+   * @see org.eclipse.swt.widgets.Control#setBackground(org.eclipse.swt.graphics.Color)
+   */
+  @Override
+  public void setBackground( final Color arg0 ) {
+    super.setBackground( arg0 );
+    for (Control c:getChildren()){
+      c.setBackground( arg0 );
+    }
   }
 
   /**
@@ -144,6 +157,9 @@ public class EvalComposite extends Composite implements EvalHandler{
   @Override
   public void handleResult( final EvalResult er ) {
     expression.setLastResult( er );
+    if (this.isDisposed()){
+      return;
+    }
     getDisplay().syncExec( new Runnable(){
       /* (non-Javadoc)
        * @see java.lang.Runnable#run()
@@ -152,16 +168,7 @@ public class EvalComposite extends Composite implements EvalHandler{
       public void run() {
         setToolTipText("");
 
-        if (er.getResult()!=null && er.getResult().length()>0){
-          lResult.setText( er.getResult() );
-          lResultIcon.setImage(HaskellUIImages.getImage( IImageNames.WORKSHEET_OK ));
-        } else if (er.getError()!=null && er.getError().length()>0){
-          lResult.setText( er.getError() );
-          lResultIcon.setImage(PlatformUI.getWorkbench().getSharedImages().getImage( ISharedImages.IMG_OBJS_ERROR_TSK ) );
-        } else {
-          lResultIcon.setImage( null );
-          lResult.setText( "" );
-        }
+        buildControl( er );
         if (er.getType()!=null && er.getType().length()>0){
           setToolTipText( er.getType() );
         }
@@ -171,6 +178,88 @@ public class EvalComposite extends Composite implements EvalHandler{
       }
     } );
 
+  }
+
+  private void buildControl(final EvalResult er){
+    if (er.getResult()!=null && er.getResult().length()>0){
+      buildResultControl(er.getResult());
+    } else if (er.getError()!=null && er.getError().length()>0){
+      buildErrorControl( er.getError()  );
+    } else {
+      buildEmptyControl();
+    }
+  }
+
+  private void buildResultControl(final String re){
+    switch (expression.getResultType()){
+      case HTML:
+        buildHTML( re );
+        break;
+      default:
+        buildText( re );
+    }
+
+    lResultIcon.setImage(HaskellUIImages.getImage( IImageNames.WORKSHEET_OK ));
+  }
+
+  private void setCurrentControl(final Control c){
+    lResult=c;
+    GridData gdResult=new GridData(GridData.FILL_HORIZONTAL);
+    gdResult.horizontalSpan=2;
+    lResult.setLayoutData( gdResult );
+    lResult.setBackground( getBackground() );
+  }
+
+  private void buildHTML(final String html){
+    Browser b=null;
+    if (!(lResult instanceof Browser)){
+      if (lResult!=null){
+        lResult.dispose();
+        lResult=null;
+      }
+      b=new Browser(this,SWT.TOP | SWT.RESIZE);
+      b.addProgressListener(new ProgressListener() {
+        @Override
+        public void completed(final ProgressEvent event) {
+          layout(true);
+          getParent().layout(true);
+        }
+        public void changed(final ProgressEvent arg0) {};
+      });
+    } else{
+      b=(Browser)lResult;
+    }
+
+    b.setText(LangUtil.unquote(html) );
+    setCurrentControl(b);
+  }
+
+
+  private void buildText(final String txt){
+    Text t=null;
+    if (!(lResult instanceof Text)){
+      if (lResult!=null){
+        lResult.dispose();
+        lResult=null;
+      }
+      t=new Text(this,SWT.MULTI | SWT.WRAP);
+      t.setEditable( false );
+    } else {
+      t=(Text)lResult;
+    }
+    t.setText( txt );
+    setCurrentControl(t);
+  }
+
+  private void buildErrorControl(final String error){
+    buildText(error);
+    lResultIcon.setImage(PlatformUI.getWorkbench().getSharedImages().getImage( ISharedImages.IMG_OBJS_ERROR_TSK ) );
+
+  }
+
+  private void buildEmptyControl(){
+    lResultIcon.setImage( null );
+    buildText( "" );
   }
 
 }
