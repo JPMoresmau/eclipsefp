@@ -37,6 +37,7 @@ public interface IPreferenceConstants {
   public final static String VERBOSE_INTERACTION = "VERBOSE_INTERACTION";  //$NON-NLS-1$
   public final static String MAX_CONFIGURE_FAILURES = "MAX_CONFIGURE_FAILURES";  //$NON-NLS-1$
   public final static String BROWSER_VERBOSE_INTERACTION = "BROWSER_VERBOSE_INTERACTION";  //$NON-NLS-1$
+  public final static String MAX_EVAL_TIME="MAX_EVAL_TIME";//$NON-NLS-1$
   //public final static String RUN_CABAL_UPDATE = "RUN_CABAL_UPDATE" ; //$NON-NLS-1$
 
   // search paths

@@ -331,38 +331,58 @@ public class JobFacade  {
 	      protected IStatus run(IProgressMonitor monitor) {
 	        try {
 	          monitor.beginTask(jobNamePrefix, IProgressMonitor.UNKNOWN);
-	          long t0=System.currentTimeMillis();
-	          if (needSynchronize){
-	        	  realFacade.synchronize(false);
-	          } else if (sync1){
-	        	  realFacade.synchronize1(file, true);
-	          }
-	          long t1=System.currentTimeMillis();
-	          if (handler!=null){
-	        	  OutlineResult or=realFacade.outline(file,d);
-	        	  handler.handleOutline(or); // avoid removing all outline on error
-	          }
-	          long t3=System.currentTimeMillis();
-	          
-	          
-         	  Collection<NameDef> ns=realFacade.build1LongRunning(file,d,end);
-        	  long t4=System.currentTimeMillis();
-	          if (ndhandler!=null){
-	        	  ndhandler.handleNameDefs(ns);
-	          }
-	          long t5=System.currentTimeMillis();
+	          Runnable r=new Runnable() {
+				
+				@Override
+				public void run() {
+					long t0=System.currentTimeMillis();
+			          if (needSynchronize){
+			        	  realFacade.synchronize(false);
+			          } else if (sync1){
+			        	  realFacade.synchronize1(file, true);
+			          }
+			          long t1=System.currentTimeMillis();
+			          if (handler!=null){
+			        	  OutlineResult or=realFacade.outline(file,d);
+			        	  handler.handleOutline(or); // avoid removing all outline on error
+			          }
+			          long t3=System.currentTimeMillis();
+			          
+			          
+		         	  Collection<NameDef> ns=realFacade.build1LongRunning(file,d,end);
+		        	  long t4=System.currentTimeMillis();
+			          if (ndhandler!=null){
+			        	  ndhandler.handleNameDefs(ns);
+			          }
+			          long t5=System.currentTimeMillis();
+			         
+			          if (BWFacade.logBuildTimes){
+				         BuildWrapperPlugin.logInfo("sync:"+(t1-t0)+"ms,outline:"+(t3-t1)+"ms,build:"+(t4-t3)+"ms,handleNameDefs:"+(t5-t4)+"ms");
+				      }
+					
+				}
+			};
+	          realFacade.waitForThread(r, monitor);
 	          if (!end && handlers!=null){
-	        	  for (EvalHandler h:handlers){
-		        	  List<EvalResult> lers=realFacade.eval(file, h.getExpression());
-		        	  if (lers!=null && lers.size()>0){
-		        		  h.handleResult(lers.get(0));
-		        	  }
-		          }
+	        	  r=new Runnable() {
+					
+					@Override
+					public void run() {
+						long t5=System.currentTimeMillis();
+						for (EvalHandler h:handlers){
+				        	  List<EvalResult> lers=realFacade.eval(file, h.getExpression());
+				        	  if (lers!=null && lers.size()>0){
+				        		  h.handleResult(lers.get(0));
+				        	  }
+				          }
+						 if (BWFacade.logBuildTimes){
+					    	 long t6=System.currentTimeMillis();
+				             BuildWrapperPlugin.logInfo("eval:"+(t6-t5)+"ms");
+					      }
+					}
+				};
+				realFacade.waitForThread(r, monitor,BuildWrapperPlugin.getMaxEvalTime());
 	          }
-	          if (BWFacade.logBuildTimes){
-		    	 long t6=System.currentTimeMillis();
-	             BuildWrapperPlugin.logInfo("sync:"+(t1-t0)+"ms,outline:"+(t3-t1)+"ms,build:"+(t4-t3)+"ms,handleNameDefs:"+(t5-t4)+"ms,eval:"+(t6-t5)+"ms");
-		      }
 	        } finally {
 	          monitor.done();
 	        }
@@ -466,15 +486,19 @@ public class JobFacade  {
 		      protected IStatus run(IProgressMonitor monitor) {
 		        try {
 		          monitor.beginTask(jobNamePrefix, IProgressMonitor.UNKNOWN);
-		          //long t0=System.currentTimeMillis();
-		          for (EvalHandler h:handlers){
-		        	  List<EvalResult> lers=realFacade.eval(file, h.getExpression());
-		        	  if (lers!=null && lers.size()>0){
-		        		  h.handleResult(lers.get(0));
-		        	  }
-		          }
-		          //long t1=System.currentTimeMillis();
-		          //BuildWrapperPlugin.logInfo("thingAtPoint:"+(t1-t0)+"ms");
+		          Runnable r=new Runnable(){
+		        	  public void run() {
+		        		  for (EvalHandler h:handlers){
+				        	  List<EvalResult> lers=realFacade.eval(file, h.getExpression());
+				        	  if (lers!=null && lers.size()>0){
+				        		  h.handleResult(lers.get(0));
+				        	  }
+				          }
+		        	  };
+		          };
+		          realFacade.waitForThread(r, monitor,BuildWrapperPlugin.getMaxEvalTime());
+		          
+
 		        } finally {
 		          monitor.done();
 		        }

@@ -373,6 +373,11 @@ public class ScionManager implements IResourceChangeListener {
     int maxConfigureFailures=preferenceStore.getInt( IPreferenceConstants.MAX_CONFIGURE_FAILURES );
     BuildWrapperPlugin.setMaxConfigureFailures( maxConfigureFailures );
 
+
+    int maxEvalTime=preferenceStore.getInt( IPreferenceConstants.MAX_EVAL_TIME );
+    BuildWrapperPlugin.setMaxConfigureFailures( maxEvalTime );
+
+
     if ( buildWrapperExecutablePath != null && buildWrapperExecutablePath.toFile().exists() ) {
       try {
         /** we get the dreaded message about mismatch cabal versions if the buildwrapper cabal library is not the same as the cabal library used to build the cabal executable **/
@@ -831,6 +836,9 @@ public class ScionManager implements IResourceChangeListener {
           } else if (event.getProperty().equals(IPreferenceConstants.MAX_CONFIGURE_FAILURES)){
             int max = ((Integer)event.getNewValue()).intValue();
             BuildWrapperPlugin.setMaxConfigureFailures( max );
+          } else if (event.getProperty().equals(IPreferenceConstants.MAX_EVAL_TIME)){
+            int max = ((Integer)event.getNewValue()).intValue();
+            BuildWrapperPlugin.setMaxEvalTime( max );
           } else if (event.getProperty().equals( IPreferenceConstants.HASKELL_CONSOLE_HIGH_WATER_MARK )){
             setConsoleMax(((Integer)event.getNewValue()).intValue());
             // update all existing consoles

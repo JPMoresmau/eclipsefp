@@ -58,6 +58,7 @@ public class BuildWrapperPlugin extends AbstractUIPlugin {
 	
 	private static String bwPath;
 	private static int maxConfigureFailures=10;
+	private static int maxEvalTime=30;
 	
 	public static boolean logAnswers=false;
 	
@@ -393,6 +394,14 @@ public class BuildWrapperPlugin extends AbstractUIPlugin {
 	 public static IPath getUniqueCabalSandboxLocation(){
 	    return getDefault().getStateLocation().append( "sandbox" );
 	 }
+
+	public static int getMaxEvalTime() {
+		return maxEvalTime;
+	}
+
+	public static void setMaxEvalTime(int maxEvalTime) {
+		BuildWrapperPlugin.maxEvalTime = maxEvalTime;
+	}
 
 	  
 }

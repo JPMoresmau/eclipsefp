@@ -23,6 +23,7 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicLong;
 
 import net.sf.eclipsefp.haskell.buildwrapper.types.BuildFlags;
 import net.sf.eclipsefp.haskell.buildwrapper.types.BuildOptions;
@@ -75,6 +76,8 @@ public class BWFacade {
 	private static final String prefix="build-wrapper-json:";
 	
 	private static boolean showedNoExeError=false; 
+	
+	private static AtomicLong poll=new AtomicLong(0);
 	
 	private int configureFailures=0;
 	private String bwPath;
@@ -467,33 +470,38 @@ public class BWFacade {
 	}
 	
 	private JSONArray readArrayBW(Process p) throws IOException{
-		JSONArray arr=null;
-		BufferedReader br=new BufferedReader(new InputStreamReader(p.getInputStream(),FileUtil.UTF8));
-		//long t0=System.currentTimeMillis();
-		String l=br.readLine();
-		boolean goOn=true;
-
-		while (goOn && l!=null){
-			if (l.startsWith(prefix)){
-				if (ow!=null && BuildWrapperPlugin.logAnswers) {
-					ow.addMessage(l);
-				}					
-				String jsons=l.substring(prefix.length()).trim();
-				try {
-					arr=ARRAY.fromJSON(jsons);
-				} catch (JSONException je){
-					BuildWrapperPlugin.logError(BWText.process_parse_error, je);
+		registerProcess(p);
+		try {
+			JSONArray arr=null;
+			BufferedReader br=new BufferedReader(new InputStreamReader(p.getInputStream(),FileUtil.UTF8));
+			//long t0=System.currentTimeMillis();
+			String l=br.readLine();
+			boolean goOn=true;
+	
+			while (goOn && l!=null){
+				if (l.startsWith(prefix)){
+					if (ow!=null && BuildWrapperPlugin.logAnswers) {
+						ow.addMessage(l);
+					}					
+					String jsons=l.substring(prefix.length()).trim();
+					try {
+						arr=ARRAY.fromJSON(jsons);
+					} catch (JSONException je){
+						BuildWrapperPlugin.logError(BWText.process_parse_error, je);
+					}
+					goOn=false;
+				} else {
+					if (ow!=null) {
+						ow.addMessage(l);
+					}
+	
+					l=br.readLine();
 				}
-				goOn=false;
-			} else {
-				if (ow!=null) {
-					ow.addMessage(l);
-				}
-
-				l=br.readLine();
 			}
+			return arr;
+		} finally {
+			unregisterProcess();
 		}
-		return arr;
 	}
 	
 	/**
@@ -1657,6 +1665,17 @@ public class BWFacade {
 	 * @param mon the monitor, maybe null
 	 */
 	public void waitForThread(Runnable r,final IProgressMonitor mon){
+		waitForThread(r,mon,0);
+	}
+	
+	/**
+	 * wait in a thread for the runnable to finish, or the monitor to be cancelled
+	 * or a certain amount of seconds to elapse
+	 * @param r the runnable
+	 * @param mon the monitor, maybe null
+	 * @param maxSecs the maximum running time in seconds (0 or less: no limit)
+	 */
+	public void waitForThread(Runnable r,final IProgressMonitor mon,final int maxSecs){
 		// no monitor, nothing to do
 		if (mon==null){
 			r.run();
@@ -1667,31 +1686,42 @@ public class BWFacade {
 			//  should the polling thread continue?
 			final AtomicBoolean doPoll=new AtomicBoolean(true);
 			try {
+				final long t0=System.currentTimeMillis();
+				final long max=maxSecs>0?t0+(maxSecs*1000):Long.MAX_VALUE;
+				BuildWrapperPlugin.logInfo("maxSecs:"+maxSecs+",t0:"+t0+",max:"+max);
 				// the runnable checking if the monitor has been canceled
 				Runnable check=new Runnable(){
 					@Override
 					public void run() {
+						//BuildWrapperPlugin.logInfo("start poll");
 						while (doPoll.get()){
 							try {
 								Thread.sleep(1000); // wait a second
 							} catch (InterruptedException ie){
 								
 							}
+							boolean expired=System.currentTimeMillis()>max;
+							if (expired){
+								BuildWrapperPlugin.logInfo(String.valueOf(System.currentTimeMillis()));
+								BuildWrapperPlugin.logWarning(BWText.process_expired, null);
+							}
 							// canceled!
-							if (mon.isCanceled()){
+							if (mon.isCanceled() || expired ){
+								//BuildWrapperPlugin.logInfo("canceled");
 								// do we have a process?
 								Process p=runningProcesses.remove(jobThread);
 								if (p!=null){
+									//BuildWrapperPlugin.logInfo("destroy");
 									p.destroy(); // destroy the process
 								}
 								return;
 							}
 						}
-						
+						//BuildWrapperPlugin.logInfo("end poll");
 					}
 				};
 				// start polling thread
-				Thread t=new Thread(check);
+				Thread t=new Thread(check,"PollingThread-"+(poll.getAndIncrement()));
 				t.setDaemon(true);
 				t.start();
 				// run the runnable in the current thread, otherwise we get into deadlock (the job waits for the thread, the thread does something that requires a lock on the object tat the job is on)

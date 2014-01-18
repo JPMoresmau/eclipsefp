@@ -844,6 +844,7 @@ public final class UITexts extends NLS {
   public static String option_overwrite;
 
   public static String maxConfigureFailures_title;
+  public static String maxEvalTime_title;
 
   public static String executables_preferences_advanced;
   public static String executables_preferences_console_high;

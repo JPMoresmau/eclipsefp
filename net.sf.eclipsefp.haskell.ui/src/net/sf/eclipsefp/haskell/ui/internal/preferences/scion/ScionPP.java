@@ -53,6 +53,8 @@ public class ScionPP
 
   private IntegerFieldEditor maxConfigureFailuresField;
   private Composite maxConfigureFailuresFieldC;
+  private IntegerFieldEditor evalMaxField;
+  private Composite evalMaxFieldFieldC;
 
   private BooleanFieldEditor verboseBrowserInteractionField;
 
@@ -139,6 +141,18 @@ public class ScionPP
     maxConfigureFailuresField.setPage(this);
     maxConfigureFailuresField.setPreferenceStore( prefStore );
     maxConfigureFailuresField.load();
+
+    evalMaxFieldFieldC = new Composite(bwComposite, SWT.NONE);
+    gd = new GridData(GridData.HORIZONTAL_ALIGN_FILL | GridData.GRAB_HORIZONTAL | GridData.VERTICAL_ALIGN_CENTER);
+    gd.horizontalSpan=2;
+    evalMaxFieldFieldC.setLayoutData( gd);
+    evalMaxField= new IntegerFieldEditor( IPreferenceConstants.MAX_EVAL_TIME,
+        UITexts.maxEvalTime_title,
+        evalMaxFieldFieldC );
+    evalMaxField.setValidRange( 0, Integer.MAX_VALUE );
+    evalMaxField.setPage(this);
+    evalMaxField.setPreferenceStore( prefStore );
+    evalMaxField.load();
 
     // scion-browser
 
@@ -255,6 +269,7 @@ public class ScionPP
 	  store.setDefault( SCION_BROWSER_EXTRA_HOOGLE_PATH, "" );
 	  store.setDefault( BROWSER_START_ONLY_PERSPECTIVE, true );
 	  store.setDefault( MAX_CONFIGURE_FAILURES, 10 );
+	  store.setDefault( MAX_EVAL_TIME, 30 );
 	  store.setDefault( IPreferenceConstants.HASKELL_CONSOLE_HIGH_WATER_MARK, 32 * 1024);// 32K
 	  store.setDefault( IPreferenceConstants.HASKELL_CONSOLE_ACTIVATE_ON_WRITE,false);
 	  store.setDefault( UNIQUE_SANDBOX, false );
