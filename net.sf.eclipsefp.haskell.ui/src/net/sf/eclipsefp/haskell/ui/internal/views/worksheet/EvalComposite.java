@@ -217,21 +217,34 @@ public class EvalComposite extends Composite implements EvalHandler{
         lResult.dispose();
         lResult=null;
       }
-      b=new Browser(this,SWT.TOP | SWT.RESIZE);
+      final Browser fb=new Browser(this,SWT.TOP | SWT.RESIZE);
+      b=fb;
       b.addProgressListener(new ProgressListener() {
         @Override
         public void completed(final ProgressEvent event) {
-          layout(true);
-          getParent().layout(true);
+          int contentHeight = ((Double)fb.evaluate("return document.body.scrollHeight")).intValue();
+          int contentWidth = ((Double)fb.evaluate("return document.body.scrollWidth")).intValue();
+          GridData gdResult=new GridData(GridData.FILL_HORIZONTAL);
+          gdResult.horizontalSpan=2;
+          gdResult.heightHint=contentHeight;
+          gdResult.widthHint=contentWidth;
+          fb.setLayoutData( gdResult );
+
+          EvalComposite.this.layout(true);
+          EvalComposite.this.getParent().layout(true);
         }
-        public void changed(final ProgressEvent arg0) {};
+        @Override
+        public void changed(final ProgressEvent arg0) {
+          EvalComposite.this.layout(true);
+          EvalComposite.this.getParent().layout(true);
+        }
       });
     } else{
       b=(Browser)lResult;
     }
-
-    b.setText(LangUtil.unquote(html) );
     setCurrentControl(b);
+    b.setText(LangUtil.unquote(html) );
+
   }
 
 
@@ -261,5 +274,6 @@ public class EvalComposite extends Composite implements EvalHandler{
     lResultIcon.setImage( null );
     buildText( "" );
   }
+
 
 }
