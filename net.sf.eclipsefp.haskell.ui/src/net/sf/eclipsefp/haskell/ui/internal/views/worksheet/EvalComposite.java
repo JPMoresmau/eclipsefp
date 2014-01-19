@@ -13,6 +13,7 @@ import net.sf.eclipsefp.haskell.ui.util.IImageNames;
 import net.sf.eclipsefp.haskell.util.LangUtil;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.resource.JFaceResources;
+import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.window.Window;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
@@ -28,12 +29,17 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.swt.widgets.ToolItem;
 import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.PlatformUI;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 
 /**
@@ -45,8 +51,10 @@ import org.eclipse.ui.PlatformUI;
  */
 public class EvalComposite extends Composite implements EvalHandler{
   private final EvalExpression expression;
-  private Control lResult;
+  private IControlProvider lResult;
   private final Label lResultIcon;
+  private final MouseListener dblListener;
+
   /**
    * @param arg0
    * @param arg1
@@ -79,20 +87,8 @@ public class EvalComposite extends Composite implements EvalHandler{
     lResultIcon=new Label( this, SWT.NONE );
     lResultIcon.setBackground( getBackground() );
     lResultIcon.setLayoutData( new GridData(GridData.VERTICAL_ALIGN_BEGINNING) );
-    buildEmptyControl();
 
-
-    tiRemove.addSelectionListener( new SelectionAdapter() {
-      @Override
-      public void widgetSelected(final org.eclipse.swt.events.SelectionEvent arg0) {
-        String msg=NLS.bind( UITexts.worksheet_removeexpression_message,expression.getExpression());
-        if (MessageDialog.openConfirm( getShell(), UITexts.worksheet_removeexpression_title, msg )){
-          page.remove( EvalComposite.this );
-        }
-      }
-    } );
-
-    MouseListener dbl=new MouseAdapter() {
+    dblListener=new MouseAdapter() {
 
       @Override
       public void mouseDoubleClick( final MouseEvent event ) {
@@ -107,10 +103,25 @@ public class EvalComposite extends Composite implements EvalHandler{
 
       }
     };
-    lExpr.addMouseListener( dbl);
-    lResult.addMouseListener( dbl );
-    lResultIcon.addMouseListener( dbl );
-    this.addMouseListener( dbl );
+
+
+    buildEmptyControl();
+
+
+    tiRemove.addSelectionListener( new SelectionAdapter() {
+      @Override
+      public void widgetSelected(final org.eclipse.swt.events.SelectionEvent arg0) {
+        String msg=NLS.bind( UITexts.worksheet_removeexpression_message,expression.getExpression());
+        if (MessageDialog.openConfirm( getShell(), UITexts.worksheet_removeexpression_title, msg )){
+          page.remove( EvalComposite.this );
+        }
+      }
+    } );
+
+
+    lExpr.addMouseListener( dblListener);
+    lResultIcon.addMouseListener( dblListener );
+    this.addMouseListener( dblListener );
 
     setBackground( getDisplay().getSystemColor( SWT.COLOR_LIST_BACKGROUND ) );
   }
@@ -195,6 +206,9 @@ public class EvalComposite extends Composite implements EvalHandler{
       case HTML:
         buildHTML( re );
         break;
+      case JSON:
+        buildJSON( re );
+        break;
       default:
         buildText( re );
     }
@@ -202,19 +216,20 @@ public class EvalComposite extends Composite implements EvalHandler{
     lResultIcon.setImage(HaskellUIImages.getImage( IImageNames.WORKSHEET_OK ));
   }
 
-  private void setCurrentControl(final Control c){
+  private void setCurrentControl(final IControlProvider c){
     lResult=c;
     GridData gdResult=new GridData(GridData.FILL_HORIZONTAL);
     gdResult.horizontalSpan=2;
-    lResult.setLayoutData( gdResult );
-    lResult.setBackground( getBackground() );
+    lResult.getControl().setLayoutData( gdResult );
+    lResult.getControl().setBackground( getBackground() );
   }
 
   private void buildHTML(final String html){
+    IControlProvider cp=null;
     Browser b=null;
-    if (!(lResult instanceof Browser)){
+    if (lResult==null || !(lResult.getControl() instanceof Browser)){
       if (lResult!=null){
-        lResult.dispose();
+        lResult.getControl().dispose();
         lResult=null;
       }
       final Browser fb=new Browser(this,SWT.TOP | SWT.RESIZE);
@@ -239,29 +254,36 @@ public class EvalComposite extends Composite implements EvalHandler{
           EvalComposite.this.getParent().layout(true);
         }
       });
+      b.addMouseListener( dblListener );
+      cp=new ControlProvider( b );
     } else{
-      b=(Browser)lResult;
+      cp=lResult;
+      b=(Browser)lResult.getControl();
     }
-    setCurrentControl(b);
+    setCurrentControl(cp);
     b.setText(LangUtil.unquote(html) );
 
   }
 
 
   private void buildText(final String txt){
+    IControlProvider cp=null;
     Text t=null;
-    if (!(lResult instanceof Text)){
+    if (lResult==null || !(lResult.getControl() instanceof Text)){
       if (lResult!=null){
-        lResult.dispose();
+        lResult.getControl().dispose();
         lResult=null;
       }
       t=new Text(this,SWT.MULTI | SWT.WRAP);
       t.setEditable( false );
+      t.addMouseListener( dblListener );
+      cp=new ControlProvider(t);
     } else {
-      t=(Text)lResult;
+      cp=lResult;
+      t=(Text)lResult.getControl();
     }
     t.setText( txt );
-    setCurrentControl(t);
+    setCurrentControl(cp);
   }
 
   private void buildErrorControl(final String error){
@@ -275,5 +297,109 @@ public class EvalComposite extends Composite implements EvalHandler{
     buildText( "" );
   }
 
+  private void buildJSON(final String json){
+    Object root=null;
+    String jsonUQ=LangUtil.unquote( json );
+    try {
+      root=new JSONObject(jsonUQ);
+    } catch (JSONException je){
+      try {
+        root=new JSONArray( jsonUQ );
+      } catch (JSONException je2){
+        root=JSONObject.stringToValue( jsonUQ );
+      }
+    }
+    if (root==null || root instanceof String){
+      buildText(json);
+    } else {
+      TreeControlProvider tcp;
+      if (lResult==null || !(lResult instanceof TreeControlProvider)){
+        if (lResult!=null){
+          lResult.getControl().dispose();
+          lResult=null;
+        }
+       TreeViewer tv=new TreeViewer(this,SWT.SINGLE | SWT.H_SCROLL | SWT.V_SCROLL);
+       tcp=new TreeControlProvider( tv );
+       tcp.viewer.setContentProvider( new JSONContentProvider() );
+       tcp.viewer.setComparator( new JSONContentProvider.JSONComparator() );
+       Listener l=new Listener(){
+         /* (non-Javadoc)
+         * @see org.eclipse.swt.widgets.Listener#handleEvent(org.eclipse.swt.widgets.Event)
+         */
+        @Override
+        public void handleEvent( final Event arg0 ) {
+          // let the tree expand, then layout
+          getDisplay().asyncExec( new Runnable() {
 
+            @Override
+            public void run() {
+              EvalComposite.this.layout(true);
+              EvalComposite.this.getParent().layout(true);
+
+            }
+          } );
+
+
+        }
+       };
+       tcp.viewer.getTree().addListener( SWT.Expand, l );
+       tcp.viewer.getTree().addListener( SWT.Collapse, l );
+       tcp.getControl().addMouseListener( dblListener );
+      } else {
+        tcp=(TreeControlProvider)lResult;
+      }
+      tcp.viewer.setInput( root );
+      setCurrentControl(tcp);
+    }
+  }
+
+  /**
+   * Simple interface to use as wrapper around a control
+   * @author JP Moresmau
+   *
+   */
+  private interface IControlProvider{
+    Control getControl();
+  }
+
+  /**
+   * Simple wrapper
+   * @author JP Moresmau
+   *
+   */
+  private class ControlProvider implements IControlProvider {
+    private final Control ctrl;
+
+    public ControlProvider( final Control ctrl ) {
+      super();
+      this.ctrl = ctrl;
+    }
+
+    @Override
+    public Control getControl(){
+      return ctrl;
+    }
+  }
+
+  /**
+   * we need to do things on the tree viewer, so wrap the viewer instead
+   *
+   * @author JP Moresmau
+   *
+   */
+  private class TreeControlProvider implements IControlProvider {
+    private final TreeViewer viewer;
+
+    public TreeControlProvider(final TreeViewer viewer){
+      this.viewer=viewer;
+    }
+
+    /* (non-Javadoc)
+     * @see net.sf.eclipsefp.haskell.ui.internal.views.worksheet.EvalComposite.IControlProvider#getControl()
+     */
+    @Override
+    public Control getControl() {
+      return viewer.getControl();
+    }
+  }
 }
