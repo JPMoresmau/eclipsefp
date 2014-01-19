@@ -862,6 +862,9 @@ public final class UITexts extends NLS {
   public static String worksheet_removeexpression_tooltip;
   public static String worksheet_expression_empty;
   public static String worksheet_expression_type;
+  public static String worksheet_removeallexpressions_title;
+  public static String worksheet_removeallexpressions_tooltip;
+  public static String worksheet_removeallexpressions_message;
 
 
   private static final String BUNDLE_NAME = UITexts.class.getPackage()

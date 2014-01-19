@@ -19,6 +19,7 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IToolBarManager;
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
@@ -70,6 +71,8 @@ public class WorkSheetViewPage extends Page {
   private final List<EvalComposite> evalComposites=new ArrayList<EvalComposite>();
 
   private final AddExpressionAction addAction=new AddExpressionAction();
+  private final RemoveAllExpressionsAction removeAllAction=new RemoveAllExpressionsAction();
+
   /**
    *
    */
@@ -98,6 +101,7 @@ public class WorkSheetViewPage extends Page {
     mainComposite.setLayout( l );
     mainComposite.setBackground( mainComposite.getDisplay().getSystemColor( SWT.COLOR_LIST_BACKGROUND ) );
     //mainComposite.setBackground( parent.getBackground() );
+    removeAllAction.setEnabled(false);
     build();
     addAction.setEnabled(false);
     IActionBars actionBars= getSite().getActionBars();
@@ -107,7 +111,7 @@ public class WorkSheetViewPage extends Page {
   private void registerToolbarActions( final IActionBars actionBars ) {
     IToolBarManager toolBarManager= actionBars.getToolBarManager();
     toolBarManager.add(addAction);
-
+    toolBarManager.add( removeAllAction );
   }
 
 
@@ -248,6 +252,7 @@ public class WorkSheetViewPage extends Page {
     save();
     comp.dispose();
     mainComposite.layout( true );
+    removeAllAction.setEnabled( evalComposites.size()>0 );
   }
 
 
@@ -268,6 +273,7 @@ public class WorkSheetViewPage extends Page {
     GridData gd=new GridData(GridData.FILL_HORIZONTAL);
     ec.setLayoutData( gd );
     evalComposites.add(ec);
+    removeAllAction.setEnabled( true );
     return ec;
   }
 
@@ -328,6 +334,44 @@ public class WorkSheetViewPage extends Page {
        }
        mainComposite.layout(true);
      }
+    }
+  }
+
+  /**
+   * action: remove all expressions
+   *
+   * @author JP Moresmau
+   *
+   */
+  private class RemoveAllExpressionsAction extends Action{
+
+    /**
+     *
+     */
+    public RemoveAllExpressionsAction() {
+      super();
+      PlatformUI.getWorkbench().getHelpSystem().setHelp(this, "WorkSheet.RemoveAllExpressionsAction"); //$NON-NLS-1$
+      setText(UITexts.worksheet_removeallexpressions_tooltip);
+      setToolTipText(UITexts.worksheet_removeallexpressions_tooltip);
+      setDescription(UITexts.worksheet_removeallexpressions_tooltip);
+      setImageDescriptor( PlatformUI.getWorkbench().getSharedImages().getImageDescriptor( ISharedImages.IMG_ELCL_REMOVEALL ) );
+
+    }
+
+    /* (non-Javadoc)
+     * @see org.eclipse.jface.action.Action#run()
+     */
+    @Override
+    public void run() {
+      if (MessageDialog.openConfirm( getSite().getShell(), UITexts.worksheet_removeallexpressions_title, UITexts.worksheet_removeallexpressions_message )){
+        for (EvalComposite c:evalComposites){
+          c.dispose();
+        }
+        evalComposites.clear();
+        save();
+        mainComposite.layout( true );
+        removeAllAction.setEnabled( false );
+      }
     }
   }
 }
