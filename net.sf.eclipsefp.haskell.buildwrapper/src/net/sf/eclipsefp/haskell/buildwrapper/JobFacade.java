@@ -328,7 +328,7 @@ public class JobFacade  {
 		
 	    Job buildJob = new Job (jobNamePrefix) {
 	      @Override
-	      protected IStatus run(IProgressMonitor monitor) {
+	      protected IStatus run(final IProgressMonitor monitor) {
 	        try {
 	          monitor.beginTask(jobNamePrefix, IProgressMonitor.UNKNOWN);
 	          Runnable r=new Runnable() {
@@ -373,6 +373,9 @@ public class JobFacade  {
 				        	  List<EvalResult> lers=realFacade.eval(file, h.getExpression());
 				        	  if (lers!=null && lers.size()>0){
 				        		  h.handleResult(lers.get(0));
+				        	  }
+				        	  if (monitor.isCanceled()){
+				        		  break;
 				        	  }
 				          }
 						 if (BWFacade.logBuildTimes){

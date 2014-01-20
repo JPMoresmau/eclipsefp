@@ -1688,7 +1688,7 @@ public class BWFacade {
 			try {
 				final long t0=System.currentTimeMillis();
 				final long max=maxSecs>0?t0+(maxSecs*1000):Long.MAX_VALUE;
-				BuildWrapperPlugin.logInfo("maxSecs:"+maxSecs+",t0:"+t0+",max:"+max);
+				//BuildWrapperPlugin.logInfo("maxSecs:"+maxSecs+",t0:"+t0+",max:"+max);
 				// the runnable checking if the monitor has been canceled
 				Runnable check=new Runnable(){
 					@Override
@@ -1711,6 +1711,8 @@ public class BWFacade {
 								// do we have a process?
 								Process p=runningProcesses.remove(jobThread);
 								if (p!=null){
+									buildProcesses.values().remove(p);
+									
 									//BuildWrapperPlugin.logInfo("destroy");
 									p.destroy(); // destroy the process
 								}
@@ -1960,6 +1962,7 @@ public class BWFacade {
 				}
 			} catch (IOException ioe){
 				BuildWrapperPlugin.logError(BWText.process_launch_error, ioe);
+				return Collections.emptyList();
 			} finally {
 				//BuildWrapperPlugin.logInfo("getThingAtPoint longrunning end");
 				runningFiles.remove(file);
@@ -1989,8 +1992,11 @@ public class BWFacade {
 				}
 			}
 		}
-		long t1=System.currentTimeMillis();
-		BuildWrapperPlugin.logInfo("eval:"+(t1-t0)+"ms ("+ers.size()+")");
+		if (logBuildTimes){
+			long t1=System.currentTimeMillis();
+		
+			BuildWrapperPlugin.logInfo("eval:"+(t1-t0)+"ms ("+ers.size()+")");
+		}
 		return ers;
 	}
 }
