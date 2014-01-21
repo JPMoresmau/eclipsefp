@@ -22,6 +22,7 @@ import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
@@ -29,6 +30,7 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.forms.widgets.SharedScrolledComposite;
 import org.eclipse.ui.part.Page;
 
 
@@ -66,6 +68,11 @@ public class WorkSheetViewPage extends Page {
    */
   private Composite mainComposite;
   /**
+   * the composite for scrolling
+   */
+  private SharedScrolledComposite sc1;
+
+  /**
    * the list of evaluation composite, one for each expression, in index order
    */
   private final List<EvalComposite> evalComposites=new ArrayList<EvalComposite>();
@@ -85,7 +92,26 @@ public class WorkSheetViewPage extends Page {
    */
   @Override
   public void createControl( final Composite parent ) {
-    mainComposite=new Composite( parent, SWT.NONE );
+    Composite mainComp= new Composite(parent, SWT.NONE);
+    mainComp.setFont(parent.getFont());
+    GridData gd=new GridData(SWT.FILL,SWT.FILL,true,true);
+    mainComp.setLayoutData( gd );
+    //GridLayout layout= new GridLayout(1,true);
+    FillLayout layout=new FillLayout();
+    layout.marginHeight= 0;
+    layout.marginWidth= 0;
+    mainComp.setLayout(layout);
+
+    sc1 = new SharedScrolledComposite(mainComp,SWT.V_SCROLL | SWT.H_SCROLL){
+      // no implementation required
+    };
+    //gd=new GridData(SWT.FILL,SWT.FILL,true,true);
+    sc1.setLayoutData(gd);
+    mainComposite=new Composite(sc1,SWT.NONE);
+    sc1.setExpandHorizontal(true);
+    sc1.setExpandVertical(true);
+    sc1.setContent( mainComposite );
+
     //RowLayout l=new RowLayout(SWT.VERTICAL);
     //l.fill=true;
     //l.pack=true;
@@ -103,6 +129,9 @@ public class WorkSheetViewPage extends Page {
     //mainComposite.setBackground( parent.getBackground() );
     removeAllAction.setEnabled(false);
     build();
+    layout();
+
+    //sc1.reflow( true );
     addAction.setEnabled(false);
     IActionBars actionBars= getSite().getActionBars();
     registerToolbarActions(actionBars);
@@ -114,6 +143,13 @@ public class WorkSheetViewPage extends Page {
     toolBarManager.add( removeAllAction );
   }
 
+  /**
+   * relayout with scrolling
+   */
+  public void layout(){
+    sc1.reflow( true );
+    mainComposite.layout();
+  }
 
   /**
    * @return the evalComposites
@@ -127,7 +163,7 @@ public class WorkSheetViewPage extends Page {
    */
   @Override
   public Control getControl() {
-    return mainComposite;
+    return sc1.getParent();
   }
 
   /* (non-Javadoc)
@@ -251,8 +287,9 @@ public class WorkSheetViewPage extends Page {
     remove(comp.getEvalExpression());
     save();
     comp.dispose();
-    mainComposite.layout( true );
     removeAllAction.setEnabled( evalComposites.size()>0 );
+    layout();
+
   }
 
 
@@ -332,7 +369,7 @@ public class WorkSheetViewPage extends Page {
            BuildWrapperPlugin.getJobFacade( f.getProject() ).eval( f, Collections.singletonList( ec ) );
          }
        }
-       mainComposite.layout(true);
+       layout();
      }
     }
   }
@@ -369,7 +406,7 @@ public class WorkSheetViewPage extends Page {
         }
         evalComposites.clear();
         save();
-        mainComposite.layout( true );
+        layout();
         removeAllAction.setEnabled( false );
       }
     }

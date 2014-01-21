@@ -54,17 +54,33 @@ import org.json.JSONObject;
  *
  */
 public class EvalComposite extends Composite implements EvalHandler{
+  /**
+   * the expression to evaluate
+   */
   private final EvalExpression expression;
+  /**
+   * the current result UI
+   */
   private IControlProvider lResult;
+  /**
+   * result icon: ok/error
+   */
   private final Label lResultIcon;
+  /**
+   * the listener to edit expression
+   */
   private final MouseListener dblListener;
-
+  /**
+   * the parent page
+   */
+  private final WorkSheetViewPage page;
   /**
    * @param arg0
    * @param arg1
    */
   public EvalComposite(final WorkSheetViewPage page, final EvalExpression expression) {
     super( page.getMainComposite(), SWT.NONE );
+    this.page=page;
     this.expression=expression;
     GridLayout gl=new GridLayout(3,false);
     this.setLayout( gl );
@@ -192,7 +208,7 @@ public class EvalComposite extends Composite implements EvalHandler{
           setToolTipText( er.getType() );
         }
         layout(true);
-        getParent().layout(true);
+        page.layout();
 
       }
     } );
@@ -343,7 +359,7 @@ public class EvalComposite extends Composite implements EvalHandler{
             @Override
             public void run() {
               EvalComposite.this.layout(true);
-              EvalComposite.this.getParent().layout(true);
+              EvalComposite.this.page.layout();
 
             }
           } );
