@@ -5,6 +5,8 @@
  */
 package net.sf.eclipsefp.haskell.ui.internal.views.worksheet;
 
+import java.util.ArrayList;
+import java.util.List;
 import net.sf.eclipsefp.haskell.buildwrapper.types.EvalHandler;
 import net.sf.eclipsefp.haskell.buildwrapper.types.EvalResult;
 import net.sf.eclipsefp.haskell.ui.internal.util.UITexts;
@@ -13,6 +15,8 @@ import net.sf.eclipsefp.haskell.ui.util.IImageNames;
 import net.sf.eclipsefp.haskell.util.LangUtil;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.resource.JFaceResources;
+import org.eclipse.jface.viewers.LabelProvider;
+import org.eclipse.jface.viewers.TreePath;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.window.Window;
 import org.eclipse.osgi.util.NLS;
@@ -96,6 +100,7 @@ public class EvalComposite extends Composite implements EvalHandler{
           if (id.open()==Window.OK){
             expression.setExpression( id.getValue() );
             expression.setResultType( id.getResultType() );
+            expression.setLastResult( null );
             lExpr.setText( getExpression() );
             page.save();
             page.eval();
@@ -167,6 +172,9 @@ public class EvalComposite extends Composite implements EvalHandler{
    */
   @Override
   public void handleResult( final EvalResult er ) {
+    if (expression.getLastResult()!=null && expression.getLastResult().equals( er )){
+      return;
+    }
     expression.setLastResult( er );
     if (this.isDisposed()){
       return;
@@ -313,6 +321,7 @@ public class EvalComposite extends Composite implements EvalHandler{
       buildText(json);
     } else {
       TreeControlProvider tcp;
+      List<List<String>> names=null;
       if (lResult==null || !(lResult instanceof TreeControlProvider)){
         if (lResult!=null){
           lResult.getControl().dispose();
@@ -347,9 +356,68 @@ public class EvalComposite extends Composite implements EvalHandler{
        tcp.getControl().addMouseListener( dblListener );
       } else {
         tcp=(TreeControlProvider)lResult;
+        // converts tree path to simple string paths
+        TreePath[] exp=tcp.viewer.getExpandedTreePaths();
+        if (exp!=null && exp.length>0){
+          names=new ArrayList<List<String>>(exp.length);
+          LabelProvider lp=new LabelProvider();
+          for (TreePath tp:exp){
+            if (tp.getSegmentCount()>0){
+              List<String> names1=new ArrayList<String>(tp.getSegmentCount());
+              for (int a=0;a<tp.getSegmentCount();a++){
+                names1.add(lp.getText( tp.getSegment( a ) ));
+              }
+              names.add(names1);
+            }
+          }
+        }
       }
       tcp.viewer.setInput( root );
       setCurrentControl(tcp);
+      // expand the tree by reconverting name paths into tree paths
+      if (names!=null){
+        LabelProvider lp=new LabelProvider();
+        JSONContentProvider cp=(JSONContentProvider)tcp.viewer.getContentProvider();
+        List<TreePath> tps=new ArrayList<TreePath>();
+        for (Object r:cp.getElements( root )){
+          String rn=lp.getText( r );
+          for (List<String> names1 :names){
+            if (names1.size()>0 && names1.get( 0 ).equals(rn)){
+              List<Object> path=new ArrayList<Object>();
+              path.add( r );
+              addToPath( path, r, names1.subList( 1, names1.size() ), lp, cp );
+              tps.add( new TreePath( path.toArray() ) );
+            }
+          }
+        }
+        if (tps.size()>0){
+          tcp.viewer.setExpandedTreePaths( tps.toArray( new TreePath[tps.size()] ) );
+        }
+      }
+    }
+  }
+
+  /**
+   * converts one level name path into a path of proper objects
+   * @param path the path of objects as given by the content provider
+   * @param parent the parent objects
+   * @param names1 the current name path
+   * @param lp the label provider
+   * @param cp the content provider
+   */
+  private void addToPath(final List<Object> path,final Object parent,final List<String> names1,final LabelProvider lp,final JSONContentProvider cp){
+    if (names1.size()>0){
+      Object[] cs=cp.getChildren( parent );
+      if (cs!=null && cs.length>0){
+        for (Object c:cs){
+          String cn=lp.getText( c);
+
+          if (names1.get( 0 ).equals(cn)){
+            path.add( c );
+            addToPath( path, c, names1.subList( 1, names1.size() ), lp, cp );
+          }
+        }
+      }
     }
   }
 

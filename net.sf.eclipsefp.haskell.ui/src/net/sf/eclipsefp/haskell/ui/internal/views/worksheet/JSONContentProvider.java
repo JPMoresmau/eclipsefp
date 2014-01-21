@@ -140,6 +140,47 @@ public class JSONContentProvider implements ITreeContentProvider {
     public String toString() {
       return name;
     }
+
+    @Override
+    public int hashCode() {
+      final int prime = 31;
+      int result = 1;
+      result = prime * result + ( ( name == null ) ? 0 : name.hashCode() );
+      result = prime * result + ( ( obj == null ) ? 0 : obj.hashCode() );
+      return result;
+    }
+
+    /**
+     * we know that JSONObject doesn't implement equals, but that's fine, we want pointer equality on the JSON object
+     */
+    @Override
+    public boolean equals( final Object obj ) {
+      if( this == obj ) {
+        return true;
+      }
+      if( obj == null ) {
+        return false;
+      }
+      if( getClass() != obj.getClass() ) {
+        return false;
+      }
+      ObjectNode other = ( ObjectNode )obj;
+      if( name == null ) {
+        if( other.name != null ) {
+          return false;
+        }
+      } else if( !name.equals( other.name ) ) {
+        return false;
+      }
+      if( this.obj == null ) {
+        if( other.obj != null ) {
+          return false;
+        }
+      } else if( !this.obj.equals( other.obj ) ) {
+        return false;
+      }
+      return true;
+    }
   }
 
   /**
@@ -163,6 +204,43 @@ public class JSONContentProvider implements ITreeContentProvider {
     @Override
     public String toString() {
        return String.valueOf( idx );
+    }
+
+    @Override
+    public int hashCode() {
+      final int prime = 31;
+      int result = 1;
+      result = prime * result + ( ( arr == null ) ? 0 : arr.hashCode() );
+      result = prime * result + idx;
+      return result;
+    }
+
+    /**
+     * we know that JSONArray doesn't implement equals, but that's fine, we want pointer equality on the JSON array
+     */
+    @Override
+    public boolean equals( final Object obj ) {
+      if( this == obj ) {
+        return true;
+      }
+      if( obj == null ) {
+        return false;
+      }
+      if( getClass() != obj.getClass() ) {
+        return false;
+      }
+      ArrayNode other = ( ArrayNode )obj;
+      if( arr == null ) {
+        if( other.arr != null ) {
+          return false;
+        }
+      } else if( !arr.equals( other.arr ) ) {
+        return false;
+      }
+      if( idx != other.idx ) {
+        return false;
+      }
+      return true;
     }
 
   }
