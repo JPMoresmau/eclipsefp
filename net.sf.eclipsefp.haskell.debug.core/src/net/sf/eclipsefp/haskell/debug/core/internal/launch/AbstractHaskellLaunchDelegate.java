@@ -7,7 +7,9 @@ package net.sf.eclipsefp.haskell.debug.core.internal.launch;
 
 import java.io.File;
 import java.io.IOException;
+import java.text.DateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -17,6 +19,7 @@ import net.sf.eclipsefp.haskell.debug.core.internal.HaskellDebugCore;
 import net.sf.eclipsefp.haskell.debug.core.internal.util.CoreTexts;
 import net.sf.eclipsefp.haskell.util.CommandLineUtil;
 import net.sf.eclipsefp.haskell.util.NetworkUtil;
+import org.apache.commons.lang3.time.DurationFormatUtils;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.ResourcesPlugin;
@@ -197,7 +200,7 @@ public abstract class AbstractHaskellLaunchDelegate extends LaunchConfigurationD
       String programName = determineProgramName( location );
       processAttrs.put( IProcess.ATTR_PROCESS_TYPE, programName );
       preProcessCreation( configuration, mode, launch, processAttrs );
-      IProcess process = null;
+
       Process proc = pb.start();
       if( proc != null ) {
         //String loc = location.toOSString();
@@ -209,11 +212,72 @@ public abstract class AbstractHaskellLaunchDelegate extends LaunchConfigurationD
 //              return new DelayedStreamsProxy(getSystemProcess(), encoding);
 //          }
 //        };
-          process=DebugPlugin.newProcess( launch, proc, configuration.getName(), processAttrs );
-          process.setAttribute( IProcess.ATTR_CMDLINE, CommandLineUtil
-                .renderCommandLine( cmdLine ) );
+        // store start time
+        long startTime=System.currentTimeMillis();
+        processAttrs.put( ILaunchAttributes.START_TIME, String.valueOf(startTime) );
+        String startDate=DateFormat.getDateTimeInstance( DateFormat.LONG, DateFormat.LONG ).format( new Date(startTime) );
+
+        final IProcess process=DebugPlugin.newProcess( launch, proc, startDate, processAttrs );
+        DebugPlugin.getDefault().getLaunchManager().addLaunchListener( new ILaunchesListener2() {
+
+          @Override
+          public void launchesRemoved( final ILaunch[] launches ) {
+            // NOOP
+          }
+
+          /* (non-Javadoc)
+           * @see org.eclipse.debug.core.ILaunchesListener2#launchesTerminated(org.eclipse.debug.core.ILaunch[])
+           */
+          @Override
+          public void launchesTerminated( final ILaunch[] launches ) {
+            for (ILaunch l:launches){
+              if (launch==l){
+                DebugPlugin.getDefault().getLaunchManager().removeLaunchListener( this );
+                // specify duration
+                String type = null;
+                try {
+                    type = configuration.getType().getName();
+                } catch (CoreException e) {
+                  HaskellCorePlugin.log( e );
+                }
+                StringBuilder buffer = new StringBuilder();
+                buffer.append(configuration.getName());
+                if (type != null) {
+                    buffer.append(" ["); //$NON-NLS-1$
+                    buffer.append(type);
+                    buffer.append("] "); //$NON-NLS-1$
+                }
+                String st=process.getAttribute( ILaunchAttributes.START_TIME );
+                if (st!=null && st.length()>0){
+                  long start=Long.parseLong(st);
+                  long dur=System.currentTimeMillis()-start;
+                  buffer.append(DurationFormatUtils.formatDuration(  dur, "mm:ss.SSS")); //$NON-NLS-1$
+                } else {
+                  buffer.append(process.getLabel());
+                }
+                process.setAttribute( IProcess.ATTR_PROCESS_LABEL,buffer.toString());
+              }
+            }
+
+          }
+
+          @Override
+          public void launchesChanged( final ILaunch[] launches ) {
+            // NOOP
+
+          }
+
+          @Override
+          public void launchesAdded( final ILaunch[] launches ) {
+            // NOOP
+
+          }
+        });
+        process.setAttribute( IProcess.ATTR_CMDLINE, CommandLineUtil
+              .renderCommandLine( cmdLine ) );
+        return process;
       }
-      return process;
+      return null;
     } catch( IOException e ) {
       Status status = new Status( IStatus.ERROR,
           HaskellDebugCore.getPluginId(),

@@ -3,7 +3,7 @@
 // version 1.0 (EPL). See http://www.eclipse.org/legal/epl-v10.html
 package net.sf.eclipsefp.haskell.debug.core.internal.launch;
 
-/** <p>contains constant name defintions for launch configuration
+/** <p>contains constant name definitions for launch configuration
   * attributes.</p>
   *
   * @author Leif Frenzel
@@ -32,4 +32,8 @@ public interface ILaunchAttributes {
   String COMMAND_ON_RELOAD = "COMMAND_ON_RELOAD";//$NON-NLS-1$
 
   String NEEDS_HTTP_PROXY  = "NEEDS_HTTP_PROXY";//$NON-NLS-1$
+  /**
+   * start time of the process
+   */
+  String START_TIME  = "START_TIME";//$NON-NLS-1$
 }

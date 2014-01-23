@@ -14,7 +14,7 @@ Fixes:
 	- Remove lines in values shown in single line text fields in cabal editor
 	- Edit cabal implementation in preferences could select the wrong one
 	- Do not allow rename while usage building is running (https://github.com/JPMoresmau/eclipsefp/issues/154)
-	- Do not make popups to small (https://sourceforge.net/p/eclipsefp/discussion/371922/thread/2eec0c41/?limit=25#b636)
+	- Do not make popups too small (https://sourceforge.net/p/eclipsefp/discussion/371922/thread/2eec0c41/?limit=25#b636)
 
 Features:
 	- Support benchmark stanzas in cabal files (https://github.com/JPMoresmau/eclipsefp/issues/109)
@@ -22,6 +22,8 @@ Features:
 	- Extra license codes in cabal editor
 	- Category drop-down in cabal editor
 	- Generate license file for some licenses in cabal editor
+	- Show start time and duration of console processes
+	- Haskell worksheet view
 
 Internal:
 
