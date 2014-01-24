@@ -19,7 +19,6 @@ import net.sf.eclipsefp.haskell.debug.core.internal.HaskellDebugCore;
 import net.sf.eclipsefp.haskell.debug.core.internal.util.CoreTexts;
 import net.sf.eclipsefp.haskell.util.CommandLineUtil;
 import net.sf.eclipsefp.haskell.util.NetworkUtil;
-import org.apache.commons.lang3.time.DurationFormatUtils;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.ResourcesPlugin;
@@ -251,7 +250,7 @@ public abstract class AbstractHaskellLaunchDelegate extends LaunchConfigurationD
                 if (st!=null && st.length()>0){
                   long start=Long.parseLong(st);
                   long dur=System.currentTimeMillis()-start;
-                  buffer.append(DurationFormatUtils.formatDuration(  dur, "mm:ss.SSS")); //$NON-NLS-1$
+                  buffer.append(CoreTexts.formatDuration(  dur));
                 } else {
                   buffer.append(process.getLabel());
                 }

@@ -13,7 +13,8 @@ Require-Bundle: net.sf.eclipsefp.haskell.core,
  org.eclipse.core.resources,
  org.eclipse.core.runtime,
  org.eclipse.ui,
- org.junit4
+ org.junit4,
+ net.sf.eclipsefp.haskell.debug.core;bundle-version="2.6.0"
 Bundle-ActivationPolicy: lazy
 Bundle-RequiredExecutionEnvironment: J2SE-1.5
 Export-Package: net.sf.eclipsefp.haskell.debug.ui.test

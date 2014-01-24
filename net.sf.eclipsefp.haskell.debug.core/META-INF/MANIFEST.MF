@@ -28,6 +28,7 @@ Export-Package: net.sf.eclipsefp.haskell.debug.core.internal,
    net.sf.eclipsefp.haskell.ui,
    net.sf.eclipsefp.haskell.debug.ui,
    net.sf.eclipsefp.haskell.hugs",
+ net.sf.eclipsefp.haskell.debug.core.internal.util,
  net.sf.eclipsefp.haskell.debug.core.test
 Bundle-ClassPath: .,
  lib/jdom.jar
