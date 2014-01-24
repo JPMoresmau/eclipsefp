@@ -1,3 +1,8 @@
+/** 
+ * Copyright (c) 2012 by JP Moresmau
+ * This code is made available under the terms of the Eclipse Public License,
+ * version 1.0 (EPL). See http://www.eclipse.org/legal/epl-v10.html
+ */
 package net.sf.eclipsefp.haskell.buildwrapper.types;
 
 import java.util.Map;
@@ -32,14 +37,15 @@ public class Note {
 	
 	public Note(JSONObject json) throws JSONException {
 		String kind = json.getString("kind");
-		if (kind.equals("error"))
+		if (kind.equals("error")){
 			this.kind = Kind.ERROR;
-		else if (kind.equals("warning"))
+		} else if (kind.equals("warning")){
 			this.kind = Kind.WARNING;
-		else if (kind.equals("info"))
+		} else if (kind.equals("info")){
 			this.kind = Kind.INFO;
-		else
+		} else{
 			this.kind = Kind.OTHER;
+		}
 		
 		this.location = new Location(json.getJSONObject("location"));
 		
