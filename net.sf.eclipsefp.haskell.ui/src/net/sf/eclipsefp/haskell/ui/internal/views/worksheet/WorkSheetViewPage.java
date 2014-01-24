@@ -163,7 +163,10 @@ public class WorkSheetViewPage extends Page {
    */
   @Override
   public Control getControl() {
-    return sc1.getParent();
+    if (sc1!=null && !sc1.isDisposed()){
+      return sc1.getParent();
+    }
+    return null;
   }
 
   /* (non-Javadoc)
