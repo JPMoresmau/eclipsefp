@@ -84,20 +84,15 @@ public class EvalComposite extends Composite implements EvalHandler{
     this.expression=expression;
     GridLayout gl=new GridLayout(3,false);
     this.setLayout( gl );
-    final Text lExpr=new Text(this,SWT.NONE);
+    final Text lExpr=new Text(this,SWT.WRAP | SWT.MULTI);
     lExpr.setEditable( false );
     lExpr.setBackground( getBackground() );
-    /*Font f=lExpr.getFont();
-    f.getFontData()[0].setStyle( f.getFontData()[0].getStyle()| SWT.ITALIC );
-    f.getFontData()
-    lExpr.setFont( f );*/
     lExpr.setFont(JFaceResources.getFontRegistry().getItalic(lExpr.getFont().getFontData()[0].getName()));
     GridData gdExpr=new GridData(GridData.FILL_HORIZONTAL) ;
     gdExpr.horizontalSpan=2;
+    gdExpr.widthHint=getBounds().width;
     lExpr.setLayoutData(gdExpr);
     lExpr.setText( getExpression() );
-    //Button bRemove=new Button(this,SWT.PUSH | SWT.FLAT);
-    //bRemove.setImage( PlatformUI.getWorkbench().getSharedImages().getImage( ISharedImages.IMG_ELCL_REMOVE ) );
 
     ToolBar tb=new ToolBar( this, SWT.FLAT );
     ToolItem tiRemove=new ToolItem( tb, SWT.PUSH );
