@@ -326,7 +326,8 @@ public class WorkSheetViewPage extends Page {
       if (f!=null){
         BWFacade bwf=BuildWrapperPlugin.getFacade( f.getProject() );
         if (bwf!=null){
-          BuildWrapperPlugin.getJobFacade( f.getProject() ).eval( f, evalComposites );
+          // clone the list to avoid potential concurrent modifications
+          BuildWrapperPlugin.getJobFacade( f.getProject() ).eval( f, new ArrayList<EvalComposite>(evalComposites) );
         }
       }
     }
