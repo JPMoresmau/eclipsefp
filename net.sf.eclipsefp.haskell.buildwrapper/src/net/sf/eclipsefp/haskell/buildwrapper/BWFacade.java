@@ -348,7 +348,6 @@ public class BWFacade {
 	public Collection<NameDef> build1LongRunning(IFile file,IDocument d,boolean end){
 		//BuildFlagInfo i=getBuildFlags(file);
 		//BuildWrapperPlugin.logInfo("build1LongRunning");
-
 		if (bwPath==null){
 			if (!showedNoExeError){
 				BuildWrapperPlugin.logError(BWText.error_noexe, null);
@@ -858,7 +857,6 @@ public class BWFacade {
 	
 	public List<TokenDef> tokenTypes(IFile file){
 		//long t0=System.currentTimeMillis();
-		
 		JSONArray arr=null;
 		if (runningFiles.add(file)){
 			Process p=buildProcesses.get(file);
@@ -871,7 +869,7 @@ public class BWFacade {
 				}
 				//BuildWrapperPlugin.logInfo("tokenTypes longrunning");
 			} catch (IOException ioe){
-				BuildWrapperPlugin.logError(BWText.process_launch_error, ioe);
+				//BuildWrapperPlugin.logError(BWText.process_launch_error, ioe);
 			} finally {
 				//BuildWrapperPlugin.logInfo("tokenTypes longrunning end");
 				runningFiles.remove(file);
@@ -1948,7 +1946,9 @@ public class BWFacade {
 	 * @return a (possibly multiple) list of results
 	 */
 	public List<EvalResult> eval(IFile file,String expression){
+		
 		long t0=System.currentTimeMillis();
+		expression=expression.replace('\n', ' ').replace('\r',' ');
 		JSONArray arr=null;
 		if (runningFiles.add(file)){
 			try {
