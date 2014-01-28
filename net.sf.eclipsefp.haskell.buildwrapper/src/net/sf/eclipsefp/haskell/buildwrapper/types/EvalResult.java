@@ -5,6 +5,8 @@
  */
 package net.sf.eclipsefp.haskell.buildwrapper.types;
 
+import net.sf.eclipsefp.haskell.util.LangUtil;
+
 import org.json.JSONObject;
 
 /**
@@ -38,13 +40,27 @@ public class EvalResult {
 			type=obj.optString("t");
 		}
 		if (!obj.isNull("r")){
-			result=obj.optString("r");
+			result=unshow(obj.optString("r"));
 		}
 		if (!obj.isNull("e")){
 			error=obj.optString("e");
 		}
 	}
 
+	/**
+	 * undoes what shows does for strings
+	 * @param s
+	 * @return
+	 */
+	private static String unshow(String s){
+		if (s==null || s.trim().length()==0){
+			return s;
+		}
+		String uq=LangUtil.unquote(s);
+		return uq.replace("\\\\","\\").replace("\\n", "\n").replace("\\\"", "\"");
+		
+	}
+	
 	public String getType() {
 		return type;
 	}
