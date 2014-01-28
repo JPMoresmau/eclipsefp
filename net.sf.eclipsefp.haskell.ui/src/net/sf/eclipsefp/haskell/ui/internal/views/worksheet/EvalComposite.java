@@ -12,7 +12,6 @@ import net.sf.eclipsefp.haskell.buildwrapper.types.EvalResult;
 import net.sf.eclipsefp.haskell.ui.internal.util.UITexts;
 import net.sf.eclipsefp.haskell.ui.util.HaskellUIImages;
 import net.sf.eclipsefp.haskell.ui.util.IImageNames;
-import net.sf.eclipsefp.haskell.util.LangUtil;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.viewers.LabelProvider;
@@ -24,6 +23,7 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.browser.Browser;
 import org.eclipse.swt.browser.ProgressEvent;
 import org.eclipse.swt.browser.ProgressListener;
+import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.events.MouseAdapter;
 import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.MouseListener;
@@ -90,7 +90,7 @@ public class EvalComposite extends Composite implements EvalHandler{
     lExpr.setFont(JFaceResources.getFontRegistry().getItalic(lExpr.getFont().getFontData()[0].getName()));
     GridData gdExpr=new GridData(GridData.FILL_HORIZONTAL) ;
     gdExpr.horizontalSpan=2;
-    gdExpr.widthHint=getBounds().width;
+    gdExpr.widthHint=getBounds().width-20;
     lExpr.setLayoutData(gdExpr);
     lExpr.setText( getExpression() );
 
@@ -239,6 +239,7 @@ public class EvalComposite extends Composite implements EvalHandler{
     lResult=c;
     GridData gdResult=new GridData(GridData.FILL_HORIZONTAL);
     gdResult.horizontalSpan=2;
+    gdResult.widthHint=getBounds().width-40;
     lResult.getControl().setLayoutData( gdResult );
     lResult.getControl().setBackground( getBackground() );
   }
@@ -280,29 +281,30 @@ public class EvalComposite extends Composite implements EvalHandler{
       b=(Browser)lResult.getControl();
     }
     setCurrentControl(cp);
-    b.setText(LangUtil.unquote(html) );
+    b.setText(html);
 
   }
 
 
   private void buildText(final String txt){
     IControlProvider cp=null;
-    Text t=null;
-    if (lResult==null || !(lResult.getControl() instanceof Text)){
+    StyledText t=null;
+    if (lResult==null || !(lResult.getControl() instanceof StyledText)){
       if (lResult!=null){
         lResult.getControl().dispose();
         lResult=null;
       }
-      t=new Text(this,SWT.MULTI | SWT.WRAP);
+      // styled text wraps even if no text
+      t=new StyledText(this,SWT.MULTI | SWT.WRAP);
       t.setEditable( false );
       t.addMouseListener( dblListener );
       cp=new ControlProvider(t);
     } else {
       cp=lResult;
-      t=(Text)lResult.getControl();
+      t=(StyledText)lResult.getControl();
     }
-    t.setText( txt );
     setCurrentControl(cp);
+    t.setText( txt );
   }
 
   private void buildErrorControl(final String error){
@@ -318,14 +320,13 @@ public class EvalComposite extends Composite implements EvalHandler{
 
   private void buildJSON(final String json){
     Object root=null;
-    String jsonUQ=LangUtil.unquote( json );
     try {
-      root=new JSONObject(jsonUQ);
+      root=new JSONObject(json);
     } catch (JSONException je){
       try {
-        root=new JSONArray( jsonUQ );
+        root=new JSONArray( json );
       } catch (JSONException je2){
-        root=JSONObject.stringToValue( jsonUQ );
+        root=JSONObject.stringToValue( json );
       }
     }
     if (root==null || root instanceof String){
