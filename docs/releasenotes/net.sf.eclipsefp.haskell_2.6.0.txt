@@ -15,6 +15,7 @@ Fixes:
 	- Edit cabal implementation in preferences could select the wrong one
 	- Do not allow rename while usage building is running (https://github.com/JPMoresmau/eclipsefp/issues/154)
 	- Do not make popups too small (https://sourceforge.net/p/eclipsefp/discussion/371922/thread/2eec0c41/?limit=25#b636)
+	- LINE Pragmas that do not start the line are handled correctly (https://github.com/JPMoresmau/eclipsefp/issues/161)
 
 Features:
 	- Support benchmark stanzas in cabal files (https://github.com/JPMoresmau/eclipsefp/issues/109)
