@@ -15,7 +15,7 @@ import net.sf.eclipsefp.haskell.buildwrapper.types.ImportSpecDef;
 import net.sf.eclipsefp.haskell.buildwrapper.types.Location;
 import net.sf.eclipsefp.haskell.core.cabalmodel.TestDocument;
 import net.sf.eclipsefp.haskell.util.PlatformUtil;
-import org.eclipse.jface.text.contentassist.CompletionProposal;
+import org.eclipse.jface.text.contentassist.ICompletionProposal;
 import org.junit.Test;
 
 
@@ -32,7 +32,7 @@ public class AnImport_PDETest {
     Location loc=new Location( "TestSimpleRemove.hs",2,0,2,44);
     ImportDef def=new ImportDef( "Data.Sequence", loc, false, false, null );
     AnImport ai=new AnImport( def, false );
-    CompletionProposal cp=ai.removeItem( td, "singleton" , "remove" );
+    ICompletionProposal cp=ai.removeItem( td, "singleton" , "remove" );
     assertNotNull( cp );
     cp.apply( td );
     // test at end
@@ -56,7 +56,7 @@ public class AnImport_PDETest {
     Location loc=new Location( "TestSimpleRemove.hs",2,0,2,48);
     ImportDef def=new ImportDef( "Data.Sequence", loc, false, false, null );
     AnImport ai=new AnImport( def, false );
-    CompletionProposal cp=ai.removeItem( td, "Seq" , "remove" );
+    ICompletionProposal cp=ai.removeItem( td, "Seq" , "remove" );
     assertNotNull( cp );
     cp.apply( td );
     assertEquals("module TestSimpleRemove where"+PlatformUtil.NL+"import Data.Sequence (singleton, empty)"+PlatformUtil.NL,td.get());
@@ -69,7 +69,7 @@ public class AnImport_PDETest {
     Location loc=new Location( "TestSimpleRemove.hs",2,0,2,48);
     ImportDef def=new ImportDef( "Data.Sequence", loc, false, false, null );
     AnImport ai=new AnImport( def, false );
-    CompletionProposal cp=ai.removeItem( td, "Seq" , "remove" );
+    ICompletionProposal cp=ai.removeItem( td, "Seq" , "remove" );
     assertNotNull( cp );
     cp.apply( td );
     assertEquals("module TestSimpleRemove where"+PlatformUtil.NL+"import Data.Sequence (singleton, empty)"+PlatformUtil.NL,td.get());
@@ -82,7 +82,7 @@ public class AnImport_PDETest {
     Location loc=new Location( "TestSimpleRemove.hs",2,0,2,48);
     ImportDef def=new ImportDef( "Data.Sequence", loc, false, false, null );
     AnImport ai=new AnImport( def, false );
-    CompletionProposal cp=ai.removeItem( td, Arrays.asList("Seq","singleton") , "remove" );
+    ICompletionProposal cp=ai.removeItem( td, Arrays.asList("Seq","singleton") , "remove" );
     assertNotNull( cp );
     cp.apply( td );
     assertEquals("module TestSimpleRemove where"+PlatformUtil.NL+"import Data.Sequence (empty)"+PlatformUtil.NL,td.get());
@@ -95,7 +95,7 @@ public class AnImport_PDETest {
     Location loc=new Location( "TestSimpleRemove.hs",2,0,2,26);
     ImportDef def=new ImportDef( "Data.Sequence", loc, false, false, null );
     AnImport ai=new AnImport( def, false );
-    CompletionProposal cp=ai.removeItem( td, "Seq" , "remove" );
+    ICompletionProposal cp=ai.removeItem( td, "Seq" , "remove" );
     assertNotNull( cp );
     cp.apply( td );
     assertEquals("module TestSimpleRemove where"+PlatformUtil.NL+"import Data.Sequence ()"+PlatformUtil.NL,td.get());
@@ -120,7 +120,7 @@ public class AnImport_PDETest {
     Location loc=new Location( "TestSimpleRemove.hs",2,0,2,32);
     ImportDef def=new ImportDef( "Data.Sequence", loc, false, false, null );
     AnImport ai=new AnImport( def, false );
-    CompletionProposal cp=ai.removeItem( td, "><" , "remove" );
+    ICompletionProposal cp=ai.removeItem( td, "><" , "remove" );
     assertNotNull( cp );
     cp.apply( td );
     assertEquals("module TestSimpleRemove where"+PlatformUtil.NL+"import Data.Sequence (Seq)"+PlatformUtil.NL,td.get());
@@ -132,7 +132,7 @@ public class AnImport_PDETest {
     Location loc=new Location( "testRemoveSuperString.hs",2,0,2,56);
     ImportDef def=new ImportDef( "Control.Monad.Trans.Reader", loc, false, false, null );
     AnImport ai=new AnImport( def, false );
-    CompletionProposal cp=ai.removeItem( td, "runReader" , "remove" );
+    ICompletionProposal cp=ai.removeItem( td, "runReader" , "remove" );
     assertNotNull( cp );
     cp.apply( td );
     assertEquals("module TestSimpleRemove where"+PlatformUtil.NL+"import Control.Monad.Trans.Reader (runReaderT)"+PlatformUtil.NL,td.get());
@@ -144,7 +144,7 @@ public class AnImport_PDETest {
     Location loc=new Location( "testRemoveSuperString.hs",2,0,2,56);
     ImportDef def=new ImportDef( "Control.Monad.Trans.Reader", loc, false, false, null );
     AnImport ai=new AnImport( def, false );
-    CompletionProposal cp=ai.removeItem( td, "runReader" , "remove" );
+    ICompletionProposal cp=ai.removeItem( td, "runReader" , "remove" );
     assertNotNull( cp );
     cp.apply( td );
     assertEquals("module TestSimpleRemove where"+PlatformUtil.NL+"import Control.Monad.Trans.Reader (runReaderT)"+PlatformUtil.NL,td.get());
@@ -161,7 +161,7 @@ public class AnImport_PDETest {
     def.getChildren().add(sp1);
     def.getChildren().add(sp2);
     AnImport ai=new AnImport( def, false );
-    CompletionProposal cp=ai.addItem(td, "singleton" , "add" );
+    ICompletionProposal cp=ai.addItem(td, "singleton" , "add" );
     assertNotNull( cp );
     cp.apply( td );
     assertEquals("module TestSimpleRemove where"+PlatformUtil.NL+"import Data.Sequence ((><), Seq, singleton)"+PlatformUtil.NL,td.get());
@@ -176,7 +176,7 @@ public class AnImport_PDETest {
     Location loc=new Location( "TestSimpleRemove.hs",2,0,2,20);
     ImportDef def=new ImportDef( "Data.Sequence", loc, false, false, null );
     AnImport ai=new AnImport( def, false );
-    CompletionProposal cp=ai.addItem(td, "singleton" , "add" );
+    ICompletionProposal cp=ai.addItem(td, "singleton" , "add" );
     assertNotNull( cp );
     cp.apply( td );
     assertEquals("module TestSimpleRemove where"+PlatformUtil.NL+"import Data.Sequence (singleton)"+PlatformUtil.NL,td.get());
@@ -189,7 +189,7 @@ public class AnImport_PDETest {
     ImportDef def=new ImportDef( "Data.Sequence", loc, false, false, null );
     def.setChildren( new ArrayList<ImportSpecDef>() );
     AnImport ai=new AnImport( def, false );
-    CompletionProposal cp=ai.addItem(td, "singleton" , "add" );
+    ICompletionProposal cp=ai.addItem(td, "singleton" , "add" );
     assertNotNull( cp );
     cp.apply( td );
     assertEquals("module TestSimpleRemove where"+PlatformUtil.NL+"import Data.Sequence (singleton)"+PlatformUtil.NL,td.get());
@@ -204,7 +204,7 @@ public class AnImport_PDETest {
     def.setChildren( new ArrayList<ImportSpecDef>() );
     def.getChildren().add(sp1);
     AnImport ai=new AnImport( def, false );
-    CompletionProposal cp=ai.addItem(td, "><" , "add" );
+    ICompletionProposal cp=ai.addItem(td, "><" , "add" );
     assertNotNull( cp );
     cp.apply( td );
     assertEquals("module TestSimpleRemove where"+PlatformUtil.NL+"import Data.Sequence (Seq, (><))"+PlatformUtil.NL,td.get());

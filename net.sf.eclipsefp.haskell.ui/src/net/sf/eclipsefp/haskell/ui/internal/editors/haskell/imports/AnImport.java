@@ -39,10 +39,11 @@ import net.sf.eclipsefp.haskell.buildwrapper.types.OutlineResult;
 import net.sf.eclipsefp.haskell.core.util.ResourceUtil;
 import net.sf.eclipsefp.haskell.ui.HaskellUIPlugin;
 import net.sf.eclipsefp.haskell.ui.internal.editors.haskell.HaskellEditor;
+import net.sf.eclipsefp.haskell.ui.internal.resolve.DiscreteCompletionProposal;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.jface.text.IDocument;
-import org.eclipse.jface.text.contentassist.CompletionProposal;
+import org.eclipse.jface.text.contentassist.ICompletionProposal;
 
 /**
  * Represents information about an import: if it's qualified,
@@ -353,7 +354,7 @@ public class AnImport {
     }
   }
 
-  public CompletionProposal addItem(final IDocument doc, final String item, final String label) {
+  public ICompletionProposal addItem(final IDocument doc, final String item, final String label) {
     try {
       String ritem=item;
       char c0=ritem.charAt( 0 );
@@ -371,8 +372,8 @@ public class AnImport {
 
       int pos = contents.indexOf( '(' );
       if (pos==-1){
-        return new CompletionProposal( " ("+ritem+")", en, 0,
-            ritem.length(), ImageCache.MODULE, label, null, "" );
+        return new DiscreteCompletionProposal( " ("+ritem+")", en, 0,
+            ImageCache.MODULE, label, null, "" );
       }
       // We have some items
       // Trim end the elements
@@ -385,7 +386,7 @@ public class AnImport {
       if (importDef.getChildren()!=null && importDef.getChildren().size()>0){
         contentsToAdd = ", " + ritem;
       }
-      return new CompletionProposal( contentsToAdd, insert, 0, contentsToAdd.length(),
+      return new DiscreteCompletionProposal( contentsToAdd, insert, 0,
           ImageCache.MODULE, label, null, "" );
     } catch (Exception e) {
       e.printStackTrace();
@@ -422,7 +423,7 @@ public class AnImport {
     return new int[]{tstart,tend};
   }
 
-  public CompletionProposal removeItem(final IDocument doc, final String item, final String label) {
+  public ICompletionProposal removeItem(final IDocument doc, final String item, final String label) {
 //    try {
 //      String contents = importDef.getLocation().getContents( doc );
 //      int ixP=contents.indexOf( "(" );
@@ -467,7 +468,7 @@ public class AnImport {
     return Character.isWhitespace( c ) || c==',' || c=='(' || c==')';
   }
 
-  public CompletionProposal removeItem(final IDocument doc, final Collection<String> items, final String label) {
+  public ICompletionProposal removeItem(final IDocument doc, final Collection<String> items, final String label) {
     try {
       String contents = importDef.getLocation().getContents( doc );
       String newContents=contents;
@@ -515,15 +516,15 @@ public class AnImport {
         }
       }
       int st=importDef.getLocation().getStartOffset( doc );
-      return new CompletionProposal( newContents.toString(), st, contents.length(),
-          0, ImageCache.MODULE, label, null, "" );
+      return new DiscreteCompletionProposal( newContents.toString(), st, contents.length(),
+           ImageCache.MODULE, label, null, "" );
     } catch (Exception e) {
       HaskellUIPlugin.log( e );
     }
     return null;
   }
 
-  public CompletionProposal replaceItem(final IDocument doc, final String item, final String newItem, final String label) {
+  public ICompletionProposal replaceItem(final IDocument doc, final String item, final String newItem, final String label) {
     try {
       String contents = importDef.getLocation().getContents( doc );
 
@@ -533,8 +534,8 @@ public class AnImport {
 
         int st=importDef.getLocation().getStartOffset( doc );
         String newContents=contents.substring( 0,ix )+newItem+contents.substring( end );
-        return new CompletionProposal( newContents.toString(), st, contents.length(),
-          0, ImageCache.MODULE, label, null, "" );
+        return new DiscreteCompletionProposal( newContents.toString(), st, contents.length(),
+          ImageCache.MODULE, label, null, "" );
       }
     } catch (Exception e) {
       HaskellUIPlugin.log( e );

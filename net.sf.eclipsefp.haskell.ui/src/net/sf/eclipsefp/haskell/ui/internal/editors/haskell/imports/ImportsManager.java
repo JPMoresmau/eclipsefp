@@ -20,10 +20,11 @@ import net.sf.eclipsefp.haskell.core.util.ResourceUtil;
 import net.sf.eclipsefp.haskell.ui.HaskellUIPlugin;
 import net.sf.eclipsefp.haskell.ui.internal.editors.haskell.HaskellEditor;
 import net.sf.eclipsefp.haskell.ui.internal.editors.haskell.imports.AnImport.FileDocumented;
+import net.sf.eclipsefp.haskell.ui.internal.resolve.DiscreteCompletionProposal;
 import net.sf.eclipsefp.haskell.util.PlatformUtil;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.jface.text.IDocument;
-import org.eclipse.jface.text.contentassist.CompletionProposal;
+import org.eclipse.jface.text.contentassist.ICompletionProposal;
 
 /**
  * Manages information and changed in the imports section
@@ -148,7 +149,7 @@ public class ImportsManager {
     }
   }
 
-  public CompletionProposal addImport( final String name, final String place, final String qualified, final String label ) {
+  public ICompletionProposal addImport( final String name, final String place, final String qualified, final String label ) {
     AnImport lastImport = null;
     for (AnImport imp : parseImports()) {
       lastImport = imp;
@@ -183,7 +184,7 @@ public class ImportsManager {
         contents = "import " + place + " (" + name + ")";
       }
       // 3. Create the proposal
-      return new CompletionProposal( contents + PlatformUtil.NL, offsetToPut, 0, contents.length() + 1, ImageCache.MODULE, label, null, "" );
+      return new DiscreteCompletionProposal( contents + PlatformUtil.NL, offsetToPut, 0, ImageCache.MODULE, label, null, "" );
     } catch (Exception e) {
       HaskellUIPlugin.log( e );
       return null;
@@ -205,7 +206,7 @@ public class ImportsManager {
 //    return null;
 //  }
 
-  public CompletionProposal removeItemInImport(final Collection<String> names, final int line, final String label) {
+  public ICompletionProposal removeItemInImport(final Collection<String> names, final int line, final String label) {
     try {
       for (AnImport imp : parseImports()) {
         int importLine =imp.getImportDef().getLocation().getStartLine();
@@ -220,7 +221,7 @@ public class ImportsManager {
     return null;
   }
 
-  public CompletionProposal replaceItemInImport(final String name,final String newName, final int line, final String label) {
+  public ICompletionProposal replaceItemInImport(final String name,final String newName, final int line, final String label) {
     try {
       for (AnImport imp : parseImports()) {
         int importLine =imp.getImportDef().getLocation().getStartLine();

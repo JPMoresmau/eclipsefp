@@ -8,7 +8,6 @@ import org.eclipse.core.resources.IMarker;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IRegion;
-import org.eclipse.jface.text.contentassist.CompletionProposal;
 import org.eclipse.jface.text.contentassist.ICompletionProposal;
 import org.eclipse.osgi.util.NLS;
 
@@ -103,7 +102,7 @@ public class AddLanguagePragmaResolution extends MarkerCompletion {
         }
       }
 
-      return new CompletionProposal(repl, lineOffset+pragmaOffset, 0, 0,null,getLabel(),null,null );
+      return new DiscreteCompletionProposal(repl, lineOffset+pragmaOffset, 0,null,getLabel(),null,null );
     } catch( BadLocationException ex ) {
       HaskellUIPlugin.log( ex );
     }
