@@ -76,7 +76,7 @@ public class EvalExpression implements Comparable<EvalExpression>{
    */
   @Override
   public int compareTo( final EvalExpression o ) {
-    return Integer.compare( index, o.index);
+    return Integer.valueOf(index).compareTo( o.index);
   }
 
   public String getExpression() {

@@ -10,7 +10,6 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
-import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -383,8 +382,7 @@ public class ScionTokenScanner implements IPartitionTokenScanner, IEditorPrefere
             file=newF;
             lTokenDefs =  f.tokenTypes( newF.getName() );
           } finally {
-            //file.delete();
-            Files.delete( file.toPath() );
+            file.delete();
             file.getParentFile().delete();
           }
         } catch( Exception ex ) {
