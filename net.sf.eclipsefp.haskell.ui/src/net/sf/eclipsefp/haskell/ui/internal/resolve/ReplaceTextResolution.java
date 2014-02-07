@@ -9,14 +9,11 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 import net.sf.eclipsefp.haskell.buildwrapper.types.GhcMessages;
-import net.sf.eclipsefp.haskell.ui.HaskellUIPlugin;
 import net.sf.eclipsefp.haskell.ui.internal.util.UITexts;
 import net.sf.eclipsefp.haskell.ui.util.HaskellUIImages;
 import net.sf.eclipsefp.haskell.ui.util.IImageNames;
 import org.eclipse.core.resources.IMarker;
-import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
-import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.text.contentassist.CompletionProposal;
 import org.eclipse.jface.text.contentassist.ICompletionProposal;
 import org.eclipse.osgi.util.NLS;
@@ -54,15 +51,17 @@ public class ReplaceTextResolution extends MarkerCompletion {
   public ICompletionProposal getCompletionProposal( final IMarker marker,
       final IDocument document ) {
 
-    int line=marker.getAttribute(IMarker.LINE_NUMBER, 0);
-    try {
-      IRegion r=document.getLineInformation( line-1 );
+    //int line=marker.getAttribute(IMarker.LINE_NUMBER, 0);
+  //  try {
+      //IRegion r=document.getLineInformation( line-1 );
+    // CHAR_START is from the document start!
       int c=marker.getAttribute(IMarker.CHAR_START, 0);
-      return new CompletionProposal( newS, r.getOffset()+c, oldS.length(), newS.length(),HaskellUIImages.getImage( IImageNames.CORRECTION ),getLabel(),null,null );
-    } catch( BadLocationException ex ) {
-      HaskellUIPlugin.log( ex );
-    }
-    return null;
+      // r.getOffset()+
+      return new CompletionProposal( newS,c, oldS.length(), newS.length(),HaskellUIImages.getImage( IImageNames.CORRECTION ),getLabel(),null,null );
+//    } catch( BadLocationException ex ) {
+//      HaskellUIPlugin.log( ex );
+//    }
+//    return null;
   }
 
   public static List<String> getSuggestionsFromGHCMessage(final String msg){
