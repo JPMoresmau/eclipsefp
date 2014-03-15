@@ -486,29 +486,22 @@ public class HaskellEditor extends TextEditor implements IEditorPreferenceNames,
     if (tokenScanner!=null){
       tokenScanner.dispose();
     }
-//    if (instance != null) {
-//      instance.removeListener( this );
-//    }
     final IFile file=findFile();
     if (file!=null){
       HaskellCorePlugin.getModifiedByEditors().remove( file );
-      /*final BWFacade f=BuildWrapperPlugin.getFacade( findFile().getProject() );
-      if (f!=null){
-        new Thread(new Runnable() {
 
-          @Override
-          public void run() {
-            // synchronize and rebuild to be sure that we're in sync if we close a dirty editor
-            f.synchronize1( file,true );
-            f.build1LongRunning( file,true );
+      // if we close a dirty editor, we need to recalculate
+      if (isDirty()){
+        JobFacade jf=BuildWrapperPlugin.getJobFacade( file.getProject() );
+        if (jf!=null){
+          jf.updateFromEditor( file,getDocument(), null, null, true, true,null );
+        }
 
-          }
-        }).start();
-
-      }*/
-      JobFacade jf=BuildWrapperPlugin.getJobFacade( file.getProject() );
-      if (jf!=null){
-        jf.updateFromEditor( file,getDocument(), null, null, true, true,null );
+      } else {
+        BWFacade f=BuildWrapperPlugin.getFacade( file.getProject() );
+        if (f!=null){
+          f.endLongRunning( file );
+        }
       }
     }
 
