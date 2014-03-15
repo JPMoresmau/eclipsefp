@@ -18,6 +18,7 @@ Fixes:
 	- LINE Pragmas that do not start the line are handled correctly (https://github.com/JPMoresmau/eclipsefp/issues/161)
 	- Support Arrow syntax (https://github.com/JPMoresmau/BuildWrapper/issues/23)
 	- Quick Fix on unknown Type (https://github.com/JPMoresmau/eclipsefp/issues/166)
+	- Round times on profiling charts (https://github.com/JPMoresmau/eclipsefp/issues/158)
 
 Features:
 	- Support benchmark stanzas in cabal files (https://github.com/JPMoresmau/eclipsefp/issues/109)

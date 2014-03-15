@@ -122,6 +122,13 @@ public class ChartCanvas extends Canvas {
         	ProfilerPlugin.log(IStatus.ERROR, ex.getLocalizedMessage(), ex);
         }
     }
+    
+
+    public void rebuildChart() {
+    	render.setProperty(IDeviceRenderer.GRAPHICS_CONTEXT, new GC(ChartCanvas.this));
+        buildChart();
+        cachedImage = null;
+    }
 
     /**
      * Builds the chart state. This method should be call when data is changed.

@@ -7,8 +7,10 @@ package net.sf.eclipsefp.haskell.profiler.internal.editors;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.StringReader;
+import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.net.URI;
 import java.util.ArrayList;
@@ -71,7 +73,6 @@ import org.eclipse.ui.ide.FileStoreEditorInput;
 public abstract class ProfileViewerBirtImpl extends ProfileViewerImpl{
 	static int INITIAL_NUMBER_OF_ITEMS = 15;
 
-	String fileContents;
 	Job job = null;
 	double[] samplePoints;
 	List<Map.Entry<String, BigInteger>> entries;
@@ -80,13 +81,11 @@ public abstract class ProfileViewerBirtImpl extends ProfileViewerImpl{
 	private ScrolledForm form;
 	private Scale slider;
 	private ChartCanvas canvas;
+	private IEditorInput input;
 
-
-	@Override
-	public void init(IEditorSite site, IEditorInput input) throws PartInitException {
-
+	private String getFileContents(IEditorInput input) throws Exception{
+		InputStream contents=null;
 		try {
-			InputStream contents;
 			if (input instanceof FileStoreEditorInput) {
 				FileStoreEditorInput fInput = (FileStoreEditorInput) input;
 				URI path = fInput.getURI();
@@ -98,18 +97,28 @@ public abstract class ProfileViewerBirtImpl extends ProfileViewerImpl{
 				setPartName(inputFile.getName());
 				contents = inputFile.getContents();
 			}
-			fileContents = new Scanner(contents).useDelimiter("\\Z").next();
+			return new Scanner(contents).useDelimiter("\\Z").next();
+		} finally {
 			contents.close();
-			job = Job.parse(new StringReader(fileContents));
+		}
+	}
+
+	@Override
+	public void init(IEditorSite site, IEditorInput input) throws PartInitException {
+		this.input=input;
+		try {
+			job = Job.parse(new StringReader(getFileContents(input)));
 			// Sort entries
 			entries = job.sortEntriesByTotal();
 			// Get sample points
 			samplePoints = new double[job.getSamplesAndTimes().size()];
 			int i = 0;
 			for (Sample s : job.getSamples()) {
-				samplePoints[i] = s.getTime();
+				// #158: round times
+				samplePoints[i] = new BigDecimal(new Float(s.getTime()).doubleValue()).setScale(2,BigDecimal.ROUND_HALF_UP).doubleValue();
 				i++;
 			}
+
 		} catch (Exception e) {
 			ProfilerPlugin.log(IStatus.ERROR, e.getLocalizedMessage(), e);
 			throw new PartInitException(Status.CANCEL_STATUS);
@@ -128,7 +137,8 @@ public abstract class ProfileViewerBirtImpl extends ProfileViewerImpl{
 		layout.numColumns = 1;
 		form.getBody().setLayout(layout);
 		
-		Chart chart = createChart(n);
+		final Chart chart = createChart();
+		populateChart(chart, n);
 		canvas = new ChartCanvas(form.getBody(), SWT.NONE);
 		canvas.setLayoutData(new GridData(GridData.FILL_BOTH));
 		canvas.setChart(chart);
@@ -154,14 +164,14 @@ public abstract class ProfileViewerBirtImpl extends ProfileViewerImpl{
 		slider.addSelectionListener(new SelectionListener() {
 
 			public void widgetSelected(SelectionEvent e) {
-				Chart chart = createChart(slider.getSelection());
-				canvas.setChart(chart);
+				populateChart(chart, slider.getSelection());
+				canvas.rebuildChart();
 				canvas.redraw();
 			}
 
 			public void widgetDefaultSelected(SelectionEvent e) {
-				Chart chart = createChart(slider.getSelection());
-				canvas.setChart(chart);
+				populateChart(chart, slider.getSelection());
+				canvas.rebuildChart();
 				canvas.redraw();
 			}
 		});
@@ -169,11 +179,7 @@ public abstract class ProfileViewerBirtImpl extends ProfileViewerImpl{
 		toolkit.paintBordersFor(parent);
 	}
 
-	private Chart createChart(int numberApart) {
-		int n = entries.size() < numberApart ? entries.size() : numberApart;
-		List<Map.Entry<String, BigInteger>> entriesApart = new ArrayList<Map.Entry<String, BigInteger>>(
-				entries.subList(0, n));
-
+	private Chart createChart(){
 		Chart chart = ChartWithAxesImpl.create();
 		// Title
 		// chart.getTitle().getLabel().getCaption().setValue(job.getName());
@@ -212,6 +218,17 @@ public abstract class ProfileViewerBirtImpl extends ProfileViewerImpl{
 		SeriesDefinition sdY = SeriesDefinitionImpl.create();
 		sdY.getSeriesPalette().shift(1);
 		yAxis.getSeriesDefinitions().add(sdY);
+		return chart;
+	}
+	
+	private void populateChart(Chart chart,int numberApart) {
+		int n = entries.size() < numberApart ? entries.size() : numberApart;
+		List<Map.Entry<String, BigInteger>> entriesApart = new ArrayList<Map.Entry<String, BigInteger>>(
+				entries.subList(0, n));
+		Axis xAxis = ((ChartWithAxes) chart).getPrimaryBaseAxes()[0];
+		Axis yAxis = ((ChartWithAxes) chart).getPrimaryOrthogonalAxis(xAxis);
+		SeriesDefinition sdY=yAxis.getSeriesDefinitions().get(0);
+		sdY.getSeries().clear();
 		// Get the numbers
 		ProfileNumbers numbers = new ProfileNumbers(entriesApart, samplePoints.length);
 		numbers.fillIn(job);
@@ -238,7 +255,6 @@ public abstract class ProfileViewerBirtImpl extends ProfileViewerImpl{
 			sdY.getSeries().add(entrySeries);
 		}
 
-		return chart;
 	}
 	
 	@Override
@@ -252,7 +268,7 @@ public abstract class ProfileViewerBirtImpl extends ProfileViewerImpl{
 				ContainerGenerator gen = new ContainerGenerator(folder);
 				IContainer con = gen.generateContainer(null);
 				IFile file = con.getFile(Path.fromPortableString(path.lastSegment()));
-				byte[] bytes = fileContents.getBytes();
+				byte[] bytes = getFileContents(input).getBytes();
 				InputStream source = new ByteArrayInputStream(bytes);
 				if (!file.exists()) {
 					file.create(source, IResource.NONE, null);

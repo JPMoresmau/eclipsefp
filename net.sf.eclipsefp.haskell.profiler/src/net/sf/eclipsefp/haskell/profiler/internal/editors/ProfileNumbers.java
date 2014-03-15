@@ -45,8 +45,9 @@ public class ProfileNumbers {
 		int sampleNo = 0;
 		for (Sample s : job.getSamples()) {
 			for (Map.Entry<String, Long> e : s.getEntries()) {
-				if (entries.containsKey(e.getKey())) {
-					entries.get(e.getKey())[sampleNo] = e.getValue();
+				double[] es=entries.get(e.getKey());
+				if (es!=null) {
+					es[sampleNo] = e.getValue();
 				} else {
 					rest[sampleNo] += e.getValue();
 				}
