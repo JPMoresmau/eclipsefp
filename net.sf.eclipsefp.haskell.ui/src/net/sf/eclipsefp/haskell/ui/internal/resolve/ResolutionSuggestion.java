@@ -7,6 +7,7 @@ package net.sf.eclipsefp.haskell.ui.internal.resolve;
 
 import java.util.List;
 import java.util.Locale;
+import net.sf.eclipsefp.haskell.buildwrapper.types.GhcMessages;
 
 /**
  * Encapsulate parsing out of scope messages
@@ -46,6 +47,10 @@ public class ResolutionSuggestion {
     }
     int end =msgL.length();
     outOfScope = msg.substring( start + 1, end ).trim();
+    // type or class is specified
+    if (outOfScope.startsWith( GhcMessages.TYPE_OR_CLASS )){
+      outOfScope=outOfScope.substring( GhcMessages.TYPE_OR_CLASS.length() ).trim();
+    }
     if (outOfScope.startsWith( "`" ) && outOfScope.endsWith( "'" )){
       outOfScope=outOfScope.substring( 1,outOfScope.length()-1 );
     }

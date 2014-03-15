@@ -1,3 +1,8 @@
+/**
+ * Copyright (c) 2011 by JP Moresmau
+ * This code is made available under the terms of the Eclipse Public License,
+ * version 1.0 (EPL). See http://www.eclipse.org/legal/epl-v10.html
+ */
 package net.sf.eclipsefp.haskell.buildwrapper.types;
 
 /**
@@ -58,7 +63,8 @@ public interface GhcMessages {
   public static String NAKED="naked expression at top level";
   public static String INPUT_CASE="parse error on input `case'";
   
-  //-fno-warn-unused-do-bind
+  public static String TYPE_OR_CLASS="type constructor or class";
+
 
 
 }

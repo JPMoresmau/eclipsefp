@@ -79,5 +79,17 @@ public class ResolutionSuggestionTest {
      assertNull(s.getOutOfScopeQualifier());
    }
 
+   @Test
+   public void testType(){
+     String msg="Not in scope: type constructor or class `Array'";
+     String msgL=msg.toLowerCase(Locale.ENGLISH);
+     int ix=msgL.indexOf( GhcMessages.NOT_IN_SCOPE_START);
+     assertTrue(ix>-1);
+     ResolutionSuggestion s=new ResolutionSuggestion( msg, ix,msgL );
+     assertNull(s.getSuggestions());
+     assertEquals("Array",s.getOutOfScope());
+     assertEquals("Array",s.getOutOfScopeName());
+     assertNull(s.getOutOfScopeQualifier());
 
+   }
 }
