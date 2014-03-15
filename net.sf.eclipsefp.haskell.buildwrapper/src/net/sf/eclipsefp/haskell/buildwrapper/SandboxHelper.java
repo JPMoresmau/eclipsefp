@@ -78,13 +78,13 @@ public class SandboxHelper {
 						LinkedList<String> args=new LinkedList<String>();
 						args.add("sandbox");
 						args.add("init");
-						f.runCabal(args,f.getSandboxPath());
+						f.runCabal(args,"",f.getSandboxPath());
 					}
 					LinkedList<String> args=new LinkedList<String>();
 					args.add("sandbox");
 					args.add("init");
 					args.addAll(f.getCabalImplDetails().getInitOptions());
-					f.runCabal(args,null);
+					f.runCabal(args,"",null);
 					
 					//if (!f.getCabalImplDetails().isUniqueSandbox()){
 						Set<IProject> processed=new HashSet<IProject>();

@@ -1479,12 +1479,14 @@ public class BWFacade {
 			return;
 		}
 		args.addFirst(cabalImplDetails.getExecutable());
-		
-		if (explicitFlags!=null && explicitFlags.length()>0){
-			args.add("--flags="+explicitFlags);
-		}
-		for (String s:extraOpts){
-			args.add(s);
+		// we should need flags and extra options ONLY on configure calls...
+		if (args.get(0).equals("configure")){
+			if (explicitFlags!=null && explicitFlags.length()>0){
+				args.add("--flags="+explicitFlags);
+			}
+			for (String s:extraOpts){
+				args.add(s);
+			}
 		}
 		for (String s:cabalImplDetails.getOptions()){
 			args.add(s);
