@@ -28,6 +28,7 @@ Features:
 	- Generate license file for some licenses in cabal editor
 	- Show start time and duration of console processes
 	- Haskell worksheet view
+	- Preselect text box in rename dialog (https://github.com/JPMoresmau/eclipsefp/issues/171)
 
 Internal:
 

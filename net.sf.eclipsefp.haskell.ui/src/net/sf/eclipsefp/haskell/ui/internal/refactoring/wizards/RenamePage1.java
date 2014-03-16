@@ -19,6 +19,7 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 
@@ -38,6 +39,7 @@ public class RenamePage1 extends UserInputWizardPage {
     super( UITexts.renameProcessor_name );
     this.delegate=delegate;
   }
+
 
   /* (non-Javadoc)
    * @see org.eclipse.jface.dialogs.IDialogPage#createControl(org.eclipse.swt.widgets.Composite)
@@ -62,7 +64,8 @@ public class RenamePage1 extends UserInputWizardPage {
     } else {
       setErrorMessage( UITexts.renameProcessor_empty );
     }
-
+    t.setFocus();
+    t.selectAll();
     l=new Label(c,SWT.NONE);
     gd=new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING);
     gd.horizontalSpan=2;
@@ -117,7 +120,7 @@ public class RenamePage1 extends UserInputWizardPage {
     };
     bProject.addSelectionListener( sl );
     bWorkspace.addSelectionListener( sl );
-
+    c.setTabList( new Control[]{t,bProject,bWorkspace} );
     setControl( c );
   }
 
