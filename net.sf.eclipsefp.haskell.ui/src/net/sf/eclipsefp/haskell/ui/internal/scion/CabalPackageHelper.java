@@ -3,7 +3,7 @@
  * This code is made available under the terms of the Eclipse Public License,
  * version 1.0 (EPL). See http://www.eclipse.org/legal/epl-v10.html
  */
-package net.sf.eclipsefp.haskell.core.cabal;
+package net.sf.eclipsefp.haskell.ui.internal.scion;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -14,9 +14,17 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import net.sf.eclipsefp.haskell.buildwrapper.types.CabalImplDetails;
+import net.sf.eclipsefp.haskell.buildwrapper.types.CabalImplDetails.SandboxType;
 import net.sf.eclipsefp.haskell.core.HaskellCorePlugin;
+import net.sf.eclipsefp.haskell.core.cabal.CabalImplementationManager;
+import net.sf.eclipsefp.haskell.core.cabal.CabalPackageRef;
+import net.sf.eclipsefp.haskell.core.cabal.CabalPackageVersion;
+import net.sf.eclipsefp.haskell.core.util.ResourceUtil;
 import net.sf.eclipsefp.haskell.util.PlatformUtil;
 import net.sf.eclipsefp.haskell.util.ProcessRunner;
+import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IStatus;
 
 /**
@@ -69,7 +77,7 @@ public class CabalPackageHelper {
    * @throws IOException
    */
   public String getLastInstalledVersion(final String name)throws IOException{
-    List<CabalPackageRef> r=list(name,"--installed");//$NON-NLS-1$
+    List<CabalPackageRef> r=list(name,true);
     if (r.size()>0){
       for (CabalPackageRef ref:r){
         if (ref.getName().equals( name )){
@@ -84,7 +92,7 @@ public class CabalPackageHelper {
 
   public List<CabalPackageRef> getInstalled()throws IOException {
     if (installed==null){
-      installed=list("","--installed"); //$NON-NLS-1$ //$NON-NLS-2$
+      installed=list("",true); //$NON-NLS-1$
       for (CabalPackageRef r:installed){
         r.getInstalled().addAll( r.getVersions() ); // all versions are installed
       }
@@ -94,7 +102,7 @@ public class CabalPackageHelper {
 
   public List<CabalPackageRef> getAll()throws IOException {
     if (all==null){
-      all=list("",""); //$NON-NLS-1$ //$NON-NLS-2$
+      all=list("",false); //$NON-NLS-1$
       // check which versions are installed
       List<CabalPackageRef> installed=getInstalled();
       Map<String,CabalPackageRef> pkgByName=new HashMap<String, CabalPackageRef>();
@@ -125,12 +133,13 @@ public class CabalPackageHelper {
     return sb.toString().substring( 2 ); // starts with *<space>
   }
 
-  private List<CabalPackageRef> list(final String pkg,final String opt)throws IOException{
+  private List<CabalPackageRef> list(final String pkg,final boolean installedOnly)throws IOException{
 
     List<CabalPackageRef> ret=new LinkedList<CabalPackageRef>();
     if (cabalPath==null){
       return ret;
     }
+    String opt=installedOnly?"--installed":"";
     BufferedReader br=run(cabalPath,"list",pkg,opt,"--simple-output");  //$NON-NLS-1$//$NON-NLS-2$
     String line=br.readLine();
     CabalPackageRef last=null;
@@ -176,7 +185,19 @@ public class CabalPackageHelper {
     ProcessRunner pr=new ProcessRunner();
     StringWriter swOut=new StringWriter();
     StringWriter swErr=new StringWriter();
-    pr.executeBlocking( new File("."), swOut, swErr, opts ); //$NON-NLS-1$
+    File dir=ResourcesPlugin.getWorkspace().getRoot().getLocation().makeAbsolute().toFile();
+    CabalImplDetails det=ScionManager.getCabalImplDetails();
+    // we list the packages in the sandbox if
+    // 1) we are sandboxed by cabal
+    // 2) we have a unique sandbox
+    // 3) we have at least one project to use, since cabal list uses the config info stored in the root of the project
+    if (det.isSandboxed() && det.getType().equals(SandboxType.CABAL) && det.isUniqueSandbox()){
+      List<IProject> p=ResourceUtil.listHaskellProjects();
+      if (p.size()>0){
+        dir=p.iterator().next().getLocation().makeAbsolute().toFile();
+      }
+    }
+    pr.executeBlocking( dir, swOut, swErr, opts );
     String err=swErr.toString();
     if (err.length()>0){
       String warn="warning:";//$NON-NLS-1$

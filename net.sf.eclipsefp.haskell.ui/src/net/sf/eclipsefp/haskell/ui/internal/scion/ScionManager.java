@@ -989,6 +989,18 @@ public class ScionManager implements IResourceChangeListener {
     }
   }
 
+  public List<String> getInstalledHcPkgOptions(){
+    CabalImplDetails det=getCabalImplDetails();
+    if (det.getType().equals( SandboxType.CABAL ) && det.isUniqueSandbox()){
+      List<String> ls=new ArrayList<String>();
+      ls.add( det.getExecutable() );
+      ls.add("sandbox");
+      ls.add("hc-pkg");
+      ls.addAll(det.getInitOptions());
+
+    }
+    return null;
+  }
 
   public static CabalImplDetails getCabalImplDetails(){
     CabalImplDetails details=new CabalImplDetails();
