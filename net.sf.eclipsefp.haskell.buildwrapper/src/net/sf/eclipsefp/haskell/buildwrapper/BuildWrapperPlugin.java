@@ -293,29 +293,29 @@ public class BuildWrapperPlugin extends AbstractUIPlugin {
 	   * @return
 	   */
 	  public static IPath getCabalFile(final IPath projectPath, final String name) {
-		  IPath f=projectPath.append(name).addFileExtension( FileUtil.EXTENSION_CABAL) ;
-		    if (f==null || !f.toFile().exists()){ // oh oh
+		IPath f=projectPath.append(name).addFileExtension( FileUtil.EXTENSION_CABAL) ;
+	    if (f==null || !f.toFile().exists()){ // oh oh
 
-    			// find a cabal file
-	    		File[] children=projectPath.toFile().listFiles();
-	    		int cnt=0;
-	    		for (File child:children){
-	    			if (child.isFile() && !child.isHidden()){
-	    				 IPath pchild=projectPath.append(child.getName());
-	    				 if ( pchild.getFileExtension() != null &&
-	    						 pchild.getFileExtension().equalsIgnoreCase(FileUtil.EXTENSION_CABAL)){
-	    					 f=pchild;
-	    					 cnt++;
-	    				 }
-	    			}
-	    		}
-	    		// cnt=1 would mean only one file, we can live with that
-	    		if (cnt>1){
-	    			f=null;
-	    		}
-		    		
-		    }
-		    return f;
+			// find a cabal file
+    		File[] children=projectPath.toFile().listFiles();
+    		int cnt=0;
+    		for (File child:children){
+    			if (child.isFile() && !child.isHidden()){
+    				 IPath pchild=projectPath.append(child.getName());
+    				 if ( pchild.getFileExtension() != null &&
+    						 pchild.getFileExtension().equalsIgnoreCase(FileUtil.EXTENSION_CABAL)){
+    					 f=pchild;
+    					 cnt++;
+    				 }
+    			}
+    		}
+    		// cnt=1 would mean only one file, we can live with that
+    		if (cnt!=1){
+    			f=null;
+    		}
+	    		
+	    }
+	    return f;
 	  }
 	  
 	  /**
