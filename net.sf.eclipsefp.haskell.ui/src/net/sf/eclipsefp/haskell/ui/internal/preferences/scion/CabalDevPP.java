@@ -5,11 +5,15 @@
  */
 package net.sf.eclipsefp.haskell.ui.internal.preferences.scion;
 
+import net.sf.eclipsefp.haskell.buildwrapper.BuildWrapperPlugin;
 import net.sf.eclipsefp.haskell.core.cabal.CabalImplementation;
 import net.sf.eclipsefp.haskell.core.cabal.CabalImplementationManager;
 import net.sf.eclipsefp.haskell.ui.internal.preferences.IPreferenceConstants;
 import net.sf.eclipsefp.haskell.ui.internal.util.UITexts;
 import org.eclipse.jface.preference.BooleanFieldEditor;
+import org.eclipse.jface.util.IPropertyChangeListener;
+import org.eclipse.jface.util.PropertyChangeEvent;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
@@ -51,15 +55,32 @@ public class CabalDevPP extends ExecutablePP {
     if (impl==null || !impl.allowsSandbox()){
       cabalSandboxField.setEnabled( false, parentComposite );
     }
+    cabalSandboxField.setPropertyChangeListener( new IPropertyChangeListener() {
+
+      @Override
+      public void propertyChange( final PropertyChangeEvent event ) {
+        updateUniqueLabel();
+      }
+    } );
 
     uniqueSandboxField= new BooleanFieldEditor( IPreferenceConstants.UNIQUE_SANDBOX,
-        UITexts.executables_preferences_unique_sandbox,
+        "",
         parentComposite );
     uniqueSandboxField.setPage(this);
     uniqueSandboxField.setPreferenceStore( getPreferenceStore() );
     uniqueSandboxField.load();
+    updateUniqueLabel();
 
     return c;
+  }
+
+  private void updateUniqueLabel(){
+
+    String s=cabalSandboxField.getBooleanValue()
+        ? BuildWrapperPlugin.getUniqueCabalSandboxLocation().toOSString()
+        : BuildWrapperPlugin.getUniqueCabalDevSandboxLocation().toOSString();
+    uniqueSandboxField.setLabelText( NLS.bind( UITexts.executables_preferences_unique_sandbox, s ) );
+    getShell().layout(true,true);
   }
 
   @Override
