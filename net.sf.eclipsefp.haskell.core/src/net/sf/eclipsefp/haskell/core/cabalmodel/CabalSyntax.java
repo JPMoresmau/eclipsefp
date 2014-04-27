@@ -79,6 +79,7 @@ public enum CabalSyntax {
   FIELD_TEST_MODULE("test-module"),//$NON-NLS-1$
 
   FIELD_X_USES_TEST_FRAMEWORK("x-uses-tf"),//$NON-NLS-1$
+  FIELD_MANUAL("manual"),//$NON-NLS-1$
 
   VALUE_EXITCODE_STDIO_1_0("exitcode-stdio-1.0",CabalSyntaxType.VALUE),//$NON-NLS-1$
   VALUE_DETAILED_0_9("detailed-0.9",CabalSyntaxType.VALUE),//$NON-NLS-1$

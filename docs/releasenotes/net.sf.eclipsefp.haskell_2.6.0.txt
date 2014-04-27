@@ -30,6 +30,7 @@ Features:
 	- Show start time and duration of console processes
 	- Haskell worksheet view
 	- Preselect text box in rename dialog (https://github.com/JPMoresmau/eclipsefp/issues/171)
+	- Support cabal "manual" field (for flags)
 
 Internal:
 
