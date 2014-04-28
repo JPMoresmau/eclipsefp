@@ -529,6 +529,8 @@ public final class UITexts extends NLS {
   public static String install_sandbox_install_text;
   public static String install_sandbox_dependencies_text;
   public static String install_sandbox_install_dest;
+  public static String check_error;
+  public static String check_error_text;
 
   public static String test_job;
   public static String test_options;

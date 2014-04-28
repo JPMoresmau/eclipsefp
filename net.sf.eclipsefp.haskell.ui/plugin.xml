@@ -1000,6 +1000,24 @@
 	
       </enablement>
     </objectContribution>     
+     <objectContribution
+          id="net.sf.eclipsefp.haskell.ui.contributionCheck"
+          objectClass="org.eclipse.core.resources.IProject">
+       <action
+             class="net.sf.eclipsefp.haskell.ui.actions.CabalCheckAction"
+             enablesFor="+"
+             id="net.sf.eclipsefp.haskell.ui.cabalCheckAction"
+             icon="icons/eview16/cabal_check.png"
+             label="%cabalCheckWizard.name">
+       </action>
+        <enablement>
+	      <adapt type="org.eclipse.core.resources.IProject">
+	        <test property="org.eclipse.core.resources.projectNature" 
+	              value="net.sf.eclipsefp.haskell.core.project.HaskellNature"/>
+	      </adapt>
+	
+      </enablement>
+    </objectContribution>     
     <objectContribution
           id="net.sf.eclipsefp.haskell.ui.contribution3"
           objectClass="org.eclipse.core.resources.IProject">
