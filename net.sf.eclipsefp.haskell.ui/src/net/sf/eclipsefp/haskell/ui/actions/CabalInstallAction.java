@@ -28,6 +28,7 @@ import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.widgets.DirectoryDialog;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IObjectActionDelegate;
 import org.eclipse.ui.IWorkbenchPart;
@@ -121,47 +122,82 @@ public class CabalInstallAction implements IObjectActionDelegate {
   protected void addSnapshot(final String sandbox){
     final String cabalExecutable=CabalImplementationManager.getCabalExecutable();
     if (cabalExecutable!=null){
-
-      final List<String> commands = new ArrayList<String>();
-      commands.add( cabalExecutable );
-      commands.add( "sandbox" );
-      commands.add( "add-source" );
-      commands.add( "--snapshot" );
+      // as far as I can tell, add-source doesn't support the --sandbox flag
+      // so we need to init the sandbox to make sure we have a proper config file in place
+      // then we can add add-source
+      final List<String> icommands = new ArrayList<String>();
+      icommands.add( cabalExecutable );
+      icommands.add( "sandbox" );
+      icommands.add( "init" );
 
       File f=new File(sandbox);
       if (f.getName().equals(".cabal-sandbox")){
         f=f.getParentFile();
       }
+      final File sandboxF=f;
+      icommands.add("--sandbox="+ sandboxF.getAbsolutePath());
+      final Display d=Display.getCurrent();
 
-      for (final IProject p:projects){
-        try {
-          List<String> prjCommands = new ArrayList<String>(commands);
-          prjCommands.add( p.getLocation().toOSString() );
-//          BWFacade bf=BuildWrapperPlugin.getFacade( p );
-//          // need to provide user supplied info
-//          if(bf!=null){
-//            String f=bf.getFlags();
-//            if (f!=null && f.length()>0){
-//              prjCommands.add("--flags="+f);
-//            }
-//            List<String> extraOpts=bf.getExtraOpts();
-//            if (extraOpts!=null){
-//              for (String eo:extraOpts){
-//                prjCommands.add(eo);
+      final Runnable r=new Runnable() {
+
+        @Override
+        public void run() {
+          final List<String> commands = new ArrayList<String>();
+          commands.add( cabalExecutable );
+          commands.add( "sandbox" );
+          commands.add( "add-source" );
+          commands.add( "--snapshot" );
+
+          for (final IProject p:projects){
+            try {
+              List<String> prjCommands = new ArrayList<String>(commands);
+              prjCommands.add( p.getLocation().toOSString() );
+//              BWFacade bf=BuildWrapperPlugin.getFacade( p );
+//              // need to provide user supplied info
+//              if(bf!=null){
+//                String f=bf.getFlags();
+//                if (f!=null && f.length()>0){
+//                  prjCommands.add("--flags="+f);
+//                }
+//                List<String> extraOpts=bf.getExtraOpts();
+//                if (extraOpts!=null){
+//                  for (String eo:extraOpts){
+//                    prjCommands.add(eo);
+//                  }
+//                }
 //              }
-//            }
-//          }
 
 
-          AbstractHaskellLaunchDelegate.runInConsole(p, prjCommands, f, NLS.bind( getJobName(), p.getName() ),true,getAfter(p) );
-        } catch (Exception ioe){
-          HaskellUIPlugin.log(ioe);
-          final IStatus st=new Status( IStatus.ERROR, HaskellUIPlugin.getPluginId(),ioe.getLocalizedMessage(),ioe);
-          ErrorDialog.openError( currentShell, UITexts.install_error, UITexts.install_error_text, st);
+              AbstractHaskellLaunchDelegate.runInConsole(p, prjCommands, sandboxF, NLS.bind( getJobName(), p.getName() ),true,getAfter(p) );
+            } catch (Exception ioe){
+              HaskellUIPlugin.log(ioe);
+              final IStatus st=new Status( IStatus.ERROR, HaskellUIPlugin.getPluginId(),ioe.getLocalizedMessage(),ioe);
+              ErrorDialog.openError( currentShell, UITexts.install_error, UITexts.install_error_text, st);
+            }
+
+
+          }
         }
 
 
+      };
+      // we need to be in the UI thread
+      Runnable uir=new Runnable() {
+
+        @Override
+        public void run() {
+          d.asyncExec( r );
+
+        }
+      };
+      try {
+        AbstractHaskellLaunchDelegate.runInConsole(null, icommands, f, "sandbox init",true,uir);
+      } catch (Exception ioe){
+        HaskellUIPlugin.log(ioe);
+        final IStatus st=new Status( IStatus.ERROR, HaskellUIPlugin.getPluginId(),ioe.getLocalizedMessage(),ioe);
+        ErrorDialog.openError( currentShell, UITexts.install_error, UITexts.install_error_text, st);
       }
+
     }
   }
 
