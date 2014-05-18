@@ -12,6 +12,9 @@ import java.util.ResourceBundle;
 
 import net.sf.eclipsefp.haskell.browser.client.NullBrowserServer;
 import net.sf.eclipsefp.haskell.browser.client.StreamBrowserServer;
+import net.sf.eclipsefp.haskell.browser.items.Declaration;
+import net.sf.eclipsefp.haskell.browser.items.Documented;
+import net.sf.eclipsefp.haskell.browser.items.Packaged;
 import net.sf.eclipsefp.haskell.browser.util.BrowserText;
 import net.sf.eclipsefp.haskell.util.FileUtil;
 
@@ -459,5 +462,64 @@ public class BrowserPlugin extends AbstractUIPlugin implements IDatabaseLoadedLi
 		StatusManager.getManager().handle(status);
 	}
 	
+	/**
+	 * get Documentation from Documented. This tries a bit harder to get documentation from the Browser info
+	 * @param d
+	 * @return
+	 */
+	public static String getDoc(Documented d){
+		if (d == null){
+			return "";
+		}
+		String s=d.getDoc();
+		if (s!=null && s.length()>0){
+			return s;
+		}
+		if (d instanceof Declaration){
+			Declaration decl=(Declaration)d;
+			return getDoc(decl.getModule().toString(),decl.getName(),d);
+		}
+		return "";
+	}
+	
+	/**
+	 * get Documentation from Documented (maybe), knowing the module and name. This tries a bit harder to get documentation from the Browser info
+	 * @param module
+	 * @param name
+	 * @param d
+	 * @return
+	 */
+	public static String getDoc(String module, String name, Documented d){
+		if (d==null || d.getDoc()==null || d.getDoc().length()==0){
+            try {
+              Packaged<Declaration>[] decls=BrowserPlugin.getSharedInstance().getDeclarations( Database.LOCAL, module );
+              for (Packaged<Declaration> p:decls){
+                if (p.getElement().getName().equals( name )){
+                  d=p.getElement();
+                  break;
+                }
+              }
+            } catch (Exception e){
+              logError(e.getLocalizedMessage(), e );
+            }
+          }
+          if ((d==null || d.getDoc()==null || d.getDoc().length()==0) &&  module.startsWith( "GHC" )){
+            try {
+              Packaged<Declaration>[] decls=BrowserPlugin.getSharedInstance().getDeclarations( Database.LOCAL, "Prelude" );
+              for (Packaged<Declaration> p:decls){
+                if (p.getElement().getName().equals( name )){
+                  d=p.getElement();
+                  break;
+                }
+              }
+            } catch (Exception e){
+            	logError(e.getLocalizedMessage(), e );
+            }
+          }
+         if (d!=null){
+        	 return d.getDoc();	 
+         }
+         return "";
+	}
 	
 }

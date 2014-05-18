@@ -736,9 +736,10 @@ public class HaskellContentAssistProcessor implements IContentAssistProcessor {
 	  for (int i = 0; i < names.size(); i++) {
 	    String s = names.get( i );
 	    Documented d = decls.get( s ).getDocumented();
+	    String ddoc=BrowserPlugin.getDoc( d );
 	    r[i] = new CompletionProposal( s, offset - plength, plength, s.length(),
           d instanceof Constructor ? ImageCache.CONSTRUCTOR : ImageCache.getImageForDeclaration( ((Declaration)d).getType() ),
-          s, null, HtmlUtil.generateDocument( d.getCompleteDefinition(), d.getDoc() ) );
+          s, null, HtmlUtil.generateDocument( d.getCompleteDefinition(), ddoc ) );
 	  }
 
 	  return r;

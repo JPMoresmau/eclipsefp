@@ -7,10 +7,7 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.Iterator;
 import net.sf.eclipsefp.haskell.browser.BrowserPlugin;
-import net.sf.eclipsefp.haskell.browser.Database;
-import net.sf.eclipsefp.haskell.browser.items.Declaration;
 import net.sf.eclipsefp.haskell.browser.items.Documented;
-import net.sf.eclipsefp.haskell.browser.items.Packaged;
 import net.sf.eclipsefp.haskell.buildwrapper.BWFacade;
 import net.sf.eclipsefp.haskell.buildwrapper.BuildWrapperPlugin;
 import net.sf.eclipsefp.haskell.buildwrapper.types.Location;
@@ -225,36 +222,11 @@ public class HaskellTextHover extends DefaultTextHover implements ITextHoverExte
               if (d==null){
                 d=im.getDeclarations().get( tap.getName() );
               }
-              if (d==null || d.getDoc()==null || d.getDoc().length()==0){
-                try {
-                  Packaged<Declaration>[] decls=BrowserPlugin.getSharedInstance().getDeclarations( Database.LOCAL, tap.getModule() );
-                  for (Packaged<Declaration> p:decls){
-                    if (p.getElement().getName().equals( tap.getName() )){
-                      d=p.getElement();
-                      break;
-                    }
-                  }
-                } catch (Exception e){
-                  HaskellUIPlugin.log( e );
-                }
-              }
-              if ((d==null || d.getDoc()==null || d.getDoc().length()==0) &&  tap.getModule().startsWith( "GHC" )){
-                try {
-                  Packaged<Declaration>[] decls=BrowserPlugin.getSharedInstance().getDeclarations( Database.LOCAL, "Prelude" );
-                  for (Packaged<Declaration> p:decls){
-                    if (p.getElement().getName().equals( tap.getName() )){
-                      d=p.getElement();
-                      break;
-                    }
-                  }
-                } catch (Exception e){
-                  HaskellUIPlugin.log( e );
-                }
-              }
-              if (d!=null && d.getDoc()!=null && d.getDoc().length()>0){
+              String doc=BrowserPlugin.getDoc( tap.getModule(), tap.getName(), d );
+              if (doc!=null && doc.length()>0){
                 sb.append(html ? "<hr/>" : "\n");
                 sb.append(html ? "<div style='padding:2px'>" : "");
-                sb.append(d.getDoc());
+                sb.append(doc);
                 sb.append(html ? "</div>" : "");
 
               }
