@@ -8,6 +8,7 @@ package net.sf.eclipsefp.haskell.style.stylishhaskell.ui;
 import net.sf.eclipsefp.haskell.style.stylishhaskell.SHConfiguration;
 import net.sf.eclipsefp.haskell.style.stylishhaskell.SHImports;
 import net.sf.eclipsefp.haskell.style.stylishhaskell.SHPragmas;
+import net.sf.eclipsefp.haskell.style.stylishhaskell.SHRecords;
 import net.sf.eclipsefp.haskell.style.stylishhaskell.SHTabs;
 import net.sf.eclipsefp.haskell.style.stylishhaskell.SHTrailingWhitespace;
 import net.sf.eclipsefp.haskell.style.stylishhaskell.SHUnicode;
@@ -50,7 +51,8 @@ public class SHConfigurationComposite extends Composite{
 	private Button bTabs;
 	private Text tTabsSpaces;
 	private Button bTrailing;
-	
+	private Button bRecords;
+	private Text tCols;	
 	
 	public SHConfigurationComposite(Composite parent, int style) {
 		super(parent, style);
@@ -150,6 +152,9 @@ public class SHConfigurationComposite extends Composite{
 			}
 		});
 		
+		bRecords=new Button(this,SWT.CHECK);
+		bRecords.setText(StyleText.sh_records);
+		styleMain(bRecords);
 		
 		bTabs=new Button(this,SWT.CHECK);
 		bTabs.setText(StyleText.sh_tabs);
@@ -197,6 +202,39 @@ public class SHConfigurationComposite extends Composite{
 		bTrailing.setText(StyleText.sh_trailing_whitespace);
 		styleMain(bTrailing);
 		
+		final Label lColsSpaces=new Label(this, SWT.NONE);
+		lColsSpaces.setText(StyleText.sh_cols_spaces);
+		
+		tCols=new Text(this,SWT.BORDER);
+		tCols.setText(String.valueOf(SHConfiguration.DEFAULT_COLUMNS));
+		gdUP=new GridData();
+		gdUP.widthHint=30;
+		tCols.setLayoutData(gdUP);
+		
+		tCols.addVerifyListener(new VerifyListener() {
+			
+			@Override
+			public void verifyText(VerifyEvent arg0) {
+				if (arg0.character==0){
+					try {
+						Integer.parseInt(arg0.text);
+						arg0.doit=true;
+						return;
+					} catch (NumberFormatException nfe){
+						// down
+					}
+				}
+				if (Character.isDigit(arg0.character)){ 
+					arg0.doit=true;
+					return;
+				}
+				if (arg0.character=='\b'){
+					arg0.doit=tCols.getText().length()>1;
+					return;
+				}
+				arg0.doit=false;
+			}
+		});
 	}
 	
 	public void setConfiguration(SHConfiguration config){
@@ -216,6 +254,8 @@ public class SHConfigurationComposite extends Composite{
 			bPragmasRemove.setSelection(config.getPragmas().isRemoveRedundant());
 		} 
 		
+		selectButton(bRecords, config.getRecords());
+		
 		selectButton(bTabs,config.getTabs());
 		if (config.getTabs()!=null){
 			tTabsSpaces.setText(String.valueOf(config.getTabs().getSpaces()));
@@ -223,6 +263,7 @@ public class SHConfigurationComposite extends Composite{
 		
 		selectButton(bTrailing,config.getTrailingWhitespace());
 		
+		tCols.setText(String.valueOf(config.getColumns()));
 	}
 	
 	private void selectButton(Button b,Object o){
@@ -251,6 +292,9 @@ public class SHConfigurationComposite extends Composite{
 			pr.setStyle(ps);
 			conf.setPragmas(pr);
 		}
+		if (bRecords.getSelection()){
+			conf.setRecords(new SHRecords());
+		}
 		if (bTabs.getSelection()){
 			SHTabs tabs=new SHTabs();
 			tabs.setSpaces(Integer.parseInt(tTabsSpaces.getText()));
@@ -259,7 +303,11 @@ public class SHConfigurationComposite extends Composite{
 		if (bTrailing.getSelection()){
 			conf.setTrailingWhitespace(new SHTrailingWhitespace());
 		}
-		
+		if (tCols.getText().length()>0){
+			conf.setColumns(Integer.parseInt(tCols.getText()));
+		} else {
+			conf.setColumns(SHConfiguration.DEFAULT_COLUMNS);
+		}
 		return conf;
 	}
 	

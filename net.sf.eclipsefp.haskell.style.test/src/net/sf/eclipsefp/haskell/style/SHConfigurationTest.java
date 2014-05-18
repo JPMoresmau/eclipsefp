@@ -42,6 +42,9 @@ public class SHConfigurationTest {
 		assertTrue(def.getPragmas().isRemoveRedundant());
 		assertEquals(SHPragmaStyle.VERTICAL,def.getPragmas().getStyle());
 		assertNotNull(def.getTrailingWhitespace());
+		assertEquals(80,def.getColumns());
+		assertNotNull(def.getRecords());
+		assertEquals(0,def.getLanguageExtensions().size());
 	}
 	
 	@Test
@@ -67,12 +70,19 @@ public class SHConfigurationTest {
 		assertNotNull(confRead.getUnicode());
 		assertTrue(confRead.getUnicode().isUnicodePragmas());
 		
+		
 		assertNotNull(confRead.getImports());
 		assertEquals(SHImportAlign.GROUP, confRead.getImports().getAlign());
 		assertNotNull(confRead.getPragmas());
 		assertFalse(confRead.getPragmas().isRemoveRedundant());
 		assertEquals(SHPragmaStyle.COMPACT,confRead.getPragmas().getStyle());
 		assertNotNull(confRead.getTrailingWhitespace());
+		
+		assertEquals(75,confRead.getColumns());
+		assertNotNull(confRead.getRecords());
+		assertEquals(2,confRead.getLanguageExtensions().size());
+		assertTrue(confRead.getLanguageExtensions().contains("TemplateHaskell"));
+		assertTrue(confRead.getLanguageExtensions().contains("QuasiQuotes"));
 		
 		ByteArrayOutputStream baos=new ByteArrayOutputStream();
 		StylishHaskell.save(confRead, baos);

@@ -7,6 +7,8 @@ package net.sf.eclipsefp.haskell.ui.internal.editors.haskell.actions;
 
 import java.io.File;
 import java.util.ResourceBundle;
+import java.util.Set;
+import net.sf.eclipsefp.haskell.buildwrapper.BuildWrapperPlugin;
 import net.sf.eclipsefp.haskell.style.stylishhaskell.StylishHaskell;
 import net.sf.eclipsefp.haskell.ui.HaskellUIPlugin;
 import net.sf.eclipsefp.haskell.ui.editor.actions.IEditorActionDefinitionIds;
@@ -16,6 +18,7 @@ import net.sf.eclipsefp.haskell.ui.internal.scion.ScionManager;
 import net.sf.eclipsefp.haskell.util.FileUtil;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
+import org.eclipse.jface.text.IRewriteTarget;
 import org.eclipse.ui.texteditor.ITextEditor;
 import org.eclipse.ui.texteditor.TextEditorAction;
 
@@ -71,7 +74,7 @@ public class FormatAction extends TextEditorAction {
   public void run() {
     ITextEditor editor = getTextEditor();
     if (editor instanceof HaskellEditor) {
-      HaskellEditor hEditor = (HaskellEditor) editor;
+      final HaskellEditor hEditor = (HaskellEditor) editor;
       // this is the temp file in .dist-buildwrapper
       File f=hEditor.getTokenScanner().getTarget();
       if (f!=null){
@@ -80,10 +83,25 @@ public class FormatAction extends TextEditorAction {
         IProject p=file.getProject();
         if (p!=null){
           try {
+            Set<String> extensions=BuildWrapperPlugin.getExtensions( file );
+            // Eclipse makes no attempt to preserve what's visible when the document is changed
+            final int t=hEditor.getViewer().getTextWidget().getTopIndex();
+            final int c=hEditor.getViewer().getTextWidget().getCaretOffset();
             // go!
-            StylishHaskell.runStylishHaskell( ScionManager.getExecutablePath( IPreferenceConstants.STYLISHHASKELL_EXECUTABLE, "stylish-haskell", false ), p, f,file.getCharset() );
+            StylishHaskell.runStylishHaskell( ScionManager.getExecutablePath( IPreferenceConstants.STYLISHHASKELL_EXECUTABLE, "stylish-haskell", false ), p, f,file.getCharset() , extensions);
+            IRewriteTarget target= (IRewriteTarget)hEditor.getAdapter(IRewriteTarget.class);
+            // avoid flickering
+            if (target != null) {
+              target.setRedraw( false );
+            }
             // re read the file on disk and tell the editor about it
             hEditor.getDocument().set( FileUtil.getContents( f,file.getCharset() ) );
+
+            hEditor.getViewer().getTextWidget().setTopIndex( t );
+            hEditor.getViewer().getTextWidget().setCaretOffset( c );
+            if (target != null) {
+              target.setRedraw( true );
+            }
           } catch (Exception ioe){
             HaskellUIPlugin.log( ioe );
           }

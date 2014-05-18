@@ -43,6 +43,7 @@ import net.sf.eclipsefp.haskell.ui.internal.editors.haskell.text.HaskellFoldingS
 import net.sf.eclipsefp.haskell.ui.internal.editors.haskell.text.ScionTokenScanner;
 import net.sf.eclipsefp.haskell.ui.internal.editors.text.HaskellViewer;
 import net.sf.eclipsefp.haskell.ui.internal.editors.text.MarkOccurrenceComputer;
+import net.sf.eclipsefp.haskell.ui.internal.preferences.IPreferenceConstants;
 import net.sf.eclipsefp.haskell.ui.internal.preferences.editor.IEditorPreferenceNames;
 import net.sf.eclipsefp.haskell.ui.internal.resolve.SelectAnnotationForQuickFix;
 import net.sf.eclipsefp.haskell.ui.internal.scion.CabalFileChangeListenerManager;
@@ -318,6 +319,10 @@ public class HaskellEditor extends TextEditor implements IEditorPreferenceNames,
     return getSourceViewer().getTextWidget().toDisplay(p2 );
   }
 
+  public ISourceViewer getViewer(){
+    return super.getSourceViewer();
+  }
+
   @Override
   protected void createActions() {
     super.createActions();
@@ -514,6 +519,16 @@ public class HaskellEditor extends TextEditor implements IEditorPreferenceNames,
     editorSaved();
   }
 
+  /* (non-Javadoc)
+   * @see org.eclipse.ui.texteditor.AbstractTextEditor#doSave(org.eclipse.core.runtime.IProgressMonitor)
+   */
+  @Override
+  public void doSave( final IProgressMonitor progressMonitor ) {
+    if (getPreferenceStore().getBoolean( IPreferenceConstants.STYLISHHASKELL_SAVE )){
+      getAction( FORMAT_ACTION ).run();
+    }
+    super.doSave( progressMonitor );
+  }
 
   @Override
   protected void editorSaved() {

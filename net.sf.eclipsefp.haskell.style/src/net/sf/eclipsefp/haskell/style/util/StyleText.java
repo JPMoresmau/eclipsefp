@@ -26,7 +26,10 @@ public class StyleText extends NLS {
 	public static String sh_tabs_spaces;
 	public static String sh_tabs_spaces_error;
 	public static String sh_trailing_whitespace;
-
+	public static String sh_cols_spaces;
+	public static String sh_cols_spaces_error;
+	public static String sh_records;
+	
 	public static String sh_title;
 	public static String sh_project;
 	public static String sh_default;

@@ -32,6 +32,12 @@ Features:
 	- Preselect text box in rename dialog (https://github.com/JPMoresmau/eclipsefp/issues/171)
 	- Support cabal "manual" field (for flags)
 	- Cabal check from project contextual menu
+	- Stylish-haskell integration
+		- supports number of columns
+		- supports alignment of types in records
+		- pass proper extensions from Cabal file
+		- apply formatting automatically on save
+	- Copy non haskell files to dist-buildwrapper automatically	
 
 Internal:
 

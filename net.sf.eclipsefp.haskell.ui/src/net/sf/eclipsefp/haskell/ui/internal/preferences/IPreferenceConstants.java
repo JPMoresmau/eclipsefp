@@ -67,9 +67,14 @@ public interface IPreferenceConstants {
   public final static String SOURCEGRAPH_EXECUTABLE="SOURCEGRAPH_EXECUTABLE"; //$NON-NLS-1$
 
   /**
-   * Stylish-haskell
+   * Stylish-haskell executable
    */
   public final static String STYLISHHASKELL_EXECUTABLE="STYLISHHASKELL_EXECUTABLE"; //$NON-NLS-1$
+  /**
+   * run Stylish-haskell on save?
+   */
+  public final static String STYLISHHASKELL_SAVE="STYLISHHASKELL_SAVE"; //$NON-NLS-1$
+
 
   public final static String YESOD_CABALDEV="YESOD_CABALDEV"; //$NON-NLS-1$
 

@@ -8,15 +8,19 @@ package net.sf.eclipsefp.haskell.style.stylishhaskell;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+
+import net.sf.eclipsefp.haskell.style.StylePlugin;
 
 /**
  * A stylish haskell configuration
  * @author JP Moresmau
  *
  */
-public class SHConfiguration {
+public class SHConfiguration implements Cloneable {
 	private SHUnicode unicode=null;
 	
 	private SHImports imports=new SHImports();
@@ -27,6 +31,20 @@ public class SHConfiguration {
 	
 	private SHTrailingWhitespace trailingWhitespace=new SHTrailingWhitespace();
 
+	private SHRecords records = new SHRecords();
+	
+	public static final int DEFAULT_COLUMNS=80;
+	
+	/**
+	 * number of columns to adapt formatting to
+	 */
+	private int columns=DEFAULT_COLUMNS;
+	
+	/**
+	 * the extensions needed to parse the file correctly
+	 */
+	private Set<String> languageExtensions = new HashSet<String>();
+	
 	public SHUnicode getUnicode() {
 		return unicode;
 	}
@@ -71,8 +89,14 @@ public class SHConfiguration {
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
+		result = prime * result + columns;
 		result = prime * result + ((imports == null) ? 0 : imports.hashCode());
+		result = prime
+				* result
+				+ ((languageExtensions == null) ? 0 : languageExtensions
+						.hashCode());
 		result = prime * result + ((pragmas == null) ? 0 : pragmas.hashCode());
+		result = prime * result + ((records == null) ? 0 : records.hashCode());
 		result = prime * result + ((tabs == null) ? 0 : tabs.hashCode());
 		result = prime
 				* result
@@ -91,15 +115,27 @@ public class SHConfiguration {
 		if (getClass() != obj.getClass())
 			return false;
 		SHConfiguration other = (SHConfiguration) obj;
+		if (columns != other.columns)
+			return false;
 		if (imports == null) {
 			if (other.imports != null)
 				return false;
 		} else if (!imports.equals(other.imports))
 			return false;
+		if (languageExtensions == null) {
+			if (other.languageExtensions != null)
+				return false;
+		} else if (!languageExtensions.equals(other.languageExtensions))
+			return false;
 		if (pragmas == null) {
 			if (other.pragmas != null)
 				return false;
 		} else if (!pragmas.equals(other.pragmas))
+			return false;
+		if (records == null) {
+			if (other.records != null)
+				return false;
+		} else if (!records.equals(other.records))
 			return false;
 		if (tabs == null) {
 			if (other.tabs != null)
@@ -122,7 +158,8 @@ public class SHConfiguration {
 	public void fromYAML(Object o){
 		clear();
 		if (o instanceof Map<?, ?>){
-			Object val1=((Map<?,?>)o).get("steps");
+			Map<?,?> m=(Map<?,?>)o;
+			Object val1=m.get("steps");
 			if (val1 instanceof Collection<?>){
 				for (Object o2:(Collection<?>)val1){
 					if (o2 instanceof Map<?,?>){
@@ -138,6 +175,29 @@ public class SHConfiguration {
 							}
 						}
 					}
+				}
+			}
+			columns=80;
+			Object val2=m.get("columns");
+			if (val2!=null){
+				if (val2 instanceof Integer){
+					columns=((Integer)val2).intValue();
+				} else {
+					try {
+						columns=Integer.parseInt(String.valueOf(val2));	
+					} catch (NumberFormatException nfe){
+						StylePlugin.logError(nfe);
+					}
+				}
+			}
+			Object val3=m.get("language_extensions");
+			if (val3 instanceof String[]){
+				for (String ext:(String[])val3){
+					languageExtensions.add(ext);
+				}
+			} else if (val3 instanceof Collection<?>){
+				for (Object ext:(Collection<?>)val3){
+					languageExtensions.add(String.valueOf(ext));
 				}
 			}
 		}
@@ -160,6 +220,11 @@ public class SHConfiguration {
 			m.put("language_pragmas", pragmas.toYAML());
 			steps.add(m);
 		}
+		if (records!=null){
+			Map<String,Object> m=new HashMap<String, Object>();
+			m.put("records", records.toYAML());
+			steps.add(m);
+		}
 		if (tabs!=null){
 			Map<String,Object> m=new HashMap<String, Object>();
 			m.put("tabs", tabs.toYAML());
@@ -173,6 +238,13 @@ public class SHConfiguration {
 		
 		Map<String,Object> ret=new HashMap<String, Object>();
 		ret.put("steps", steps);
+		
+		
+		ret.put("columns", columns);
+		
+		if (languageExtensions.size()>0){
+			ret.put("language_extensions", languageExtensions.toArray(new String[languageExtensions.size()]));
+		}
 		return ret;
 	}
 	
@@ -182,6 +254,8 @@ public class SHConfiguration {
 		tabs=null;
 		trailingWhitespace=null;
 		unicode=null;
+		records=null;
+		columns=DEFAULT_COLUMNS;
 	}
 	
 	private void addStep(String name,Map<?,?> params){
@@ -194,12 +268,45 @@ public class SHConfiguration {
 		} else if ("language_pragmas".equalsIgnoreCase(name)){
 			pragmas=new SHPragmas();
 			pragmas.fromYAML(params);
+		} else if ("records".equalsIgnoreCase(name)){
+			records=new SHRecords();
+			records.fromYAML(params);
 		} else if ("tabs".equalsIgnoreCase(name)){
 			tabs=new SHTabs();
 			tabs.fromYAML(params);
-		}else if ("trailing_whitespace".equalsIgnoreCase(name)){
+		} else if ("trailing_whitespace".equalsIgnoreCase(name)){
 			trailingWhitespace=new SHTrailingWhitespace();
 			trailingWhitespace.fromYAML(params);
 		}
+	}
+
+	public int getColumns() {
+		return columns;
+	}
+
+	public void setColumns(int columns) {
+		this.columns = columns;
+	}
+	
+	/* (non-Javadoc)
+	 * @see java.lang.Object#clone()
+	 */
+	@Override
+	protected SHConfiguration clone() {
+		SHConfiguration clone=new SHConfiguration();
+		clone.fromYAML(toYAML());
+		return clone;
+	}
+
+	public SHRecords getRecords() {
+		return records;
+	}
+
+	public void setRecords(SHRecords records) {
+		this.records = records;
+	}
+
+	public Set<String> getLanguageExtensions() {
+		return languageExtensions;
 	}
 }

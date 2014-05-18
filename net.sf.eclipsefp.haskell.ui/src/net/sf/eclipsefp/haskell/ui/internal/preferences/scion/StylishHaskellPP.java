@@ -11,7 +11,9 @@ import net.sf.eclipsefp.haskell.style.stylishhaskell.StylishHaskell;
 import net.sf.eclipsefp.haskell.style.stylishhaskell.ui.SHConfigurationComposite;
 import net.sf.eclipsefp.haskell.style.util.StyleText;
 import net.sf.eclipsefp.haskell.ui.internal.preferences.IPreferenceConstants;
+import net.sf.eclipsefp.haskell.ui.internal.util.UITexts;
 import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.jface.preference.BooleanFieldEditor;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
@@ -24,6 +26,11 @@ import org.eclipse.swt.widgets.Control;
  */
 public class StylishHaskellPP extends ExecutablePP {
   private SHConfigurationComposite confComp;
+
+  /**
+   * format on save?
+   */
+  private BooleanFieldEditor formatOnSave;
 
   public StylishHaskellPP(){
     super("stylish-haskell","stylish-haskell",IPreferenceConstants.STYLISHHASKELL_EXECUTABLE);
@@ -39,6 +46,13 @@ public class StylishHaskellPP extends ExecutablePP {
     confComp=new SHConfigurationComposite( parentComposite, SWT.NONE );
     confComp.setConfiguration( StylishHaskell.getWorkspaceConfiguration() );
 
+    formatOnSave = new BooleanFieldEditor( IPreferenceConstants.STYLISHHASKELL_SAVE,
+        UITexts.sh_save,
+        parentComposite );
+    formatOnSave.setPage(this);
+    formatOnSave.setPreferenceStore( getPreferenceStore() );
+    formatOnSave.load();
+
     return c;
   }
 
@@ -50,6 +64,7 @@ public class StylishHaskellPP extends ExecutablePP {
     SHConfiguration conf=confComp.getConfiguration();
     try {
       StylishHaskell.setWorkspaceConfiguration( conf );
+      formatOnSave.store();
       return super.performOk();
     } catch (IOException ioe){
       MessageDialog.openError( getShell(), StyleText.sh_save_error, ioe.getLocalizedMessage() );
@@ -63,6 +78,7 @@ public class StylishHaskellPP extends ExecutablePP {
   @Override
   protected void performDefaults() {
     confComp.setConfiguration(new SHConfiguration());
+    formatOnSave.loadDefault();
     super.performDefaults();
   }
 }

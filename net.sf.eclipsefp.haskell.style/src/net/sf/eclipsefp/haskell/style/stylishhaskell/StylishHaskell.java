@@ -19,6 +19,7 @@ import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import net.sf.eclipsefp.haskell.style.StylePlugin;
 import net.sf.eclipsefp.haskell.util.FileUtil;
@@ -46,27 +47,47 @@ public class StylishHaskell {
 	 * @param project the project we're in
 	 * @param filePath the file to format
 	 * @param charset the charset of the file
+	 * @param extensions the Haskell extensions needed to parse the file correctly
 	 * @throws Exception
 	 */
-	public static void runStylishHaskell(String exe, IProject project, File filePath,String charset) throws Exception{
+	public static void runStylishHaskell(String exe, IProject project, File filePath,String charset,Set<String> extensions) throws Exception{
 		List<String> cmd=new ArrayList<String>();
 		cmd.add(exe);
 		cmd.add("-i"); // in place
 		String cf=getConfigFile(project);
+		File tempFile=null;
 		if (cf!=null){
+			// add the required extensions
+			if (extensions!=null && extensions.size()>0){
+				SHConfiguration conf=load(cf);
+				conf.getLanguageExtensions().addAll(extensions);
+				tempFile=File.createTempFile("stylish", ".yaml");
+				save(conf,tempFile);
+				cf=tempFile.getAbsolutePath();
+			}
+			
 			cmd.add("--config="+cf);
 		}
-		cmd.add(filePath.getAbsolutePath());
-		// keep old contents
-		String contents=FileUtil.getContents(filePath, charset);
-
-		// capture errors
-		StringWriter sw=new StringWriter();
-		int code=new ProcessRunner().executeBlocking(filePath.getParentFile(), new StringWriter(), sw,cmd.toArray(new String[cmd.size()]));
-		if (code!=0){
-			// we restore the file contents if we failed
-			FileUtil.writeSharedFile(filePath, contents, 1);
-			throw new IOException(sw.toString());
+		try {
+			cmd.add(filePath.getAbsolutePath());
+			// keep old contents
+			String contents=FileUtil.getContents(filePath, charset);
+	
+			// capture errors
+			StringWriter swErr=new StringWriter();
+			StringWriter swOut=new StringWriter();
+			
+			int code=new ProcessRunner().executeBlocking(filePath.getParentFile(), swOut, swErr,cmd.toArray(new String[cmd.size()]));
+			String err=swErr.toString();
+			if (code!=0 || err.length()>0){
+				// we restore the file contents if we failed
+				FileUtil.writeSharedFile(filePath, contents, 1);
+				throw new IOException(err);
+			}
+		} finally {
+			if (tempFile!=null){
+				tempFile.delete();
+			}
 		}
 	}
 	
@@ -238,5 +259,25 @@ public class StylishHaskell {
 		Yaml yaml = new Yaml(options);
 		String s=yaml.dump(o);
 		os.write(s.getBytes()); // platform encoding
+	}
+	
+	/**
+	 * save to a file as YAML
+	 * @param config
+	 * @param f
+	 * @throws IOException
+	 */
+	public static void save(SHConfiguration config,File f) throws IOException {
+		if (f.getParentFile()!=null){
+			f.getParentFile().mkdirs();
+		}
+		
+		OutputStream os=new BufferedOutputStream(new FileOutputStream(f));
+		try {
+			save(config, os);
+		} finally {
+			os.close();
+		}
+		
 	}
 }

@@ -828,6 +828,7 @@ public final class UITexts extends NLS {
   public static String yesod_devel;
   public static String yesod_test;
   public static String yesod_cabaldev;
+  public static String sh_save;
 
   public static String proposal_category_mode;
 
