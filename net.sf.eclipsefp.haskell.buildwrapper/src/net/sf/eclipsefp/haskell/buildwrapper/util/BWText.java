@@ -46,6 +46,7 @@ public class BWText extends NLS {
   public static String 		  error_parsing_usage_path;
   public static String 		  error_parsing_usage_file;
   public static String 		  error_sandbox;
+  public static String 		  error_listener_nonhaskell;
   public static String 		  error_setup_db;
   public static String 		  error_db;
   public static String 		  error_no_db;

@@ -8,8 +8,11 @@ package net.sf.eclipsefp.haskell.buildwrapper;
 import java.io.File;
 import java.io.Writer;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
+import net.sf.eclipsefp.haskell.buildwrapper.types.BuildFlags;
 import net.sf.eclipsefp.haskell.buildwrapper.types.CabalImplDetails;
 import net.sf.eclipsefp.haskell.buildwrapper.usage.UsageAPI;
 import net.sf.eclipsefp.haskell.buildwrapper.usage.UsageThread;
@@ -67,6 +70,9 @@ public class BuildWrapperPlugin extends AbstractUIPlugin {
 	
 	private IResourceChangeListener sandboxListener=new SandboxHelper.ProjectReferencesChangeListener();
 	
+	private IResourceChangeListener nonHaskellListener=new NonHaskellResourceChangeListener();
+	
+	
 	private IResourceChangeListener preDeleteListener = new IResourceChangeListener() {
 		@Override
 		public void resourceChanged(IResourceChangeEvent event) {
@@ -92,6 +98,7 @@ public class BuildWrapperPlugin extends AbstractUIPlugin {
 		usageThread.start();
 		ResourcesPlugin.getWorkspace().addResourceChangeListener(sandboxListener,IResourceChangeEvent.POST_CHANGE);
 		ResourcesPlugin.getWorkspace().addResourceChangeListener(preDeleteListener, IResourceChangeEvent.PRE_DELETE);
+		ResourcesPlugin.getWorkspace().addResourceChangeListener(nonHaskellListener,IResourceChangeEvent.POST_CHANGE);
 	}
 
 	/**
@@ -109,6 +116,7 @@ public class BuildWrapperPlugin extends AbstractUIPlugin {
 		plugin = null;
 		ResourcesPlugin.getWorkspace().removeResourceChangeListener(sandboxListener);
 		ResourcesPlugin.getWorkspace().removeResourceChangeListener(preDeleteListener);
+		ResourcesPlugin.getWorkspace().removeResourceChangeListener(nonHaskellListener);
 		// facades are removed and stopped by ScionManager
 		
 		usageThread.setShouldStop();
@@ -403,5 +411,25 @@ public class BuildWrapperPlugin extends AbstractUIPlugin {
 		BuildWrapperPlugin.maxEvalTime = maxEvalTime;
 	}
 
-	  
+	/**
+	 * get extensions used in a file
+	 * @param file
+	 * @return
+	 */
+	public static Set<String> getExtensions(IFile file){
+		IProject p=file.getProject();
+		BWFacade bwf=BuildWrapperPlugin.getFacade( p );
+        Set<String> extensions=new HashSet<String>();
+        if (bwf !=null){
+          BuildFlags bf=bwf.getBuildFlags( file );
+          if (bf!=null){
+	          for (String s:bf.getGhcFlags()){
+	            if (s.startsWith( "-X" )){
+	              extensions.add(s.substring( 2 ));
+	            }
+	          }
+          }
+        }
+        return extensions;
+	}
 }
