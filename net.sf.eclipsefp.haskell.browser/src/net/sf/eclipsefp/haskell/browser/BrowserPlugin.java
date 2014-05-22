@@ -490,32 +490,34 @@ public class BrowserPlugin extends AbstractUIPlugin implements IDatabaseLoadedLi
 	 * @return
 	 */
 	public static String getDoc(String module, String name, Documented d){
-		if (d==null || d.getDoc()==null || d.getDoc().length()==0){
-            try {
-              Packaged<Declaration>[] decls=BrowserPlugin.getSharedInstance().getDeclarations( Database.LOCAL, module );
-              for (Packaged<Declaration> p:decls){
-                if (p.getElement().getName().equals( name )){
-                  d=p.getElement();
-                  break;
-                }
-              }
-            } catch (Exception e){
-              logError(e.getLocalizedMessage(), e );
-            }
-          }
-          if ((d==null || d.getDoc()==null || d.getDoc().length()==0) &&  module.startsWith( "GHC" )){
-            try {
-              Packaged<Declaration>[] decls=BrowserPlugin.getSharedInstance().getDeclarations( Database.LOCAL, "Prelude" );
-              for (Packaged<Declaration> p:decls){
-                if (p.getElement().getName().equals( name )){
-                  d=p.getElement();
-                  break;
-                }
-              }
-            } catch (Exception e){
-            	logError(e.getLocalizedMessage(), e );
-            }
-          }
+		if (module!=null && module.length()>0){
+			if (d==null || d.getDoc()==null || d.getDoc().length()==0){
+	            try {
+	              Packaged<Declaration>[] decls=BrowserPlugin.getSharedInstance().getDeclarations( Database.LOCAL, module );
+	              for (Packaged<Declaration> p:decls){
+	                if (p.getElement().getName().equals( name )){
+	                  d=p.getElement();
+	                  break;
+	                }
+	              }
+	            } catch (Exception e){
+	              logError(e.getLocalizedMessage(), e );
+	            }
+	          }
+	          if ((d==null || d.getDoc()==null || d.getDoc().length()==0) &&  module.startsWith( "GHC" )){
+	            try {
+	              Packaged<Declaration>[] decls=BrowserPlugin.getSharedInstance().getDeclarations( Database.LOCAL, "Prelude" );
+	              for (Packaged<Declaration> p:decls){
+	                if (p.getElement().getName().equals( name )){
+	                  d=p.getElement();
+	                  break;
+	                }
+	              }
+	            } catch (Exception e){
+	            	logError(e.getLocalizedMessage(), e );
+	            }
+	          }
+		}
          if (d!=null){
         	 return d.getDoc();	 
          }
