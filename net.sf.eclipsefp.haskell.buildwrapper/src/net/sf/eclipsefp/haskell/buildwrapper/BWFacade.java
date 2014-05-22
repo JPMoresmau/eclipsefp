@@ -991,6 +991,7 @@ public class BWFacade {
 	
 	public List<Occurrence> getOccurrences(IFile file,String s){
 		//BuildFlagInfo i=getBuildFlags(file);
+		long t0=System.currentTimeMillis();
 		String path=file.getProjectRelativePath().toOSString();
 		LinkedList<String> command=new LinkedList<String>();
 		command.add("occurrences");
@@ -1019,6 +1020,10 @@ public class BWFacade {
 			}
 		} else {
 			cps=new ArrayList<Occurrence>();
+		}
+		if (logBuildTimes){
+			long t1=System.currentTimeMillis();
+			BuildWrapperPlugin.logInfo("occurrences:"+(t1-t0)+"ms");
 		}
 		return cps;
 	}
