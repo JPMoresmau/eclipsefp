@@ -139,7 +139,6 @@ public class ScionTokenScanner implements IPartitionTokenScanner, IEditorPrefere
 
   @Override
   public IToken nextToken() {
-
      do {
        if (tokenDefs!=null && tokenDefs.hasNext()){
          TokenDef nextTokenDef=tokenDefs.next();
@@ -188,7 +187,7 @@ public class ScionTokenScanner implements IPartitionTokenScanner, IEditorPrefere
 //           if (currentOffset+currentLength>=offset+length)  {
 //             return Token.EOF;
 //           }
-           if ( nextOffset>offset+length || currentLength<0)  {
+           if ( nextOffset>offset+length || currentLength<=0)  {
              currentTokenDef=null;
              return Token.EOF;
            }
@@ -205,6 +204,7 @@ public class ScionTokenScanner implements IPartitionTokenScanner, IEditorPrefere
     return currentToken;
 
   }
+
 
   /**
    * add an occurrence for a given token
@@ -249,7 +249,7 @@ public class ScionTokenScanner implements IPartitionTokenScanner, IEditorPrefere
   }
 
   /**
-   * get occurrences for the toekn situated at the given offset
+   * get occurrences for the token situated at the given offset
    * @param offset
    * @return
    */
@@ -308,14 +308,6 @@ public class ScionTokenScanner implements IPartitionTokenScanner, IEditorPrefere
 
   @Override
   public void setRange( final IDocument document, final int offset, final int length ) {
-    currentTokenDef = null;
-    // currentToken=null;
-
-    currentLength=0;
-    currentOffset=0;
-
-    tokenDefs = null;
-
     boolean changed=false;
     if( file != null ) {
       String newContents = document.get();
@@ -428,7 +420,24 @@ public class ScionTokenScanner implements IPartitionTokenScanner, IEditorPrefere
       if( lTokenDefs != null) {
         lMergedTokenDefs=mergeTokens( lTokenDefs);
       }
+    } else if (offset == this.offset+this.length){
+      this.offset = offset;
+      this.length = length;
+      tokenDefs.previous();
+      currentTokenDef = null;
+      // currentToken=null;
+
+      currentLength=0;
+      currentOffset=0;
+      return;
     }
+    currentTokenDef = null;
+    // currentToken=null;
+
+    currentLength=0;
+    currentOffset=0;
+
+    tokenDefs = null;
     tokenDefs =lMergedTokenDefs.listIterator();
     this.offset = offset;
     this.length = length;

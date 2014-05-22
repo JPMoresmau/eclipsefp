@@ -9,6 +9,7 @@ import java.util.Map;
 import net.sf.eclipsefp.haskell.buildwrapper.types.Occurrence;
 import net.sf.eclipsefp.haskell.ui.internal.editors.haskell.HaskellEditor;
 import net.sf.eclipsefp.haskell.ui.internal.editors.haskell.text.ScionTokenScanner;
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.ITextSelection;
@@ -44,19 +45,34 @@ public class MarkOccurrenceComputer {
     this.document = document;
   }
 
-  public void compute() {
+  public void compute(final IProgressMonitor pm) {
+    if (pm!=null && pm.isCanceled()){
+      return;
+    }
     final IAnnotationModel model = getAnnotationModel( editor );
     if( model instanceof IAnnotationModelExtension ) {
       ISelection selection = editor.getSelectionProvider().getSelection();
       if( selection instanceof ITextSelection ) {
         ITextSelection textSelection = ( ITextSelection )selection;
         int offset = textSelection.getOffset();
+        if (pm!=null && pm.isCanceled()){
+          return;
+        }
         ScionTokenScanner sts=editor.getTokenScanner();
         if (sts!=null){
+          if (pm!=null && pm.isCanceled()){
+            return;
+          }
           List<Occurrence> occurrences=sts.getOccurrences( offset );
           if (occurrences != null) {
+            if (pm!=null && pm.isCanceled()){
+              return;
+            }
             Map<Annotation, Position> map = computeAnnotations( occurrences );
             IAnnotationModelExtension amx = ( IAnnotationModelExtension )model;
+            if (pm!=null && pm.isCanceled()){
+              return;
+            }
             amx.replaceAnnotations( collectToRemove( model ), map );
           }
         }

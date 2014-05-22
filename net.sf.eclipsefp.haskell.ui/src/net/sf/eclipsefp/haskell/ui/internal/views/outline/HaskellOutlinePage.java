@@ -123,7 +123,7 @@ public class HaskellOutlinePage extends ContentOutlinePage {
   /** <p>updates the outline page.</p> */
   public void update() {
     if (getControl()!=null && !getControl().isDisposed()){
-       getControl().getDisplay().syncExec( new Runnable(){
+       getControl().getDisplay().asyncExec( new Runnable(){
          @Override
         public void run() {
            TreeViewer viewer = getTreeViewer();
