@@ -66,8 +66,8 @@ public class UsageThread extends Thread {
 								f.generateUsage(c,retAll);
 							}
 						}
-						p=getNext();
 					}
+					p=getNext();
 				}
 			}
 			working.set(false);
