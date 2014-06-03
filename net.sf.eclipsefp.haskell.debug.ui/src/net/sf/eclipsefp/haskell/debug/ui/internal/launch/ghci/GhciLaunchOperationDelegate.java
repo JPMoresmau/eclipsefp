@@ -57,6 +57,10 @@ public class GhciLaunchOperationDelegate
             }
             include=!removeFromDebug;
           }
+          // ignore verbosity settings, since -v0 will cause us to not show anything
+          if (s.startsWith( "-v" )){ //$NON-NLS-1$
+            include=false;
+          }
           if (include){
             cmdLine.add(s);
           }

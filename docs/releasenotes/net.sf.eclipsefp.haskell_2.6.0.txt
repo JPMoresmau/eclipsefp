@@ -20,6 +20,7 @@ Fixes:
 	- Quick Fix on unknown Type (https://github.com/JPMoresmau/eclipsefp/issues/166)
 	- Round times on profiling charts (https://github.com/JPMoresmau/eclipsefp/issues/158)
 	- Offer component options when creating project when folder exists but cabal file doesn't
+	- GHCi session did not show any output (https://sourceforge.net/p/eclipsefp/discussion/371922/thread/ac4b9d35/?limit=25#b5e1)
 
 Features:
 	- Support benchmark stanzas in cabal files (https://github.com/JPMoresmau/eclipsefp/issues/109)

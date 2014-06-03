@@ -2,8 +2,8 @@ package net.sf.eclipsefp.haskell.util;
 
 import java.io.File;
 import java.io.IOException;
+
 import junit.framework.TestCase;
-import net.sf.eclipsefp.haskell.util.FileUtil;
 
 
 public class FileUtilTest extends TestCase{
@@ -48,6 +48,19 @@ public class FileUtilTest extends TestCase{
     }
 
   }
+//  
+//  public void testGHCi() throws Exception {
+//	  ProcessRunner pr=new ProcessRunner();
+//	  StringWriter swOut=new StringWriter();
+//	  StringWriter swErr=new StringWriter();
+//	  
+//	  Process p=pr.executeNonblocking(new File("/home/jpmoresmau/Documents/jp-github/runtime-New_configuration/P3"), swOut, swErr, "/usr/bin/ghc","--interactive","-w", "-v0");
+//	  Thread.sleep(2000);
+//	  p.getOutputStream().write(":q\n".getBytes());
+//	  p.getOutputStream().flush();
+//	  p.waitFor();
+//	  System.out.println(swOut.toString());
+//  }
 
 
 }
