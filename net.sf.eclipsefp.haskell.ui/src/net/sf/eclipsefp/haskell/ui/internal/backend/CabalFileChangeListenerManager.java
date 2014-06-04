@@ -1,4 +1,4 @@
-package net.sf.eclipsefp.haskell.ui.internal.scion;
+package net.sf.eclipsefp.haskell.ui.internal.backend;
 
 import java.util.ArrayList;
 import java.util.Collection;

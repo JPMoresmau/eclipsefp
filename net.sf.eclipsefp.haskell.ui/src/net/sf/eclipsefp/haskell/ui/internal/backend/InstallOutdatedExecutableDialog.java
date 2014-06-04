@@ -3,7 +3,7 @@
  * This code is made available under the terms of the Eclipse Public License,
  * version 1.0 (EPL). See http://www.eclipse.org/legal/epl-v10.html
  */
-package net.sf.eclipsefp.haskell.ui.internal.scion;
+package net.sf.eclipsefp.haskell.ui.internal.backend;
 
 import net.sf.eclipsefp.haskell.ui.internal.preferences.IPreferenceConstants;
 import net.sf.eclipsefp.haskell.ui.internal.util.UITexts;

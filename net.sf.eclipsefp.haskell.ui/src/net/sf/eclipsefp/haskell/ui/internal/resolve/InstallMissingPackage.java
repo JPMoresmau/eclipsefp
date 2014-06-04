@@ -15,8 +15,8 @@ import net.sf.eclipsefp.haskell.buildwrapper.BuildWrapperPlugin;
 import net.sf.eclipsefp.haskell.core.cabal.CabalImplementationManager;
 import net.sf.eclipsefp.haskell.debug.core.internal.launch.AbstractHaskellLaunchDelegate;
 import net.sf.eclipsefp.haskell.ui.HaskellUIPlugin;
-import net.sf.eclipsefp.haskell.ui.internal.scion.CabalFileChangeListenerManager;
-import net.sf.eclipsefp.haskell.ui.internal.scion.ScionManager;
+import net.sf.eclipsefp.haskell.ui.internal.backend.CabalFileChangeListenerManager;
+import net.sf.eclipsefp.haskell.ui.internal.backend.BackendManager;
 import net.sf.eclipsefp.haskell.ui.internal.util.UITexts;
 import net.sf.eclipsefp.haskell.ui.util.CabalFileChangeListener;
 import org.eclipse.core.resources.IFile;
@@ -103,7 +103,7 @@ public class InstallMissingPackage extends MarkerCompletion {
         final List<String> commands = new ArrayList<String>();
         commands.add( cabalExecutable );
         commands.add("install");
-        ScionManager.addCabalInstallOptions( commands );
+        BackendManager.addCabalInstallOptions( commands );
         for (String s:packages){
           commands.add("\""+s+"\"");
         }

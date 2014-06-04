@@ -3,7 +3,7 @@
  * This code is made available under the terms of the Eclipse Public License,
  * version 1.0 (EPL). See http://www.eclipse.org/legal/epl-v10.html
  */
-package net.sf.eclipsefp.haskell.ui.internal.scion;
+package net.sf.eclipsefp.haskell.ui.internal.backend;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -186,7 +186,7 @@ public class CabalPackageHelper {
     StringWriter swOut=new StringWriter();
     StringWriter swErr=new StringWriter();
     File dir=ResourcesPlugin.getWorkspace().getRoot().getLocation().makeAbsolute().toFile();
-    CabalImplDetails det=ScionManager.getCabalImplDetails();
+    CabalImplDetails det=BackendManager.getCabalImplDetails();
     // we list the packages in the sandbox if
     // 1) we are sandboxed by cabal
     // 2) we have a unique sandbox

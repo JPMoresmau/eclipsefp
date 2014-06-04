@@ -1,6 +1,6 @@
 // Copyright (c) 2004-2005 by Leif Frenzel
 // See http://leiffrenzel.de
-package net.sf.eclipsefp.haskell.ui.internal.scion;
+package net.sf.eclipsefp.haskell.ui.internal.backend;
 
 import net.sf.eclipsefp.haskell.buildwrapper.BuildWrapperPlugin;
 import net.sf.eclipsefp.haskell.buildwrapper.JobFacade;

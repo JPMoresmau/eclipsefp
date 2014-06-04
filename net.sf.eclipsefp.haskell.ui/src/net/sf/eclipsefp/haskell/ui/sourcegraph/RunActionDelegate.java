@@ -13,8 +13,8 @@ import net.sf.eclipsefp.haskell.buildwrapper.BuildWrapperPlugin;
 import net.sf.eclipsefp.haskell.core.util.ResourceUtil;
 import net.sf.eclipsefp.haskell.debug.core.internal.launch.AbstractHaskellLaunchDelegate;
 import net.sf.eclipsefp.haskell.ui.HaskellUIPlugin;
+import net.sf.eclipsefp.haskell.ui.internal.backend.BackendManager;
 import net.sf.eclipsefp.haskell.ui.internal.preferences.IPreferenceConstants;
-import net.sf.eclipsefp.haskell.ui.internal.scion.ScionManager;
 import net.sf.eclipsefp.haskell.ui.internal.util.UITexts;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
@@ -57,7 +57,7 @@ public class RunActionDelegate implements IObjectActionDelegate {
         final IFile cabalFile = BuildWrapperPlugin.getCabalFile( project );
         // Run the command
         final List<String> commands = new ArrayList<String>();
-        commands.add( ScionManager.getExecutablePath( IPreferenceConstants.SOURCEGRAPH_EXECUTABLE,SOURCEGRAPH, false ) );
+        commands.add( BackendManager.getExecutablePath( IPreferenceConstants.SOURCEGRAPH_EXECUTABLE,SOURCEGRAPH, false ) );
         commands.add(cabalFile.getRawLocation().toOSString());
 
         AbstractHaskellLaunchDelegate.runInConsole( project, commands, new File(project.getLocation().toOSString()), SOURCEGRAPH, false,new Runnable(){

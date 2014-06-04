@@ -6,8 +6,8 @@
 package net.sf.eclipsefp.haskell.debug.ui.internal.launch.yesod;
 
 import net.sf.eclipsefp.haskell.debug.core.internal.launch.IInteractiveLaunchOperationDelegate;
+import net.sf.eclipsefp.haskell.ui.internal.backend.BackendManager;
 import net.sf.eclipsefp.haskell.ui.internal.preferences.IPreferenceConstants;
-import net.sf.eclipsefp.haskell.ui.internal.scion.ScionManager;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 
@@ -25,7 +25,7 @@ public class YesodDevelLaunchOperationDelegate implements
    */
   @Override
   public String getExecutable() {
-    return ScionManager.getExecutablePath( IPreferenceConstants.YESOD_EXECUTABLE, "yesod",false ); //$NON-NLS-1$
+    return BackendManager.getExecutablePath( IPreferenceConstants.YESOD_EXECUTABLE, "yesod",false ); //$NON-NLS-1$
   }
 
   /* (non-Javadoc)

@@ -1,7 +1,7 @@
 // (c) 2010, B. Scott Michel (bscottm@ieee.org)
 // Licensed under the EPL
 
-package net.sf.eclipsefp.haskell.ui.internal.scion;
+package net.sf.eclipsefp.haskell.ui.internal.backend;
 
 import java.io.InputStream;
 import net.sf.eclipsefp.haskell.browser.BrowserPlugin;

@@ -21,8 +21,8 @@ import net.sf.eclipsefp.haskell.core.cabal.CabalPackageVersion;
 import net.sf.eclipsefp.haskell.debug.core.internal.launch.AbstractHaskellLaunchDelegate;
 import net.sf.eclipsefp.haskell.ui.HaskellUIPlugin;
 import net.sf.eclipsefp.haskell.ui.handlers.OpenDefinitionHandler;
-import net.sf.eclipsefp.haskell.ui.internal.scion.CabalPackageHelper;
-import net.sf.eclipsefp.haskell.ui.internal.scion.ScionManager;
+import net.sf.eclipsefp.haskell.ui.internal.backend.CabalPackageHelper;
+import net.sf.eclipsefp.haskell.ui.internal.backend.BackendManager;
 import net.sf.eclipsefp.haskell.ui.internal.util.UITexts;
 import net.sf.eclipsefp.haskell.ui.properties.ImportLibrariesLabelProvider;
 import net.sf.eclipsefp.haskell.ui.util.HaskellUIImages;
@@ -481,7 +481,7 @@ public class CabalPackagesView extends ViewPart {
       } else {
         commands.add( "--user" );
       }
-      ScionManager.addCabalInstallOptions( commands );
+      BackendManager.addCabalInstallOptions( commands );
       // force reinstall
       commands.add( "--reinstall" );
       if (options!=null && options.trim().length()>0){

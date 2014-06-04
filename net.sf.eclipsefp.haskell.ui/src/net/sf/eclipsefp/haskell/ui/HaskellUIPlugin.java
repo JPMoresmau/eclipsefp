@@ -17,10 +17,10 @@ package net.sf.eclipsefp.haskell.ui;
 
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
+import net.sf.eclipsefp.haskell.ui.internal.backend.BackendManager;
 import net.sf.eclipsefp.haskell.ui.internal.editors.haskell.HaskellEditor;
 import net.sf.eclipsefp.haskell.ui.internal.editors.haskell.text.ColorProvider;
 import net.sf.eclipsefp.haskell.ui.internal.editors.haskell.text.ScannerManager;
-import net.sf.eclipsefp.haskell.ui.internal.scion.ScionManager;
 import net.sf.eclipsefp.haskell.ui.internal.util.UITexts;
 import net.sf.eclipsefp.haskell.ui.util.HaskellUIImages;
 import org.eclipse.core.resources.IFile;
@@ -65,7 +65,7 @@ public class HaskellUIPlugin extends AbstractUIPlugin {
    */
   private ResourceBundle resourceBundle = null;
   // The scion-server manager object
-  private ScionManager fScionManager = null;
+  private BackendManager fScionManager = null;
 
   public HaskellUIPlugin() {
     plugin = this;
@@ -85,7 +85,7 @@ public class HaskellUIPlugin extends AbstractUIPlugin {
   public void start( final BundleContext context ) throws Exception {
     super.start( context );
     //getPreferenceManager().activateBuildConsolePreferences();
-    fScionManager = new ScionManager();
+    fScionManager = new BackendManager();
     fScionManager.start();
   }
 
@@ -180,7 +180,7 @@ public class HaskellUIPlugin extends AbstractUIPlugin {
   // Scion manager
   // //////////////
 
-  public ScionManager getScionManager() {
+  public BackendManager getScionManager() {
     return fScionManager;
   }
   /**

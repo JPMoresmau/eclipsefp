@@ -14,8 +14,8 @@ import net.sf.eclipsefp.haskell.browser.items.HaskellPackage;
 import net.sf.eclipsefp.haskell.browser.items.PackageIdentifier;
 import net.sf.eclipsefp.haskell.core.cabal.CabalPackageRef;
 import net.sf.eclipsefp.haskell.ui.HaskellUIPlugin;
-import net.sf.eclipsefp.haskell.ui.internal.scion.CabalPackageHelper;
-import net.sf.eclipsefp.haskell.ui.internal.scion.ScionManager;
+import net.sf.eclipsefp.haskell.ui.internal.backend.CabalPackageHelper;
+import net.sf.eclipsefp.haskell.ui.internal.backend.BackendManager;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.Viewer;
 
@@ -58,9 +58,9 @@ public class DependenciesDialogContentProvider implements ITreeContentProvider {
 
       }
 
-      for (HaskellPackage pkg:ScionManager.listProjectPackages()){
+      for (HaskellPackage pkg:BackendManager.listProjectPackages()){
         // we can reference ourselves, or reference other projects if we're sandboxed
-        if (ScionManager.getCabalImplDetails().isSandboxed() || pkg.getIdentifier().getName().equals( projectName ) ){
+        if (BackendManager.getCabalImplDetails().isSandboxed() || pkg.getIdentifier().getName().equals( projectName ) ){
           if(! names.contains( pkg.getIdentifier().getName() ) ) {
             pkgs.add( pkg );
           }

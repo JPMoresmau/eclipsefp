@@ -10,8 +10,8 @@ import net.sf.eclipsefp.haskell.buildwrapper.BuildWrapperPlugin;
 import net.sf.eclipsefp.haskell.buildwrapper.SandboxHelper;
 import net.sf.eclipsefp.haskell.core.cabal.CabalImplementationManager;
 import net.sf.eclipsefp.haskell.ui.HaskellUIPlugin;
-import net.sf.eclipsefp.haskell.ui.internal.scion.CabalFileChangeListenerManager;
-import net.sf.eclipsefp.haskell.ui.internal.scion.ScionManager;
+import net.sf.eclipsefp.haskell.ui.internal.backend.CabalFileChangeListenerManager;
+import net.sf.eclipsefp.haskell.ui.internal.backend.BackendManager;
 import net.sf.eclipsefp.haskell.ui.internal.util.UITexts;
 import net.sf.eclipsefp.haskell.ui.util.CabalFileChangeListener;
 import org.eclipse.core.resources.IFile;
@@ -94,7 +94,7 @@ public class InstallDeps extends MarkerCompletion {
           @Override
           protected IStatus run( final IProgressMonitor monitor ) {
             try {
-              if (ScionManager.getCabalImplDetails().isSandboxed()){
+              if (BackendManager.getCabalImplDetails().isSandboxed()){
                 IProject project=marker.getResource().getProject();
                 BWFacade bwf=BuildWrapperPlugin.getFacade( project );
                 if (bwf!=null){

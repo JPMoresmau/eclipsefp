@@ -13,8 +13,8 @@ import net.sf.eclipsefp.haskell.core.cabal.CabalImplementationManager;
 import net.sf.eclipsefp.haskell.core.util.ResourceUtil;
 import net.sf.eclipsefp.haskell.debug.core.internal.launch.AbstractHaskellLaunchDelegate;
 import net.sf.eclipsefp.haskell.ui.HaskellUIPlugin;
+import net.sf.eclipsefp.haskell.ui.internal.backend.BackendManager;
 import net.sf.eclipsefp.haskell.ui.internal.preferences.IPreferenceConstants;
-import net.sf.eclipsefp.haskell.ui.internal.scion.ScionManager;
 import net.sf.eclipsefp.haskell.ui.internal.util.UITexts;
 import net.sf.eclipsefp.haskell.ui.views.CabalPackagesView;
 import org.eclipse.core.resources.IProject;
@@ -78,7 +78,7 @@ public class CabalInstallAction implements IObjectActionDelegate {
    // options
       // use a different build dir so we don't pollute the cabal config file with a wrong sandbox path
       commands.add("--builddir="+BWFacade.DIST_FOLDER_CABAL+sandbox.hashCode());
-      ScionManager.addCabalInstallOptions( commands );
+      BackendManager.addCabalInstallOptions( commands );
       commands.add("--force-reinstalls");
       commands.add("--sandbox="+sandbox);
       commands.add("--with-cabal-install="+cabalExecutable);
@@ -206,7 +206,7 @@ public class CabalInstallAction implements IObjectActionDelegate {
     // this action and its subclasses use cabal executable directly
     // so ask for confirmation that we're getting out of the sandbox
     // (dependencies and installation in dependent projects being handled automatically)
-    CabalImplDetails cid=ScionManager.getCabalImplDetails();
+    CabalImplDetails cid=BackendManager.getCabalImplDetails();
     if (cid.isSandboxed()){
       if (cid.getType().equals( SandboxType.CABAL_DEV ) || cid.getType().equals( SandboxType.CABAL)){
         MessageDialog md=new MessageDialog( currentShell, UITexts.install_sandbox_title, null, getSandboxWarningMessage(), MessageDialog.QUESTION,
@@ -246,7 +246,7 @@ public class CabalInstallAction implements IObjectActionDelegate {
       final List<String> commands = new ArrayList<String>();
       commands.add( cabalExecutable );
       commands.add("install");
-      ScionManager.addCabalInstallOptions( commands );
+      BackendManager.addCabalInstallOptions( commands );
    // options
       commands.add("--builddir="+BWFacade.DIST_FOLDER_CABAL);
       // commands.add( "--user" ); // use cabal default, which is now user

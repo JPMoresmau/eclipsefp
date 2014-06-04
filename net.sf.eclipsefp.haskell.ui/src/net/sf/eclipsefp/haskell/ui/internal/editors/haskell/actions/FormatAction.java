@@ -12,9 +12,9 @@ import net.sf.eclipsefp.haskell.buildwrapper.BuildWrapperPlugin;
 import net.sf.eclipsefp.haskell.style.stylishhaskell.StylishHaskell;
 import net.sf.eclipsefp.haskell.ui.HaskellUIPlugin;
 import net.sf.eclipsefp.haskell.ui.editor.actions.IEditorActionDefinitionIds;
+import net.sf.eclipsefp.haskell.ui.internal.backend.BackendManager;
 import net.sf.eclipsefp.haskell.ui.internal.editors.haskell.HaskellEditor;
 import net.sf.eclipsefp.haskell.ui.internal.preferences.IPreferenceConstants;
-import net.sf.eclipsefp.haskell.ui.internal.scion.ScionManager;
 import net.sf.eclipsefp.haskell.util.FileUtil;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
@@ -88,7 +88,7 @@ public class FormatAction extends TextEditorAction {
             final int t=hEditor.getViewer().getTextWidget().getTopIndex();
             final int c=hEditor.getViewer().getTextWidget().getCaretOffset();
             // go!
-            StylishHaskell.runStylishHaskell( ScionManager.getExecutablePath( IPreferenceConstants.STYLISHHASKELL_EXECUTABLE, "stylish-haskell", false ), p, f,file.getCharset() , extensions);
+            StylishHaskell.runStylishHaskell( BackendManager.getExecutablePath( IPreferenceConstants.STYLISHHASKELL_EXECUTABLE, "stylish-haskell", false ), p, f,file.getCharset() , extensions);
             IRewriteTarget target= (IRewriteTarget)hEditor.getAdapter(IRewriteTarget.class);
             // avoid flickering
             if (target != null) {

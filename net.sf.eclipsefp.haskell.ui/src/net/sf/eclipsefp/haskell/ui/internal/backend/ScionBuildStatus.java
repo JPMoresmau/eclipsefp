@@ -1,8 +1,9 @@
-package net.sf.eclipsefp.haskell.ui.internal.scion;
+package net.sf.eclipsefp.haskell.ui.internal.backend;
 
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 
+@Deprecated
 public class ScionBuildStatus {
   private IStatus status;
   private String executableName;

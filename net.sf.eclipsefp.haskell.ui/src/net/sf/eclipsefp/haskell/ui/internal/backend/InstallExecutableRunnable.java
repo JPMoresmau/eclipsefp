@@ -3,7 +3,7 @@
  * This code is made available under the terms of the Eclipse Public License,
  * version 1.0 (EPL). See http://www.eclipse.org/legal/epl-v10.html
  */
-package net.sf.eclipsefp.haskell.ui.internal.scion;
+package net.sf.eclipsefp.haskell.ui.internal.backend;
 
 import java.io.File;
 import java.io.StringWriter;
@@ -122,7 +122,7 @@ public class InstallExecutableRunnable implements Runnable {
       if (!CabalImplementationManager.getInstance().getDefaultCabalImplementation().allowsSandbox()){
         args.add(global?"--global": "--user");
       }
-      ScionManager.addCabalInstallOptions( args );
+      BackendManager.addCabalInstallOptions( args );
       File f=new File(binDir,FileUtil.makeExecutableName( p.getExeName() ));
       if (!f.exists()){ // the exe does not exist, we force reinstall to make sure it wasn't deleted manually
         args.add( "--reinstall" );

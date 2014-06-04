@@ -30,7 +30,7 @@ import net.sf.eclipsefp.haskell.core.util.ResourceUtil;
 import net.sf.eclipsefp.haskell.hlint.HLintFixer;
 import net.sf.eclipsefp.haskell.hlint.Suggestion;
 import net.sf.eclipsefp.haskell.ui.HaskellUIPlugin;
-import net.sf.eclipsefp.haskell.ui.internal.scion.ScionManager;
+import net.sf.eclipsefp.haskell.ui.internal.backend.BackendManager;
 import net.sf.eclipsefp.haskell.util.HaskellText;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IMarker;
@@ -234,7 +234,7 @@ public class BuildMarkerResolutionGenerator implements
           } else if ((ix=msgL.indexOf( CabalMessages.DEPENDENCIES_MISSING ))>-1){
             // sandbox does the download for us, so if we're missing a dependency and sandbox,
             // either it's badly spelt or we don't have internet connnection...
-            if (!ScionManager.getCabalImplDetails().isSandboxed()){
+            if (!BackendManager.getCabalImplDetails().isSandboxed()){
               int nlid=msg.indexOf( "\n",ix );
               Set<String> all=new HashSet<String>();
               for (String s:msg.substring( nlid ).split( "\\n" )){

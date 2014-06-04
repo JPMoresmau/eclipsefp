@@ -1,4 +1,4 @@
-package net.sf.eclipsefp.haskell.ui.internal.scion;
+package net.sf.eclipsefp.haskell.ui.internal.backend;
 
 import java.io.File;
 import java.io.IOException;
@@ -92,7 +92,7 @@ import org.osgi.framework.Version;
  *
  * This works by listening for resource changes.
  */
-public class ScionManager implements IResourceChangeListener {
+public class BackendManager implements IResourceChangeListener {
   /** Current executable path string */
   private IPath buildWrapperExecutablePath;
   /** Current browser executable path string */
@@ -107,7 +107,7 @@ public class ScionManager implements IResourceChangeListener {
   private final static String MINIMUM_BUILDWRAPPER="0.7.2";
   private final static String MINIMUM_SCIONBROWSER="0.2.12";
 
-  public ScionManager() {
+  public BackendManager() {
     // The interesting stuff is done in the start() method
     buildWrapperExecutablePath = null;
     browserExecutablePath = null;

@@ -1,4 +1,4 @@
-package net.sf.eclipsefp.haskell.ui.internal.scion;
+package net.sf.eclipsefp.haskell.ui.internal.backend;
 
 import java.io.BufferedOutputStream;
 import java.io.BufferedReader;

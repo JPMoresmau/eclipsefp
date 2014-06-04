@@ -8,7 +8,7 @@ package net.sf.eclipsefp.haskell.ui.internal.preferences.scion;
 
 import java.io.File;
 import net.sf.eclipsefp.haskell.ui.HaskellUIPlugin;
-import net.sf.eclipsefp.haskell.ui.internal.scion.InstallExecutableRunnable;
+import net.sf.eclipsefp.haskell.ui.internal.backend.InstallExecutableRunnable;
 import net.sf.eclipsefp.haskell.ui.internal.util.UITexts;
 import net.sf.eclipsefp.haskell.ui.util.HaskellUIImages;
 import net.sf.eclipsefp.haskell.ui.util.IImageNames;
