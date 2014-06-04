@@ -349,7 +349,9 @@ public class JobFacade  {
 			          long t3=System.currentTimeMillis();
 			          
 			          
-		         	  Collection<NameDef> ns=realFacade.build1LongRunning(file,d,end);
+		         	  Collection<NameDef> ns=BWFacade.longRunning?
+		         			  realFacade.build1LongRunning(file,d,end)
+		         			  :realFacade.build1(file, d);
 		        	  long t4=System.currentTimeMillis();
 			          if (ndhandler!=null){
 			        	  ndhandler.handleNameDefs(ns);

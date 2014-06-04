@@ -103,6 +103,14 @@ public class BWFacade {
 	private List<Component> components;
 	private Map<String, CabalPackage[]> packageDB;
 	
+	/**
+	 * use a long running buidlwrapper process?
+	 */
+	public static boolean longRunning=true;
+	
+	/**
+	 * log build times
+	 */
 	public static final boolean logBuildTimes=false;
 	
 	/**
@@ -139,8 +147,7 @@ public class BWFacade {
 	 * map of outlines for files (key is relative path)
 	 */
 	private Map<String,OutlineResult> outlines=new HashMap<String, OutlineResult>();
-	
-	
+
 	/**
 	 * map of flag info for files
 	 */
