@@ -30,7 +30,7 @@
 </item>
 
 <item
-	href="/net.sf.eclipsefp.haskell.doc.user/html/haskell/userGuide/wizards.html#newProject"
+	href="/net.sf.eclipsefp.haskell.doc.user/html/userGuide/wizards.html#newProject"
 	title="Create a Haskell project"
 	skip="true">
 	<action
@@ -40,14 +40,12 @@
 		The first thing you will need is a Haskell Project. (If you already 
 		have one in your workspace that you would like to use, you may skip 
 		this step with the &quot;Click to Skip&quot; button.) Select File &gt; New &gt; 
-		Haskell Project. The 
-		&quot;New Haskell Project&quot; wizard is automatically displayed when you 
-		click the &quot;Click to Perform&quot; button. Just enter the project name, leaving the "Executable" checkbox selected.
+		Haskell Project. Just enter the project name in the wizard that opens, leaving the "Executable" checkbox selected.
 	</description>
 </item>
 
 <item
-	href="/net.sf.eclipsefp.haskell.doc.user/html/haskell/userGuide/wizards.html#newModule"
+	href="/net.sf.eclipsefp.haskell.doc.user/html/userGuide/editor.html"
 	title="Write some code in the Main module"
 	skip="true">
 	<description>
@@ -58,7 +56,7 @@
 </item>
 
 <item
-	href="/net.sf.eclipsefp.haskell.doc.user/html/haskell/gettingStarted.html#run"
+	href="/net.sf.eclipsefp.haskell.doc.user/html/userGuide/runningPrograms.html"
 	title="Launch the executable">
 	<description>
 	    Right-click your project and choose Run As &gt; Haskell Application
@@ -68,11 +66,11 @@
 </item>
 
 <item
-	href="/net.sf.eclipsefp.haskell.doc.user/html/haskell/userGuide/haddock.html"
+	href="/net.sf.eclipsefp.haskell.doc.user/html/userGuide/haddock.html"
 	title="Generate documentation (Haddock)">
 	<description>
 	  If you want to use Haddock to generate documentation from your sources,
-	  you can run it from the Haddock Export Wizard. You have to annotate your
+	  you can run it from the Cabal documentation export. You have to annotate your
 	  sources first. See the Help for more details.
 	</description>
 </item>

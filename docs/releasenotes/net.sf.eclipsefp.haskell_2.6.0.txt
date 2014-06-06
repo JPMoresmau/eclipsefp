@@ -23,6 +23,7 @@ Fixes:
 	- GHCi session did not show any output (https://sourceforge.net/p/eclipsefp/discussion/371922/thread/ac4b9d35/?limit=25#b5e1)
 
 Features:
+	- Support Cabal 1.18 sandboxing
 	- Support benchmark stanzas in cabal files (https://github.com/JPMoresmau/eclipsefp/issues/109)
 	- Launch configurations for cabal test and cabal bench: allows you to run all test suites or all benchmarks	
 	- Extra license codes in cabal editor

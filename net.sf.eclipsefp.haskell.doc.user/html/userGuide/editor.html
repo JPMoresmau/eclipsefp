@@ -17,13 +17,23 @@ source code. Which style is used is determined from the file extension of
 the source file (<b>.hs</b> and <b>.lhs</b> for conventional and literate
 style resp.).</p>
 
-<p>Code Assist is triggered by pressing <b>CTRL-Space</b> when typing.</p>
+<p>Code Assist is triggered by pressing <b>CTRL-Space</b> when typing. Code assist is context sensitive and can show you:<ul>
+<li>Functions, types and constructors in normal code</li>
+<li>Types in type signatures</li>
+<li>Modules in import statement</li>
+<li>Pragma in LANGUAGE directives</li>
+</ul></p>
 
 <p>The Outline View shows the overall structure of the Haskell source file
 in the currently active editor.</p>
 
 <p>Certain regions of the editor can be folded into one line and unfolded
 with the small '-' and '+' buttons in the left editor ruler.</p>
+
+<p>The Haskell worksheet views allows you to enter expressions evaluated when your file is changed. 
+This is like GHCi except your expressions are preserved over save/reload of your file. The recalculation is done automatically.
+Several output formats like simple text or HTML are supported.
+</p>
 
 <h3>Configuration</h3>
 
@@ -37,16 +47,28 @@ Undo and Redo etc.) there are the following Haskell-specific shortcuts:</p>
 
 <p><table border="1" cellpadding="10" cellspacing="0" width="100%" style="border-collapse: collapse" bordercolor="#111111">
   <tr>
-    <td><b>Ctrl&nbsp;+&nbsp;/<br>Ctrl&nbsp;+&nbsp;7</b></td>
-    <td valign="top">Comment (add <b>--</b> to the start of the current line)</td>
+    <td><b>Shift&nbsp;+&nbsp;Ctrl&nbsp;+&nbsp;C</b></td>
+    <td valign="top">Toggle comment (add or remove <b>--</b> to the start of the selected lines)</td>
   </tr>
   <tr>
-    <td><b>Ctrl&nbsp;+&nbsp;+Shift&nbsp;/<br>Ctrl&nbsp;+&nbsp;&szlig;</b></td>
-    <td valign="top">Uncomment (remove <b>--</b> from the start of the current line)</td>
+    <td><b>Shift&nbsp;+&nbsp;Ctrl&nbsp;+&nbsp;P</b></td>
+    <td valign="top">Add pragram comment ({-# ... #-} )</td>
+  </tr>
+ <tr>
+    <td><b>Shift&nbsp;+&nbsp;Ctrl&nbsp;+&nbsp;D&nbsp;F</b></td>
+    <td valign="top">Add an Haddock comment before the current element (the element Follows the documention)</td>
   </tr>
   <tr>
-    <td><b>Home</b></td>
-    <td>Go to the first non-whitespace character of the current line</td>
+    <td><b>Shift&nbsp;+&nbsp;Ctrl&nbsp;+&nbsp;D&nbsp;P</b></td>
+    <td valign="top">Add an Haddock comment after the current element</td>
+  </tr>
+  <tr>
+    <td><b>Shift&nbsp;+&nbsp;Ctrl&nbsp;+&nbsp;D&nbsp;B</b></td>
+    <td valign="top">Add an Haddock block comment before the current element (the element Follows the documention)</td>
+  </tr>
+  <tr>
+    <td><b>Shift&nbsp;+&nbsp;Alt&nbsp;+&nbsp;R</b></td>
+    <td valign="top">Rename the current element (if your project builds successfully, all instances of the element should be renamed everywhere they're used)</td>
   </tr>
 </table></p>
 
