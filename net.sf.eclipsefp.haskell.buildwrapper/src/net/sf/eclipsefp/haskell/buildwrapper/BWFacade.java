@@ -1098,7 +1098,7 @@ public class BWFacade {
 	public List<ThingAtPoint> getLocals(IFile file,Location location){
 		//long t0=System.currentTimeMillis();
 		JSONArray arr=null;
-		boolean run=false;
+		//boolean run=false;
 		if (runningFiles.add(file)){
 			try {
 				Process p=buildProcesses.get(file);
@@ -1108,7 +1108,7 @@ public class BWFacade {
 					p.getOutputStream().write((command+PlatformUtil.NL).getBytes(FileUtil.UTF8));
 					p.getOutputStream().flush();
 					arr=readArrayBW(p);
-					run=true;
+					//run=true;
 				}
 			} catch (IOException ioe){
 				BuildWrapperPlugin.logError(BWText.process_launch_error, ioe);
