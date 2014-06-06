@@ -1096,7 +1096,7 @@ public class BWFacade {
 	 * @return
 	 */
 	public List<ThingAtPoint> getLocals(IFile file,Location location){
-		long t0=System.currentTimeMillis();
+		//long t0=System.currentTimeMillis();
 		JSONArray arr=null;
 		boolean run=false;
 		if (runningFiles.add(file)){
@@ -1149,8 +1149,8 @@ public class BWFacade {
 				}
 			}
 		}
-		long t1=System.currentTimeMillis();
-		BuildWrapperPlugin.logInfo("getLocals:"+(t1-t0)+"ms ("+taps.size()+","+run+")");
+		//long t1=System.currentTimeMillis();
+		//BuildWrapperPlugin.logInfo("getLocals:"+(t1-t0)+"ms ("+taps.size()+","+run+")");
 		return taps;
 	}
 	
@@ -1714,7 +1714,7 @@ public class BWFacade {
 							}
 							boolean expired=System.currentTimeMillis()>max;
 							if (expired){
-								BuildWrapperPlugin.logInfo(String.valueOf(System.currentTimeMillis()));
+								//BuildWrapperPlugin.logInfo(String.valueOf(System.currentTimeMillis()));
 								BuildWrapperPlugin.logWarning(BWText.process_expired, null);
 							}
 							// canceled!
@@ -2008,7 +2008,6 @@ public class BWFacade {
 		}
 		if (logBuildTimes){
 			long t1=System.currentTimeMillis();
-		
 			BuildWrapperPlugin.logInfo("eval:"+(t1-t0)+"ms ("+ers.size()+")");
 		}
 		return ers;
