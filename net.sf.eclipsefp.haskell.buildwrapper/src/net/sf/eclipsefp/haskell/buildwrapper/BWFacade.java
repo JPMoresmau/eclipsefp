@@ -103,6 +103,8 @@ public class BWFacade {
 	private List<Component> components;
 	private Map<String, CabalPackage[]> packageDB;
 	
+	private boolean hasCabalChanged = false;
+	
 	/**
 	 * use a long running buidlwrapper process?
 	 */
@@ -354,6 +356,11 @@ public class BWFacade {
 	
 	public Collection<NameDef> build1LongRunning(IFile file,IDocument d,boolean end){
 		//BuildFlagInfo i=getBuildFlags(file);
+		// avoid "Too late for parseStaticFlags: call it before newSession"
+		if (hasCabalChanged){
+			getBuildFlags(file);
+			hasCabalChanged=false;
+		}
 		//BuildWrapperPlugin.logInfo("build1LongRunning");
 		if (bwPath==null){
 			if (!showedNoExeError){
@@ -697,6 +704,7 @@ public class BWFacade {
 	public void cabalFileChanged(){
 		components=null;
 		packageDB=null;
+		hasCabalChanged=true;
 		//flagInfos.clear();
 	}
 	
@@ -1960,7 +1968,11 @@ public class BWFacade {
 	 * @return a (possibly multiple) list of results
 	 */
 	public List<EvalResult> eval(IFile file,String expression){
-		
+		// avoid "Too late for parseStaticFlags: call it before newSession"
+		if (hasCabalChanged){
+			getBuildFlags(file);
+			hasCabalChanged=false;
+		}
 		long t0=System.currentTimeMillis();
 		expression=expression.replace('\n', ' ').replace('\r',' ');
 		JSONArray arr=null;
