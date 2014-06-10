@@ -126,10 +126,12 @@ public class Note {
 	        try {
 	          prov.connect( resource );
 	          doc=prov.getDocument(  resource );
-	          try {
-	              attributes=location.getMarkerProperties(doc);
-	          } finally {
-	            prov.disconnect( resource );
+	          if (doc!=null){
+		          try {
+		              attributes=location.getMarkerProperties(doc);
+		          } finally {
+		            prov.disconnect( resource );
+		          }
 	          }
 	        } catch (Exception ce){
 	          BuildWrapperPlugin.log(IStatus.ERROR,ce.getLocalizedMessage(), ce );
