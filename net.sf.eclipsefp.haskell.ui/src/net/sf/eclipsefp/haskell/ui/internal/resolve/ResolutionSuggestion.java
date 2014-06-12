@@ -54,6 +54,9 @@ public class ResolutionSuggestion {
     if (outOfScope.startsWith( "`" ) && outOfScope.endsWith( "'" )){
       outOfScope=outOfScope.substring( 1,outOfScope.length()-1 );
     }
+    if (outOfScope.startsWith( "‘" ) && outOfScope.endsWith( "’" )){
+      outOfScope=outOfScope.substring( 1,outOfScope.length()-1 );
+    }
 
     int pointPos = outOfScope.lastIndexOf( '.' );
     if (pointPos != -1) {

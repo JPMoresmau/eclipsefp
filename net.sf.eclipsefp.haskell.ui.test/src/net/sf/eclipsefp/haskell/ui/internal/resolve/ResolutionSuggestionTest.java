@@ -92,4 +92,20 @@ public class ResolutionSuggestionTest {
      assertNull(s.getOutOfScopeQualifier());
 
    }
+
+   @Test
+   public void test7_8(){
+     String msg=" Not in scope: ‘<$>’";
+     String msgL=msg.toLowerCase(Locale.ENGLISH);
+     int ix=msgL.indexOf( GhcMessages.NOT_IN_SCOPE_START);
+     assertTrue(ix>-1);
+     ResolutionSuggestion s=new ResolutionSuggestion( msg, ix,msgL );
+     assertNull(s.getSuggestions());
+     assertEquals("<$>",s.getOutOfScope());
+     assertEquals("<$>",s.getOutOfScopeName());
+     assertNull(s.getOutOfScopeQualifier());
+
+   }
+
+
 }
