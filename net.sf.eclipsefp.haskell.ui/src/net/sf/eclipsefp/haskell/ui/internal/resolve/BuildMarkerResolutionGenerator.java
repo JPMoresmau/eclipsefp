@@ -178,6 +178,9 @@ public class BuildMarkerResolutionGenerator implements
               List<String> suggestions=ReplaceTextResolution.getSuggestionsFromGHCMessage( sug,msgL.substring( l ) );
               msgL=msgL.substring( 0,l );
               int end = msgL.lastIndexOf( GhcMessages.NOT_IN_SCOPE_END );
+              if (end==-1){
+                end = msgL.lastIndexOf( GhcMessages.NOT_IN_SCOPE_END_7_8 );
+              }
               String notInScope = msg.substring( start + 2, end );
 
               for (String suggestion:suggestions){
