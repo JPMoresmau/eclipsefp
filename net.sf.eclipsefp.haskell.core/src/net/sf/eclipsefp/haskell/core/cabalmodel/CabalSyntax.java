@@ -24,6 +24,7 @@ public enum CabalSyntax {
   FIELD_EXPOSED_MODULES("exposed-modules"), //$NON-NLS-1$
   FIELD_NAME("name"), //$NON-NLS-1$
   FIELD_LICENSE_FILE("license-file"), //$NON-NLS-1$
+  FIELD_LICENSE_FILES("license-files"), //$NON-NLS-1$
   FIELD_LICENSE("license"), //$NON-NLS-1$
   FIELD_COPYRIGHT("copyright"), //$NON-NLS-1$
   FIELD_VERSION("version"), //$NON-NLS-1$
