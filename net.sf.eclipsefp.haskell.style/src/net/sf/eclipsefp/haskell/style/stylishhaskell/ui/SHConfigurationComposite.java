@@ -174,7 +174,7 @@ public class SHConfigurationComposite extends Composite{
 			
 			@Override
 			public void verifyText(VerifyEvent arg0) {
-				if (Character.isDigit(arg0.character)){ 
+				if (Character.isDigit(arg0.character) || arg0.character==0){ 
 					arg0.doit=true;
 					return;
 				}
