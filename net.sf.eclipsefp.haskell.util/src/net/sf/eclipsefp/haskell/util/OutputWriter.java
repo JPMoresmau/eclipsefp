@@ -12,6 +12,8 @@ import java.util.LinkedList;
    * https://bugs.eclipse.org/bugs/show_bug.cgi?id=259107
    */
 public abstract class OutputWriter extends Thread {
+		/** the console doesn't like long lines **/
+		private static int LINE_LENGTH=200;
 	    /** the message list **/
 	    private final LinkedList<String> messages   = new LinkedList<String>();
 	    /** should we stop? **/
@@ -73,18 +75,41 @@ public abstract class OutputWriter extends Thread {
 	        }
 	        if (m != null) {
 	          try {
+	        	
 	            final int mLen = m.length();
-	            int i = 0;
-
+	            int written=0;
+	            int sinceLastLine=0;
+	            for (int i=0;i<mLen;i++){
+	            	char c=m.charAt(i);
+	            	serverOutput.write(c);
+	            	written++;
+	            	if (i=='\n'){
+	            		sinceLastLine=0;
+	            	} else {
+	            		sinceLastLine++;
+	            	}
+	            	if (sinceLastLine==LINE_LENGTH){
+	            		serverOutput.write(PlatformUtil.NL);
+	            		serverOutput.flush();
+	            		written=0;
+	            		sinceLastLine=0;
+	            	} else if (written>=80){
+	            		serverOutput.flush();
+	            		written=0;
+	            	}
+	            }
+	            
 	            // Break the message up into 1K chunks for better UI responsiveness, since this all is going to
 	            // an IOConsole.
-	            while ( mLen - i > 1024 ) {
+	           /* while ( mLen - i > 1024 ) {
 	              serverOutput.write(m, i, 1024);
 	              serverOutput.flush();
 	              i += 1024;
 	            }
-	            serverOutput.write(m, i, mLen - i);
-	            serverOutput.write(PlatformUtil.NL);
+	            serverOutput.write(m, i, mLen - i);*/
+	            if (sinceLastLine>0){
+	            	serverOutput.write(PlatformUtil.NL);
+	            }
 	            serverOutput.flush();
 	          } catch (IOException ex) {
 	            if (!terminateFlag) {
