@@ -12,7 +12,8 @@ Necessary Haskell packages:
 Fixes:
 	- Support GHC 7.8 quotes in error messages (https://github.com/JPMoresmau/eclipsefp/issues/184 and https://github.com/JPMoresmau/eclipsefp/issues/185)
 	- Cut long lines in the output console because the Eclipse console doesn't like long lines
-
+	- Autodetect GHC implementations does not lose the currently selected GHc if it's still present
+	
 Features:
 	- Pass GHC implementation chosen in preference to cabal via --with-ghc
 

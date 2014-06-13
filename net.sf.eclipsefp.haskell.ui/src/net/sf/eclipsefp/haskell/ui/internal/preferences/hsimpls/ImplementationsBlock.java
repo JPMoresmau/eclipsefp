@@ -488,11 +488,14 @@ class ImplementationsBlock implements ISelectionProvider {
   }
 
   private void autoDetectGHCImpls() {
+    IHsImplementation def= getCheckedHsImplementation();
     List<IHsImplementation> detect=CompilerManager.autodetectGHCImpls();
     installations.clear();
     installations.addAll( detect);
     viewer.refresh();
-
+    if (def!=null){
+      setCheckedHsImplementation( def.getName());
+    }
   }
 
   private final class Comparator_Version extends ViewerComparator {
