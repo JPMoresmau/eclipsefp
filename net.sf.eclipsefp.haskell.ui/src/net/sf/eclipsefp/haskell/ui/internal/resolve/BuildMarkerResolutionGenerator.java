@@ -155,20 +155,34 @@ public class BuildMarkerResolutionGenerator implements
           // Import a package
           else if (msgL.indexOf(GhcMessages.MISSING_MODULE)>-1){
             int start=GhcMessages.MISSING_MODULE.length();
+            int length=GhcMessages.MISSING_MODULE_ADD_START.length();
             ix=msgL.indexOf( GhcMessages.MISSING_MODULE_ADD_START,start );
+            if (ix==-1){
+              ix=msgL.indexOf( GhcMessages.MISSING_MODULE_ADD_START_7_8,ix);
+              length=GhcMessages.MISSING_MODULE_ADD_START_7_8.length();
+            }
             if (ix>-1){
               Set<String> pkgs=new HashSet<String>();
               while (ix>-1){
                 int ix2=msgL.indexOf( GhcMessages.MISSING_MODULE_ADD_END,ix);
+                if (ix2==-1){
+                  ix2=msgL.indexOf( GhcMessages.MISSING_MODULE_ADD_END_7_8,ix);
+                }
                 if (ix2>-1){
-                  String pkg=msg.substring( ix+GhcMessages.MISSING_MODULE_ADD_START.length(),ix2 );
+                  String pkg=msg.substring( ix+length,ix2 );
                   // if the dependency can be found in several versions, we'll get several messages
                   if (pkgs.add( pkg )){
                     res.add(new AddPackageDependency( pkg ));
                   }
                   ix=ix2;
                 }
-                ix=msgL.indexOf( GhcMessages.MISSING_MODULE_ADD_START,ix+1 );
+                int st=ix+1;
+                length=GhcMessages.MISSING_MODULE_ADD_START.length();
+                ix=msgL.indexOf( GhcMessages.MISSING_MODULE_ADD_START,st );
+                if (ix==-1){
+                  ix=msgL.indexOf( GhcMessages.MISSING_MODULE_ADD_START_7_8,st);
+                  length=GhcMessages.MISSING_MODULE_ADD_START_7_8.length();
+                }
               }
 
             }

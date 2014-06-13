@@ -38,7 +38,9 @@ public interface GhcMessages {
 
   public static String MISSING_MODULE="could not find module";//$NON-NLS-1$
   public static String MISSING_MODULE_ADD_START="perhaps you need to add `";//$NON-NLS-1$	  
+  public static String MISSING_MODULE_ADD_START_7_8="perhaps you need to add ‘";//$NON-NLS-1$	  
   public static String MISSING_MODULE_ADD_END="' to the build-depends"; //$NON-NLS-1$
+  public static String MISSING_MODULE_ADD_END_7_8="’ to the build-depends"; //$NON-NLS-1$
   
   public static String NOT_IN_SCOPE_START="not in scope: "; //$NON-NLS-1$
   public static String NOT_IN_SCOPE_END="'"; //$NON-NLS-1$
