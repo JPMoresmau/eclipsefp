@@ -122,6 +122,7 @@ public class InstallExecutableRunnable implements Runnable {
       if (!CabalImplementationManager.getInstance().getDefaultCabalImplementation().allowsSandbox()){
         args.add(global?"--global": "--user");
       }
+      args.add("--with-ghc="+CompilerManager.getCompilerExecutable());
       BackendManager.addCabalInstallOptions( args );
       File f=new File(binDir,FileUtil.makeExecutableName( p.getExeName() ));
       if (!f.exists()){ // the exe does not exist, we force reinstall to make sure it wasn't deleted manually

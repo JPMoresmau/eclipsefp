@@ -1509,6 +1509,9 @@ public class BWFacade {
 			}
 		}
 		for (String s:cabalImplDetails.getOptions()){
+			if (s.startsWith("--with-ghc") && !args.get(0).equals("configure") && !args.get(0).equals("install")){
+				continue;
+			}
 			args.add(s);
 		}
 		// no we can't build one project in the directory of another

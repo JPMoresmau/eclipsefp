@@ -29,6 +29,7 @@ import net.sf.eclipsefp.haskell.core.cabalmodel.PackageDescriptionLoader;
 import net.sf.eclipsefp.haskell.core.cabalmodel.PackageDescriptionStanza;
 import net.sf.eclipsefp.haskell.core.cabalmodel.RealValuePosition;
 import net.sf.eclipsefp.haskell.core.code.ModuleCreationInfo;
+import net.sf.eclipsefp.haskell.core.compiler.CompilerManager;
 import net.sf.eclipsefp.haskell.core.hlint.HLintBuilder;
 import net.sf.eclipsefp.haskell.core.partitioned.runner.AlexRunner;
 import net.sf.eclipsefp.haskell.core.partitioned.runner.HappyRunner;
@@ -1042,7 +1043,7 @@ public class BackendManager implements IResourceChangeListener {
       }
     }
     addCabalInstallOptions( details.getInstallOptions() );
-
+    details.getOptions().add( "--with-ghc="+CompilerManager.getCompilerExecutable() );
     //HaskellUIPlugin.getDefault().getPreferenceStore().getString( IPreferenceConstants.CABALDEV_EXECUTABLE );
     return details;
   }
@@ -1056,7 +1057,7 @@ public class BackendManager implements IResourceChangeListener {
     if (CabalImplementationManager.getCabalLibraryVersion().compareTo( new Version(1,16,0) )>=0){
       options.add( "-j" );
     }
-
+    options.add( "--with-ghc="+CompilerManager.getCompilerExecutable() );
   }
 
   /**
