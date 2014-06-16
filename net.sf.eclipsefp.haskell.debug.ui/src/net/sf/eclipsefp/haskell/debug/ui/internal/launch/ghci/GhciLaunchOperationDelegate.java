@@ -5,6 +5,7 @@ package net.sf.eclipsefp.haskell.debug.ui.internal.launch.ghci;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 import net.sf.eclipsefp.haskell.buildwrapper.BWFacade;
 import net.sf.eclipsefp.haskell.buildwrapper.BuildWrapperPlugin;
 import net.sf.eclipsefp.haskell.buildwrapper.types.BuildFlags;
@@ -58,7 +59,11 @@ public class GhciLaunchOperationDelegate
             include=!removeFromDebug;
           }
           // ignore verbosity settings, since -v0 will cause us to not show anything
-          if (s.startsWith( "-v" )){ //$NON-NLS-1$
+          if (s.toLowerCase(Locale.ENGLISH).startsWith( "-v" )){ //$NON-NLS-1$
+            include=false;
+          }
+          // ignore optimisation settings
+          if (s.toLowerCase(Locale.ENGLISH).startsWith( "-o" )){ //$NON-NLS-1$
             include=false;
           }
           if (include){
