@@ -287,6 +287,8 @@ public class BuildMarkerResolutionGenerator implements
                 res.add(new CabalFieldSetter( CabalSyntax.FIELD_CABAL_VERSION, value ));
               }
             }
+          } else if (msg.indexOf( "DeriveDataTypeable")>-1){
+            res.add( new AddLanguagePragmaResolution( "DeriveDataTypeable" ) );
           }
         }
       }
@@ -484,7 +486,7 @@ public class BuildMarkerResolutionGenerator implements
    *
    * @param res
    * @param flag
-   * @return true if the pragam was valid, false otherwise
+   * @return true if the pragma was valid, false otherwise
    */
   private boolean addPragma(final List<IMarkerResolution> res,final String flag){
     if (flag!=null && flag.length()>2 && flag.startsWith( "-X" )){ //$NON-NLS-1$

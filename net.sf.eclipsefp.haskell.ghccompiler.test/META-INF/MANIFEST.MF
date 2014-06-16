@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Test Plug-in
 Bundle-SymbolicName: net.sf.eclipsefp.haskell.ghccompiler.test
-Bundle-Version: 2.2.3
+Bundle-Version: 2.6.1.qualifier
 Bundle-Vendor: eclipsefp.sourceforge.net
 Require-Bundle: org.easymock;bundle-version="[2.2.0,3.0.0)",
  org.junit;bundle-version="[4.8.0,4.12.0)",
