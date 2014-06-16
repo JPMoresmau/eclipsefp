@@ -25,6 +25,7 @@ public class CappedStringWriterTest {
 		CappedStringWriter w=new CappedStringWriter(100);
 		w.write("toto");
 		w.write("titi");
+		w.close();
 		Assert.assertEquals("tototiti", w.toString());
 	}
 	
@@ -34,12 +35,14 @@ public class CappedStringWriterTest {
 		w.write("toto");
 		w.clear();
 		w.write("titi");
+		w.close();
 		Assert.assertEquals("titi", w.toString());
 		w=new CappedStringWriter(4);
 		w.write("toto");
 		w.clear();
 		w.write("tutu");
 		w.write("titi");
+		w.close();
 		Assert.assertEquals("titi", w.toString());
 	}
 	
@@ -49,6 +52,7 @@ public class CappedStringWriterTest {
 		CappedStringWriter w=new CappedStringWriter(100);
 		w.write("toto");
 		w.write((String)null);
+		w.close();
 		assertEquals("toto", w.toString());
 	}
 	
@@ -57,6 +61,7 @@ public class CappedStringWriterTest {
 		CappedStringWriter w=new CappedStringWriter(4);
 		w.write("toto");
 		w.write("titi");
+		w.close();
 		assertEquals("titi", w.toString());
 	}
 	
@@ -65,6 +70,7 @@ public class CappedStringWriterTest {
 		CappedStringWriter w=new CappedStringWriter(6);
 		w.write("toto");
 		w.write("titi");
+		w.close();
 		assertEquals("titi", w.toString());
 	}
 	
@@ -73,6 +79,7 @@ public class CappedStringWriterTest {
 		CappedStringWriter w=new CappedStringWriter(2);
 		w.write("toto");
 		w.write("titi");
+		w.close();
 		assertEquals("", w.toString());
 	}
 	
@@ -88,6 +95,7 @@ public class CappedStringWriterTest {
 		for (int a=0;a<10000;a++){
 			w.write(s);
 		}
+		w.close();
 		assertEquals(s,w.toString());
 	}
 }

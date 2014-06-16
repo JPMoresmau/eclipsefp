@@ -95,6 +95,7 @@ public class DispatchWriterTest extends TestCase {
 		multiplexer.getWriters().add(output);
 		multiplexer.getWriters().remove(output);
 		multiplexer.write("This should not be outputed to the removed writer");
+		multiplexer.close();
 
 		assertEquals(0, output.toString().length());
 	}
@@ -103,6 +104,7 @@ public class DispatchWriterTest extends TestCase {
 		DispatchWriter multiplexer = new DispatchWriter();
 		multiplexer.getWriters().addAll(Arrays.asList(outputs));
 		multiplexer.write(EXPECTED_CONTENTS);
+		multiplexer.close();
 	}
 }
 
