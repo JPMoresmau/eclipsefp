@@ -44,6 +44,10 @@ public class HistoryAction extends Action  {
 
   private int insertOffset=0;
   private int insertIndex=-1;
+  /**
+   * where the caret is in the line
+   */
+  private int caretPos = 0;
 
   public HistoryAction(final TextConsolePage p){
     super(UITexts.command_history,AbstractUIPlugin.imageDescriptorFromPlugin( HaskellDebugUI.getDefault().getBundle().getSymbolicName(), "icons/etool16/history16.gif" )); //$NON-NLS-1$
@@ -59,7 +63,9 @@ public class HistoryAction extends Action  {
       public void verifyText( final VerifyEvent paramVerifyEvent ) {
         // more than one printable character: not a key press, append to current buffer
         if (paramVerifyEvent.text!=null && paramVerifyEvent.text.trim().length()>1){
-          current.append(paramVerifyEvent.text.trim());
+          String t=paramVerifyEvent.text.trim();
+          current.insert(caretPos,t);
+          caretPos+=t.length();
           if (paramVerifyEvent.text.endsWith( "\r" ) || paramVerifyEvent.text.endsWith( "\n" )){ //$NON-NLS-1$ //$NON-NLS-2$
 
             String s=current.toString().trim();
@@ -74,6 +80,7 @@ public class HistoryAction extends Action  {
             }
             insertIndex=-1;
             current.setLength( 0 );
+            caretPos=0;
           }
         }
       }
@@ -92,6 +99,7 @@ public class HistoryAction extends Action  {
           } else {
             text.replaceTextRange( insertOffset, current.length(), "" ); //$NON-NLS-1$
             current.setLength( 0 );
+            caretPos=0;
           }
           if (e.keyCode==SWT.ARROW_DOWN ){
             insertIndex--;
@@ -112,6 +120,7 @@ public class HistoryAction extends Action  {
 
           //current.append(toInsert); // done by verify listener
           text.append(toInsert);
+          caretPos+=toInsert.length();
           text.setCaretOffset( text.getCharCount() );
         }
       }
@@ -133,15 +142,24 @@ public class HistoryAction extends Action  {
             }
             insertIndex=-1;
             current.setLength( 0 );
+            caretPos=0;
            // printable character
           } else if (!Character.isISOControl( c )){
             if (current.length()==0){
               insertOffset=text.getCharCount();
             }
-            current.append(c);
+            current.insert(caretPos,c);
+            caretPos++;
             // backspace
           } else if (c=='\b' && current.length()>0){
             current.setLength( current.length()-1 );
+            caretPos--;
+          } else if (e.keyCode==SWT.ARROW_LEFT){
+            caretPos--;
+          } else if (e.keyCode==SWT.ARROW_RIGHT){
+            if (caretPos<current.length()){
+              caretPos++;
+            }
           }
         }
       }
