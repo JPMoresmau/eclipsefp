@@ -317,7 +317,7 @@ public class JobFacade  {
 	 * @param ndhandler
 	 */
 	public void updateFromEditor(final IFile file,final IDocument d,final OutlineHandler handler,final NameDefHandler ndhandler,final boolean sync1,final boolean end,final List<? extends EvalHandler> handlers){
-		final String jobNamePrefix = NLS.bind(BWText.editor_job_name, getProject().getName());
+		final String jobNamePrefix = NLS.bind(BWText.editor_job_name, file.getName(), getProject().getName());
 	
 		/*
 		 *  we're not automatically building, and it's the first time we get a request from the editor
