@@ -1,2 +1,0 @@
-# Turn on tracing for the Haddock plugin
-net.sf.eclipsefp.haskell.haddock/commandline = false

@@ -2,7 +2,7 @@
 
 EclipseFP is a set of plugins for Eclipse that add support for the Haskell programming language. 
 
-This file is at the root of the project, and below it you should see all the plugins that make up EclipseFP. Most of current plugins that are part of the EclipseFP installation, some are obsolete and are not installed any more, some are just test plugins that contains, er, tests on other classes.
+This file is at the root of the project, and below it you should see all the plugins that make up EclipseFP. Most of current plugins that are part of the EclipseFP installation, some are just test plugins that contains, er, tests on other classes.
 
 * [docs](https://github.com/JPMoresmau/eclipsefp/tree/master/docs) contains some documentation, mainly the release notes
 * [net.sf.eclipsefp.haskell](https://github.com/JPMoresmau/eclipsefp/tree/master/net.sf.eclipsefp.haskell) contains cheatsheets
@@ -18,13 +18,10 @@ This file is at the root of the project, and below it you should see all the plu
 * [net.sf.eclipsefp.haskell-feature](https://github.com/JPMoresmau/eclipsefp/tree/master/net.sf.eclipsefp.haskell-feature) EclipseFP feature
 * [net.sf.eclipsefp.haskell.ghccompiler](https://github.com/JPMoresmau/eclipsefp/tree/master/net.sf.eclipsefp.haskell.ghccompiler) specific GHC support
 * [net.sf.eclipsefp.haskell.ghccompiler.test](https://github.com/JPMoresmau/eclipsefp/tree/master/net.sf.eclipsefp.haskell.ghccompiler.test) tests for specific GHC support
-* [net.sf.eclipsefp.haskell.haddock](https://github.com/JPMoresmau/eclipsefp/tree/master/net.sf.eclipsefp.haskell.haddock) deprecated. Used to call haddock directly, now we just call cabal haddock
 * [net.sf.eclipsefp.haskell.hlint](https://github.com/JPMoresmau/eclipsefp/tree/master/net.sf.eclipsefp.haskell.hlint) HLint integration
 * [net.sf.eclipsefp.haskell.hlint.test](https://github.com/JPMoresmau/eclipsefp/tree/master/net.sf.eclipsefp.haskell.hlint.test) HLint integration test
 * [net.sf.eclipsefp.haskell.hugs](https://github.com/JPMoresmau/eclipsefp/tree/master/net.sf.eclipsefp.haskell.hugs) Hugs support, compiles but not maintained
 * [net.sf.eclipsefp.haskell.profiler](https://github.com/JPMoresmau/eclipsefp/tree/master/net.sf.eclipsefp.haskell.profiler) profiling support
-* [net.sf.eclipsefp.haskell.scion.client](https://github.com/JPMoresmau/eclipsefp/tree/master/net.sf.eclipsefp.haskell.scion.client) Deprecated, used when scion was the back-end and not buildwrapper
-* [net.sf.eclipsefp.haskell.scion.client.test](https://github.com/JPMoresmau/eclipsefp/tree/master/net.sf.eclipsefp.haskell.scion.client.test) Tests for scion
 * [net.sf.eclipsefp.haskell.style](https://github.com/JPMoresmau/eclipsefp/tree/master/net.sf.eclipsefp.haskell.style) Stylish-Haskell integration
 * [net.sf.eclipsefp.haskell.style.test](https://github.com/JPMoresmau/eclipsefp/tree/master/net.sf.eclipsefp.haskell.style.test) Tests for Stylish Haskell integration
 * [net.sf.eclipsefp.haskell.test](https://github.com/JPMoresmau/eclipsefp/tree/master/net.sf.eclipsefp.haskell.test) General test
