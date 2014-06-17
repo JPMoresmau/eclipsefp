@@ -20,6 +20,7 @@ public class TestScope implements IScopeContext {
    */
   public static final String SCOPE = "test"; //$NON-NLS-1$
 
+  @Override
   public IPath getLocation() {
     // Return null. InstanceScope does this too, and remarks:
     // The instance location usually corresponds to the state
@@ -27,10 +28,12 @@ public class TestScope implements IScopeContext {
     return null;
   }
 
+  @Override
   public String getName() {
     return SCOPE;
   }
 
+  @Override
   public IEclipsePreferences getNode( final String qualifier ) {
     if (qualifier == null) {
       throw new IllegalArgumentException();

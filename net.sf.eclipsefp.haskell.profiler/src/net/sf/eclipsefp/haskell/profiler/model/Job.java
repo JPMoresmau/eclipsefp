@@ -104,6 +104,7 @@ public class Job {
 				new ArrayList<Map.Entry<String, BigInteger>>(
 						getTotalByEntry().entrySet());
 		Collections.sort(totals, new Comparator<Map.Entry<String, BigInteger>>() {
+			@Override
 			public int compare(Entry<String, BigInteger> a, Entry<String, BigInteger> b) {
 				return -a.getValue().compareTo(b.getValue());
 			}

@@ -31,6 +31,7 @@ public class Constructor extends Documented {
 		this.signature = o.getString("type");
 	}
 	
+	@Override
 	public String getName() {
 		return this.name;
 	}
@@ -39,6 +40,7 @@ public class Constructor extends Documented {
 		return this.signature;
 	}
 	
+	@Override
 	public String getCompleteDefinition() {
 		StringBuilder builder = new StringBuilder(this.getName());
 		builder.append(" :: ");

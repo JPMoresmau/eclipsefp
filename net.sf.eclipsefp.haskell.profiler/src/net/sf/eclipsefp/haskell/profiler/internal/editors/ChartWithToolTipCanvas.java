@@ -33,6 +33,7 @@ public class ChartWithToolTipCanvas extends ChartCanvas implements
 	 * 
 	 * @see org.eclipse.birt.chart.device.IUpdateNotifier#regenerateChart()
 	 */
+	@Override
 	public void regenerateChart() {
 		redraw();
 	}
@@ -42,6 +43,7 @@ public class ChartWithToolTipCanvas extends ChartCanvas implements
 	 * 
 	 * @see org.eclipse.birt.chart.device.IUpdateNotifier#repaintChart()
 	 */
+	@Override
 	public void repaintChart() {
 		redraw();
 	}
@@ -51,6 +53,7 @@ public class ChartWithToolTipCanvas extends ChartCanvas implements
 	 * 
 	 * @see org.eclipse.birt.chart.device.IUpdateNotifier#peerInstance()
 	 */
+	@Override
 	public Object peerInstance() {
 		return this;
 	}
@@ -60,6 +63,7 @@ public class ChartWithToolTipCanvas extends ChartCanvas implements
 	 * 
 	 * @see org.eclipse.birt.chart.device.IUpdateNotifier#getDesignTimeModel()
 	 */
+	@Override
 	public Chart getDesignTimeModel() {
 		return chart;
 	}
@@ -69,6 +73,7 @@ public class ChartWithToolTipCanvas extends ChartCanvas implements
 	 * 
 	 * @see org.eclipse.birt.chart.device.IUpdateNotifier#getRunTimeModel()
 	 */
+	@Override
 	public Chart getRunTimeModel() {
 		return state.getChartModel();
 	}

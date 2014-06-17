@@ -162,12 +162,14 @@ public abstract class ProfileViewerBirtImpl extends ProfileViewerImpl{
 		slider.setSelection(n);
 		slider.addSelectionListener(new SelectionListener() {
 
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				populateChart(chart, slider.getSelection());
 				canvas.rebuildChart();
 				canvas.redraw();
 			}
 
+			@Override
 			public void widgetDefaultSelected(SelectionEvent e) {
 				populateChart(chart, slider.getSelection());
 				canvas.rebuildChart();

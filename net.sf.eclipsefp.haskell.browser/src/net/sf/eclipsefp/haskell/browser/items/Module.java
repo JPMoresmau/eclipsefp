@@ -25,6 +25,7 @@ public class Module extends Documented {
 		this.name = o.getString("name");
 	}
 	
+	@Override
 	public String getName() {
 		return this.name;
 	}

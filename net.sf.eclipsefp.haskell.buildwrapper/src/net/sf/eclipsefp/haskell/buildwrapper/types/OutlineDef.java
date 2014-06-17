@@ -48,6 +48,7 @@ public class OutlineDef {
 	}
 	
 	public static Comparator<OutlineDef> BY_LOCATION=new Comparator<OutlineDef>() {
+		@Override
 		public int compare(OutlineDef o1, OutlineDef o2) {
 			Location l1=o1.getLocation();
 			Location l2=o2.getLocation();
@@ -60,6 +61,7 @@ public class OutlineDef {
 	};
 	
 	public static Comparator<OutlineDef> BY_NAME=new Comparator<OutlineDef>() {
+		@Override
 		public int compare(OutlineDef o1, OutlineDef o2) {
 			return o1.getName().compareToIgnoreCase(o2.getName());
 		}

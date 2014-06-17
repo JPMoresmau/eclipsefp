@@ -89,22 +89,27 @@ public class LiterateContentDescriber_PDETest extends TestCase {
     // interface methods of IContentDescription
     ///////////////////////////////////////////
 
+    @Override
     public String getCharset() {
       return null;
     }
 
+    @Override
     public IContentType getContentType() {
       return null;
     }
 
+    @Override
     public Object getProperty( final QualifiedName key ) {
       return props.get( key );
     }
 
+    @Override
     public boolean isRequested( final QualifiedName key ) {
       return LiterateContentDescriber.STYLE.equals( key );
     }
 
+    @Override
     public void setProperty( final QualifiedName key, final Object value ) {
       props.put( key, value );
     }

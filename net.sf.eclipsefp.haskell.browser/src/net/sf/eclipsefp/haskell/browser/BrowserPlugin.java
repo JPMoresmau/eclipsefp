@@ -68,6 +68,7 @@ public class BrowserPlugin extends AbstractUIPlugin implements IDatabaseLoadedLi
 	 * org.eclipse.ui.plugin.AbstractUIPlugin#start(org.osgi.framework.BundleContext
 	 * )
 	 */
+	@Override
 	public void start(BundleContext context) throws Exception {
 		super.start(context);
 		plugin = this;
@@ -95,6 +96,7 @@ public class BrowserPlugin extends AbstractUIPlugin implements IDatabaseLoadedLi
 	 * org.eclipse.ui.plugin.AbstractUIPlugin#stop(org.osgi.framework.BundleContext
 	 * )
 	 */
+	@Override
 	public void stop(BundleContext context) throws Exception {
 		plugin = null;
 		if (server != null)
@@ -362,18 +364,22 @@ public class BrowserPlugin extends AbstractUIPlugin implements IDatabaseLoadedLi
 			listener.hoogleUnloaded(e);
 	}
 
+	@Override
 	public void databaseLoaded(DatabaseLoadedEvent e) {
 		notifyDatabaseLoaded(e);
 	}
 	
+	@Override
 	public void databaseUnloaded(BrowserEvent e) {
 		notifyDatabaseUnloaded(e);
 	}
 	
+	@Override
 	public void hoogleLoaded(BrowserEvent e) {
 		notifyHoogleLoaded(e);
 	}
 	
+	@Override
 	public void hoogleUnloaded(BrowserEvent e) {
 		notifyHoogleUnloaded(e);
 	}

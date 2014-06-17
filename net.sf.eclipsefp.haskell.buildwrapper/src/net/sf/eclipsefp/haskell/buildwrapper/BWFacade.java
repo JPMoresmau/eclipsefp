@@ -1648,6 +1648,7 @@ public class BWFacade {
 	}
 	
 	private static JSONFactory<JSONArray> ARRAY=new JSONFactory<JSONArray>() {
+		@Override
 		public JSONArray fromJSON(String json)throws JSONException {
 			return new JSONArray(json);
 		}
@@ -1660,6 +1661,7 @@ public class BWFacade {
 //	};
 
 	private static JSONFactory<String> STRING=new JSONFactory<String>() {
+		@Override
 		public String fromJSON(String json)throws JSONException {
 			return json;
 		}
@@ -1667,6 +1669,7 @@ public class BWFacade {
 
 	
 	private static JSONFactory<Boolean> BOOL=new JSONFactory<Boolean>() {
+		@Override
 		public Boolean fromJSON(String json)throws JSONException {
 			return Boolean.valueOf(json);
 		}

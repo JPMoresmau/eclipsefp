@@ -70,7 +70,9 @@ public class JobFacade  {
           try {
            notes=realFacade.build(buildOptions);
 	       if (buildOptions.isOutput()){
-	    	   new Thread(new Runnable(){public void run() {
+	    	   new Thread(new Runnable(){
+	    	@Override
+			public void run() {
 	    		   try {
 	    			   	IProgressMonitor monitor=new NullProgressMonitor();
 		   				IResource res=realFacade.getProject().findMember(BWFacade.DIST_FOLDER);
@@ -492,7 +494,8 @@ public class JobFacade  {
 		        try {
 		          monitor.beginTask(jobNamePrefix, IProgressMonitor.UNKNOWN);
 		          Runnable r=new Runnable(){
-		        	  public void run() {
+		        	  @Override
+					public void run() {
 		        		  for (EvalHandler h:handlers){
 				        	  List<EvalResult> lers=realFacade.eval(file, h.getExpression());
 				        	  if (lers!=null && lers.size()>0){

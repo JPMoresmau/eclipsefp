@@ -150,6 +150,7 @@ public class Note {
 		 * this locks the workspace, so fire a new thread
 		 */
 		new Thread(new Runnable(){
+			@Override
 			public void run() {
 				try {
 					MarkerUtilities.createMarker(resource, attributesf, BuildWrapperPlugin.PROBLEM_MARKER_ID);
