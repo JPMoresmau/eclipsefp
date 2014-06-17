@@ -152,7 +152,6 @@ public class Commands {
 		return o;
 	}
 	
-	@SuppressWarnings("unchecked")
 	public static Packaged<Declaration>[] responseGetDeclarations(
 			String response) throws Exception {
 		JSONArray jDecls = new JSONArray(response);
@@ -165,11 +164,11 @@ public class Commands {
 			aDecls.add(new Packaged<Declaration>(id, decl));
 		}
 
-		Packaged<Declaration>[] elts = (Packaged<Declaration>[]) new Packaged[aDecls.size()];
+		@SuppressWarnings("unchecked")
+		Packaged<Declaration>[] elts = new Packaged[aDecls.size()];
 		return aDecls.toArray(elts);
 	}
 	
-	@SuppressWarnings("unchecked")
 	public static Packaged<Declaration>[] responseGetDeclarationsFromPrefix(
 			String response) throws Exception {
 		JSONArray jDecls = new JSONArray(response);
@@ -184,7 +183,8 @@ public class Commands {
 			aDecls.add(new Packaged<Declaration>(id, decl));
 		}
 
-		Packaged<Declaration>[] elts = (Packaged<Declaration>[]) new Packaged[aDecls.size()];
+		@SuppressWarnings("unchecked")
+		Packaged<Declaration>[] elts = new Packaged[aDecls.size()];
 		return aDecls.toArray(elts);
 	}
 	

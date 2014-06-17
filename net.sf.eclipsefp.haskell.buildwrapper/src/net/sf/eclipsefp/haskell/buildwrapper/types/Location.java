@@ -286,7 +286,7 @@ public class Location {
 		String pl=p.getLocation().toOSString();
 		String loc=getFileName();
 		if (loc!=null && loc.startsWith(pl)){
-			return (IFile)p.getFile(loc.substring(pl.length()));
+			return p.getFile(loc.substring(pl.length()));
 		} else if (!new File(loc).isAbsolute()) {
 			return p.getFile(loc);
 		}

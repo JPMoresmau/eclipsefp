@@ -79,21 +79,23 @@ public class NullBrowserServer extends BrowserServer {
 		return new Module[0];
 	}
 
-	@SuppressWarnings("unchecked")
 	@Override
 	public Packaged<Declaration>[] getDeclarations(Database db,String module) throws Exception {
 		// Return nothing
-		return (Packaged<Declaration>[]) new Packaged[0];
+		@SuppressWarnings("unchecked")
+		Packaged<Declaration>[] result = new Packaged[0];
+		return result;
 	}
 	
 	/* (non-Javadoc)
 	 * @see net.sf.eclipsefp.haskell.browser.BrowserServer#getDeclarationsFromPrefix(net.sf.eclipsefp.haskell.browser.Database, java.lang.String)
 	 */
-	@SuppressWarnings("unchecked")
 	@Override
 	public Packaged<Declaration>[] getDeclarationsFromPrefix(Database db,
 			String prefix) throws Exception {
-		return (Packaged<Declaration>[]) new Packaged[0];
+		@SuppressWarnings("unchecked")
+		Packaged<Declaration>[] result = new Packaged[0];
+		return result;
 	}
 	
 	@Override
