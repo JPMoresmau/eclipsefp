@@ -28,7 +28,7 @@ import org.json.JSONObject;
  */
 public class Note {
 	
-	public enum Kind { ERROR, WARNING, INFO, OTHER };
+	public enum Kind { ERROR, WARNING, INFO, OTHER }
 	
 	private Kind kind; // error, warning, info or other
 	private Location location;
@@ -150,6 +150,7 @@ public class Note {
 		 * this locks the workspace, so fire a new thread
 		 */
 		new Thread(new Runnable(){
+			@Override
 			public void run() {
 				try {
 					MarkerUtilities.createMarker(resource, attributesf, BuildWrapperPlugin.PROBLEM_MARKER_ID);

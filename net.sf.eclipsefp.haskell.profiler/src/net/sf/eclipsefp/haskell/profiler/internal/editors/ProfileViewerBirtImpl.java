@@ -7,7 +7,6 @@ package net.sf.eclipsefp.haskell.profiler.internal.editors;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.IOException;
 import java.io.InputStream;
 import java.io.StringReader;
 import java.math.BigDecimal;
@@ -46,6 +45,7 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.window.Window;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
@@ -60,6 +60,7 @@ import org.eclipse.ui.IFileEditorInput;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.dialogs.ContainerGenerator;
 import org.eclipse.ui.dialogs.SaveAsDialog;
+import org.eclipse.ui.forms.widgets.ExpandableComposite;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.ScrolledForm;
 import org.eclipse.ui.forms.widgets.Section;
@@ -130,7 +131,7 @@ public abstract class ProfileViewerBirtImpl extends ProfileViewerImpl{
 		
 		toolkit = new FormToolkit(parent.getDisplay());
 		form = toolkit.createScrolledForm(parent);
-		form.setText(UITexts.bind(UITexts.graph_title, new Object[] { job.getName(), job.getDate() }));
+		form.setText(NLS.bind(UITexts.graph_title, new Object[] { job.getName(), job.getDate() }));
 		
 		int n = entries.size() < INITIAL_NUMBER_OF_ITEMS ? entries.size() : INITIAL_NUMBER_OF_ITEMS;
 		GridLayout layout = new GridLayout();
@@ -144,7 +145,7 @@ public abstract class ProfileViewerBirtImpl extends ProfileViewerImpl{
 		canvas.setChart(chart);
 		
 		Section section = toolkit.createSection(form.getBody(), 
-				  Section.TITLE_BAR | Section.TWISTIE);
+				ExpandableComposite.TITLE_BAR | ExpandableComposite.TWISTIE);
 		section.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		section.setText(UITexts.graph_options);
 		
@@ -163,12 +164,14 @@ public abstract class ProfileViewerBirtImpl extends ProfileViewerImpl{
 		slider.setSelection(n);
 		slider.addSelectionListener(new SelectionListener() {
 
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				populateChart(chart, slider.getSelection());
 				canvas.rebuildChart();
 				canvas.redraw();
 			}
 
+			@Override
 			public void widgetDefaultSelected(SelectionEvent e) {
 				populateChart(chart, slider.getSelection());
 				canvas.rebuildChart();

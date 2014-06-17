@@ -50,242 +50,297 @@ public class MockFile implements IFile {
 		fFileName = filename;
 	}
 
-	public void appendContents(final InputStream source, final boolean force,
+	@Override
+  public void appendContents(final InputStream source, final boolean force,
 			final boolean keepHistory, final IProgressMonitor monitor) {
 	  // unused
 	}
 
-	public void appendContents(final InputStream source, final int updateFlags,
+	@Override
+  public void appendContents(final InputStream source, final int updateFlags,
 			final IProgressMonitor monitor) {
 	  // unused
 	}
 
-	public void create(final InputStream source, final boolean force,
+	@Override
+  public void create(final InputStream source, final boolean force,
 			final IProgressMonitor monitor) {
 	  // unused
 	}
 
-	public void create(final InputStream source, final int updateFlags,
+	@Override
+  public void create(final InputStream source, final int updateFlags,
 			final IProgressMonitor monitor) {
 	  // unused
 	}
 
-	public void createLink(final IPath localLocation, final int updateFlags,
+	@Override
+  public void createLink(final IPath localLocation, final int updateFlags,
 			final IProgressMonitor monitor) {
 	  // unused
 	}
 
-	public void delete(final boolean force, final boolean keepHistory,
+	@Override
+  public void delete(final boolean force, final boolean keepHistory,
 			final IProgressMonitor monitor) {
 	  // unused
 	}
 
-	public String getCharset() {
+	@Override
+  public String getCharset() {
 		return null;
 	}
 
-	public String getCharset(final boolean checkImplicit) {
+	@Override
+  public String getCharset(final boolean checkImplicit) {
 		return null;
 	}
 
-	public String getCharsetFor(final Reader reader) {
+	@Override
+  public String getCharsetFor(final Reader reader) {
 		return null;
 	}
 
-	public IContentDescription getContentDescription() {
+	@Override
+  public IContentDescription getContentDescription() {
 		return null;
 	}
 
-	public InputStream getContents() {
+	@Override
+  public InputStream getContents() {
 		MockInputStream stream = new MockInputStream(
 				                     new ByteArrayInputStream(fContents.getBytes()));
 		fOpenStreams.add(stream);
 		return stream;
 	}
 
-	public InputStream getContents(final boolean force) {
+	@Override
+  public InputStream getContents(final boolean force) {
 		return getContents();
 	}
 
-	public boolean isDerived(final int options) {
+	@Override
+  public boolean isDerived(final int options) {
 		return false;
 	}
 
-	public int getEncoding() {
+	@Override
+  public int getEncoding() {
 		return 0;
 	}
 
-	public IPath getFullPath() {
+	@Override
+  public IPath getFullPath() {
 		return null;
 	}
 
-	public boolean isHidden() {
+	@Override
+  public boolean isHidden() {
 		return false;
 	}
 
-	public boolean isHidden(final int options) {
+	@Override
+  public boolean isHidden(final int options) {
 		return false;
 	}
 
-	public IFileState[] getHistory(final IProgressMonitor monitor) {
+	@Override
+  public IFileState[] getHistory(final IProgressMonitor monitor) {
 		return null;
 	}
 
-	public String getName() {
+	@Override
+  public String getName() {
 		return fFileName;
 	}
 
-	public Map getPersistentProperties() throws CoreException {
+	@Override
+	public Map<QualifiedName, String> getPersistentProperties() throws CoreException {
 		return null;
 	}
 
-	public boolean isReadOnly() {
+	@Override
+  public boolean isReadOnly() {
 		return false;
 	}
 
-	public Map getSessionProperties() throws CoreException {
+	@Override
+	public Map<QualifiedName, Object> getSessionProperties() throws CoreException {
 		return null;
 	}
 
-	public boolean isTeamPrivateMember(final int options) {
+	@Override
+  public boolean isTeamPrivateMember(final int options) {
 		return false;
 	}
 
-	public void move(final IPath destination, final boolean force, final boolean keepHistory,
+	@Override
+  public void move(final IPath destination, final boolean force, final boolean keepHistory,
 			final IProgressMonitor monitor) {
 	  // unused
 	}
 
-	public void setCharset(final String newCharset) {
+	@Override
+  public void setCharset(final String newCharset) {
 	  // unused
 	}
 
-	public void setCharset(final String newCharset, final IProgressMonitor monitor) {
+	@Override
+  public void setCharset(final String newCharset, final IProgressMonitor monitor) {
 	  // unused
 	}
 
-	public void setContents(final InputStream source, final boolean force,
+	@Override
+  public void setContents(final InputStream source, final boolean force,
 			final boolean keepHistory, final IProgressMonitor monitor) {
 	  // unused
 	}
 
-	public void setContents(final IFileState source, final boolean force,
+	@Override
+  public void setContents(final IFileState source, final boolean force,
 			final boolean keepHistory, final IProgressMonitor monitor) {
 	  // unused
 	}
 
-	public void setContents(final InputStream source, final int updateFlags,
+	@Override
+  public void setContents(final InputStream source, final int updateFlags,
 			final IProgressMonitor monitor) {
 	  // unused
 	}
 
-	public void setContents(final IFileState source, final int updateFlags,
+	@Override
+  public void setContents(final IFileState source, final int updateFlags,
 			final IProgressMonitor monitor) {
       // unused
 	}
 
-	public void setHidden(final boolean isHidden) throws CoreException {
+	@Override
+  public void setHidden(final boolean isHidden) throws CoreException {
 	  // unused
 	}
 
-	public void accept(final IResourceProxyVisitor visitor, final int memberFlags) {
+	@Override
+  public void accept(final IResourceProxyVisitor visitor, final int memberFlags) {
 	  // unused
 	}
 
-	public void accept(final IResourceVisitor visitor) {
+	@Override
+  public void accept(final IResourceVisitor visitor) {
 	  // unused
 	}
 
-	public void accept(final IResourceVisitor visitor, final int depth,
+	@Override
+  public void accept(final IResourceVisitor visitor, final int depth,
 			final boolean includePhantoms) {
 	  // unused
 	}
 
-	public void accept(final IResourceVisitor visitor, final int depth, final int memberFlags) {
+	@Override
+  public void accept(final IResourceVisitor visitor, final int depth, final int memberFlags) {
 	  // unused
 	}
 
- public void accept(final IResourceProxyVisitor visitor, final int depth, final int memberFlags) {
+ @Override
+public void accept(final IResourceProxyVisitor visitor, final int depth, final int memberFlags) {
 	    // unused
   }
 
-	public void clearHistory(final IProgressMonitor monitor) {
+	@Override
+  public void clearHistory(final IProgressMonitor monitor) {
 	  // unused
 	}
 
-	public void copy(final IPath destination, final boolean force, final IProgressMonitor monitor) {
+	@Override
+  public void copy(final IPath destination, final boolean force, final IProgressMonitor monitor) {
 	  // unused
 	}
 
-	public void copy(final IPath destination, final int updateFlags,
+	@Override
+  public void copy(final IPath destination, final int updateFlags,
 			final IProgressMonitor monitor) {
 	  // unused
 	}
 
-	public void copy(final IProjectDescription description, final boolean force,
+	@Override
+  public void copy(final IProjectDescription description, final boolean force,
 			final IProgressMonitor monitor) {
 	  // unused
 	}
 
-	public void copy(final IProjectDescription description, final int updateFlags,
+	@Override
+  public void copy(final IProjectDescription description, final int updateFlags,
 			final IProgressMonitor monitor) {
 	  // unused
 	}
 
-	public IMarker createMarker(final String type) {
+	@Override
+  public IMarker createMarker(final String type) {
 		return null;
 	}
 
-	public void delete(final boolean force, final IProgressMonitor monitor) {
+	@Override
+  public void delete(final boolean force, final IProgressMonitor monitor) {
 	  // unused
 	}
 
-	public void delete(final int updateFlags, final IProgressMonitor monitor) {
+	@Override
+  public void delete(final int updateFlags, final IProgressMonitor monitor) {
 	  // unused
 	}
 
-	public void deleteMarkers(final String type, final boolean includeSubtypes, final int depth) {
+	@Override
+  public void deleteMarkers(final String type, final boolean includeSubtypes, final int depth) {
 	  // unused
 	}
 
-	public boolean exists() {
+	@Override
+  public boolean exists() {
 		return false;
 	}
 
-	public IMarker findMarker(final long id) {
+	@Override
+  public IMarker findMarker(final long id) {
 
 		return null;
 	}
 
-	public IMarker[] findMarkers(final String type, final boolean includeSubtypes, final int depth) {
+	@Override
+  public IMarker[] findMarkers(final String type, final boolean includeSubtypes, final int depth) {
 		return null;
 	}
 
-	public String getFileExtension() {
+	@Override
+  public String getFileExtension() {
 		return null;
 	}
 
-	public long getLocalTimeStamp() {
+	@Override
+  public long getLocalTimeStamp() {
 		return 0;
 	}
 
-	public IPath getLocation() {
+	@Override
+  public IPath getLocation() {
 		return null;
 	}
 
-	public IMarker getMarker(final long id) {
+	@Override
+  public IMarker getMarker(final long id) {
 		return null;
 	}
 
-	public long getModificationStamp() {
+	@Override
+  public long getModificationStamp() {
 		return 0;
 	}
 
-	public IContainer getParent() {
+	@Override
+  public IContainer getParent() {
 		return null;
 	}
 
-	public String getPersistentProperty(final QualifiedName key) {
+	@Override
+  public String getPersistentProperty(final QualifiedName key) {
 		return null;
 	}
 
@@ -293,131 +348,160 @@ public class MockFile implements IFile {
 		fProject = project;
 	}
 
-	public IProject getProject() {
+	@Override
+  public IProject getProject() {
 		return fProject;
 	}
 
-	public IPath getProjectRelativePath() {
+	@Override
+  public IPath getProjectRelativePath() {
 		return null;
 	}
 
-	public IPath getRawLocation() {
+	@Override
+  public IPath getRawLocation() {
 		return null;
 	}
 
-	public ResourceAttributes getResourceAttributes() {
+	@Override
+  public ResourceAttributes getResourceAttributes() {
 		return null;
 	}
 
-	public Object getSessionProperty(final QualifiedName key) {
+	@Override
+  public Object getSessionProperty(final QualifiedName key) {
 		return null;
 	}
 
-	public int getType() {
+	@Override
+  public int getType() {
 
 		return 0;
 	}
 
-	public IWorkspace getWorkspace() {
+	@Override
+  public IWorkspace getWorkspace() {
 
 		return null;
 	}
 
-	public boolean isAccessible() {
+	@Override
+  public boolean isAccessible() {
 
 		return false;
 	}
 
-	public boolean isDerived() {
+	@Override
+  public boolean isDerived() {
 
 		return false;
 	}
 
-	public boolean isLocal(final int depth) {
+	@Override
+  public boolean isLocal(final int depth) {
 
 		return false;
 	}
 
-	public boolean isLinked() {
+	@Override
+  public boolean isLinked() {
 
 		return false;
 	}
 
-	public boolean isPhantom() {
+	@Override
+  public boolean isPhantom() {
 
 		return false;
 	}
 
-	public boolean isSynchronized(final int depth) {
+	@Override
+  public boolean isSynchronized(final int depth) {
 
 		return false;
 	}
 
-	public boolean isTeamPrivateMember() {
+	@Override
+  public boolean isTeamPrivateMember() {
 
 		return false;
 	}
 
-	public void move(final IPath destination, final boolean force, final IProgressMonitor monitor) {
+	@Override
+  public void move(final IPath destination, final boolean force, final IProgressMonitor monitor) {
     // unused
 	}
 
-	public void move(final IPath destination, final int updateFlags,
+	@Override
+  public void move(final IPath destination, final int updateFlags,
 			final IProgressMonitor monitor) {
 	  // unused
 	}
 
-	public void move(final IProjectDescription description, final boolean force,
+	@Override
+  public void move(final IProjectDescription description, final boolean force,
 			final boolean keepHistory, final IProgressMonitor monitor) {
 	  // unused
 	}
 
-	public void move(final IProjectDescription description, final int updateFlags,
+	@Override
+  public void move(final IProjectDescription description, final int updateFlags,
 			final IProgressMonitor monitor) {
 	  // unused
 	}
 
-	public void refreshLocal(final int depth, final IProgressMonitor monitor) {
+	@Override
+  public void refreshLocal(final int depth, final IProgressMonitor monitor) {
 	  // unused
 	}
 
-	public void revertModificationStamp(final long value) {
+	@Override
+  public void revertModificationStamp(final long value) {
 	  // unused
 	}
 
-	public void setDerived(final boolean isDerived) {
+	@Override
+  public void setDerived(final boolean isDerived) {
 	  // unused
 	}
 
-	public void setLocal(final boolean flag, final int depth, final IProgressMonitor monitor) {
+	@Override
+  public void setLocal(final boolean flag, final int depth, final IProgressMonitor monitor) {
 	  // unused
 	}
 
-	public long setLocalTimeStamp(final long value) {
+	@Override
+  public long setLocalTimeStamp(final long value) {
 		return 0;
 	}
 
-	public void setPersistentProperty(final QualifiedName key, final String value) {
+	@Override
+  public void setPersistentProperty(final QualifiedName key, final String value) {
 	  // unused
 	}
 
-	public void setReadOnly(final boolean readOnly) {
+	@Override
+  public void setReadOnly(final boolean readOnly) {
 	  // unused
 	}
 
-	public void setResourceAttributes(final ResourceAttributes attributes) {
+	@Override
+  public void setResourceAttributes(final ResourceAttributes attributes) {
 		// unused
 	}
 
-	public void setSessionProperty(final QualifiedName key, final Object value) {
+	@Override
+  public void setSessionProperty(final QualifiedName key, final Object value) {
 	  // unused
 	}
 
-	public void setTeamPrivateMember(final boolean isTeamPrivate) {
+	@Override
+  public void setTeamPrivateMember(final boolean isTeamPrivate) {
 	  // unused
 	}
 
-	public void touch(final IProgressMonitor monitor) {
+	@Override
+  public void touch(final IProgressMonitor monitor) {
 	  // unused
 	}
 
@@ -425,28 +509,34 @@ public class MockFile implements IFile {
 		return null;
 	}
 
-	public boolean contains(final ISchedulingRule rule) {
+	@Override
+  public boolean contains(final ISchedulingRule rule) {
 
 		return false;
 	}
 
-	public boolean isConflicting(final ISchedulingRule rule) {
+	@Override
+  public boolean isConflicting(final ISchedulingRule rule) {
 		return false;
 	}
 
-	public void createLink(final URI location, final int updateFlags, final IProgressMonitor monitor) {
+	@Override
+  public void createLink(final URI location, final int updateFlags, final IProgressMonitor monitor) {
 	  // unused
 	}
 
-	public URI getLocationURI() {
+	@Override
+  public URI getLocationURI() {
 		return null;
 	}
 
-	public URI getRawLocationURI() {
+	@Override
+  public URI getRawLocationURI() {
 		return null;
 	}
 
-	public boolean isLinked(final int options) {
+	@Override
+  public boolean isLinked(final int options) {
 		return false;
 	}
 
@@ -456,15 +546,18 @@ public class MockFile implements IFile {
 		}
 	}
 
-	public IResourceProxy createProxy() {
+	@Override
+  public IResourceProxy createProxy() {
 		return null;
 	}
 
-	public int findMaxProblemSeverity(final String type, final boolean includeSubtypes,
+	@Override
+  public int findMaxProblemSeverity(final String type, final boolean includeSubtypes,
 			final int depth) {
 		return 0;
 	}
 
+  @Override
   public IPathVariableManager getPathVariableManager() {
     IPathVariableManager result = null;
     IWorkspace workspace = ResourcesPlugin.getWorkspace();
@@ -474,11 +567,13 @@ public class MockFile implements IFile {
     return result;
   }
 
+  @Override
   public boolean isVirtual() {
     // By default, do not assume that MockFile's are virtual resources
     return false;
   }
 
+  @Override
   public void setDerived( final boolean isDerived, final IProgressMonitor monitor )
       throws CoreException {
     // unused.

@@ -18,6 +18,7 @@ import org.eclipse.jface.viewers.ISelection;
  * @author Leif Frenzel (changed formatting and minor refactorings)
  * @deprecated provided by default in text editor by Eclipse
  */
+@Deprecated
 public class FirstCharAction extends AbstractAction {
     @Override
     public void run(final IAction action) {
@@ -73,7 +74,6 @@ public class FirstCharAction extends AbstractAction {
      * Helper for setting caret
      *
      * @param pos
-     * @throws BadLocationException
      */
     protected void setCaretPosition( final int pos ) {
         getTextEditor().selectAndReveal(pos, 0);

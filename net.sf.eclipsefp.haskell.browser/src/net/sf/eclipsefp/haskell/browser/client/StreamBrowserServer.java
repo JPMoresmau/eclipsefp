@@ -429,6 +429,7 @@ public class StreamBrowserServer extends BrowserServer {
 		process = null;
 	}
 	
+	@Override
 	public boolean isRunning(){
 		return lock.isRunning();
 	}

@@ -2,7 +2,6 @@ package net.sf.eclipsefp.haskell.ui.internal.preferences.templates;
 
 import net.sf.eclipsefp.haskell.ui.HaskellUIPlugin;
 import net.sf.eclipsefp.haskell.ui.internal.editors.haskell.codeassist.HSCodeTemplateManager;
-import org.eclipse.ui.IWorkbenchPreferencePage;
 import org.eclipse.ui.texteditor.templates.TemplatePreferencePage;
 
 /**
@@ -19,7 +18,7 @@ import org.eclipse.ui.texteditor.templates.TemplatePreferencePage;
  * be accessed directly via the preference store.
  */
 
-public class HSCodeTemplatePreferences extends TemplatePreferencePage implements IWorkbenchPreferencePage {
+public class HSCodeTemplatePreferences extends TemplatePreferencePage {
 
 	public HSCodeTemplatePreferences() {
 		super();

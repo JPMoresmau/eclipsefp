@@ -22,11 +22,7 @@ public class HLintPP extends ExecutablePP {
    * always display suggestion?
    */
   private BooleanFieldEditor alwaysFullField;
-  /**
-   * @param pgmName
-   * @param exeName
-   * @param pref
-   */
+
   public HLintPP() {
     super( "HLint" , "hlint", IPreferenceConstants.HLINT_EXECUTABLE );
   }

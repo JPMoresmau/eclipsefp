@@ -42,7 +42,7 @@ public class HoogleResultConstructor extends HoogleResult {
 		this.pkg = new ArrayList<PackageIdentifier>();
 		for (int i = 0; i < results.length(); i++) {
 			JSONArray result = results.getJSONArray(i);
-			this.pkg.add(new PackageIdentifier(result.getJSONObject(0)));;
+			this.pkg.add(new PackageIdentifier(result.getJSONObject(0)));
 		}
 	}
 

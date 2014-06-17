@@ -57,9 +57,7 @@ public abstract class PackageBuilder {
   public abstract String getMessage(PackageBuilderMessages message);
 
   /** Unpack the package's archive to its final destination
-  *
-  * @param The final destination directory.
-  * */
+    */
  public ScionBuildStatus unpackScionArchive(final File destdir) {
    ScionBuildStatus retval = new ScionBuildStatus();
    if( !destdir.exists() || destdir.list().length == 0 ) {

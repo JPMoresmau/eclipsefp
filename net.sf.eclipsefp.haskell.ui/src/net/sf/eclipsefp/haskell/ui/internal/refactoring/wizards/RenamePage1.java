@@ -32,9 +32,6 @@ import org.eclipse.swt.widgets.Text;
 public class RenamePage1 extends UserInputWizardPage {
   private final RenameDelegate delegate;
 
-  /**
-   * @param name
-   */
   public RenamePage1( final RenameDelegate delegate ) {
     super( UITexts.renameProcessor_name );
     this.delegate=delegate;

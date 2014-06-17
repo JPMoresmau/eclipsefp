@@ -16,7 +16,6 @@ import net.sf.eclipsefp.haskell.core.preferences.TemplateVariables;
 import net.sf.eclipsefp.haskell.ui.internal.util.UITexts;
 import net.sf.eclipsefp.haskell.ui.internal.wizards.NewProjectWizardPage;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.ui.INewWizard;
 
 
 /**
@@ -24,7 +23,7 @@ import org.eclipse.ui.INewWizard;
  * @author JP Moresmau
  *
  */
-public class NewGtkProjectWizard extends NewHaskellProjectWizard implements INewWizard {
+public class NewGtkProjectWizard extends NewHaskellProjectWizard {
 
   /**
    *

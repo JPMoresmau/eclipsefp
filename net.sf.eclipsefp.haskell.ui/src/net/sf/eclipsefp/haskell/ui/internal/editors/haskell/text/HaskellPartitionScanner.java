@@ -18,6 +18,7 @@ import org.eclipse.jface.text.rules.Token;
   * @author Leif Frenzel
   * @deprecated
   */
+@Deprecated
 public class HaskellPartitionScanner extends RuleBasedPartitionScanner {
   public HaskellPartitionScanner() {
     IPredicateRule[] rules = new IPredicateRule[] {

@@ -92,6 +92,7 @@ public class BuildWrapperPlugin extends AbstractUIPlugin {
 	 * (non-Javadoc)
 	 * @see org.eclipse.ui.plugin.AbstractUIPlugin#start(org.osgi.framework.BundleContext)
 	 */
+	@Override
 	public void start(BundleContext context) throws Exception {
 		super.start(context);
 		plugin = this;
@@ -112,6 +113,7 @@ public class BuildWrapperPlugin extends AbstractUIPlugin {
 	 * (non-Javadoc)
 	 * @see org.eclipse.ui.plugin.AbstractUIPlugin#stop(org.osgi.framework.BundleContext)
 	 */
+	@Override
 	public void stop(BundleContext context) throws Exception {
 		plugin = null;
 		ResourcesPlugin.getWorkspace().removeResourceChangeListener(sandboxListener);
@@ -232,7 +234,7 @@ public class BuildWrapperPlugin extends AbstractUIPlugin {
 	}
 	
 	 public static void logInfo(String message) {
-	    log(Status.INFO, message, null);
+	    log(IStatus.INFO, message, null);
 	  }
 
 	  public static void logDebug(String message) {
@@ -240,12 +242,12 @@ public class BuildWrapperPlugin extends AbstractUIPlugin {
 	  }
 	  
 	  public static void logWarning(String message, Throwable cause) {
-	    log(Status.WARNING, message, cause);
+	    log(IStatus.WARNING, message, cause);
 	  }
 
 
 	  public static void logError(String message, Throwable cause) {
-	    log(Status.ERROR, message, cause);
+	    log(IStatus.ERROR, message, cause);
 	  }
 
 	  public static void log(int severity, String message, Throwable cause) {

@@ -110,6 +110,7 @@ public class Suggestion implements Serializable {
 		return getMessage();
 	}
 	
+	@Override
 	public String toString() {
 		JSONObject obj=new JSONObject();
 		try {

@@ -172,14 +172,12 @@ public class JSONArray {
     /**
      * Construct a JSONArray from a collection of beans.
      * The collection should have Java Beans.
-     * 
-     * @throws JSONException If not an array.
      */
 
 	public JSONArray(Collection<? extends Object> collection, boolean includeSuperClass) {
 		this.myArrayList = new ArrayList<Object>();
 		if (collection != null) {
-			Iterator<? extends Object> iter = collection.iterator();;
+			Iterator<? extends Object> iter = collection.iterator();
 			while (iter.hasNext()) {
 			    Object o = iter.next();
 			    if (o instanceof Map) {
@@ -854,6 +852,7 @@ public class JSONArray {
      * @return a printable, displayable, transmittable
      *  representation of the array.
      */
+    @Override
     public String toString() {
         try {
             return '[' + join(",") + ']';

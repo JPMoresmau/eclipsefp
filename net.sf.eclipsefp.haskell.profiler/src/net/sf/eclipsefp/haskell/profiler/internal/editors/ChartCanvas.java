@@ -83,7 +83,8 @@ public class ChartCanvas extends Canvas {
             if (render!=null){
 		        addPaintListener(new PaintListener() {
 		
-		            public void paintControl(PaintEvent e) {
+		            @Override
+					public void paintControl(PaintEvent e) {
 		
 		                Composite co = (Composite) e.getSource();
 		                final Rectangle rect = co.getClientArea();
@@ -109,7 +110,8 @@ public class ChartCanvas extends Canvas {
 		
 		        addControlListener(new ControlAdapter() {
 		
-		            public void controlResized(ControlEvent e) {
+		            @Override
+					public void controlResized(ControlEvent e) {
 		            	
 		            	render.setProperty(IDeviceRenderer.GRAPHICS_CONTEXT, new GC(ChartCanvas.this));
 		                buildChart();
@@ -210,7 +212,8 @@ public class ChartCanvas extends Canvas {
      * 
      * @see org.eclipse.swt.widgets.Widget#dispose()
      */
-    public void dispose() {
+    @Override
+	public void dispose() {
         if (cachedImage != null)
             cachedImage.dispose();
         super.dispose();

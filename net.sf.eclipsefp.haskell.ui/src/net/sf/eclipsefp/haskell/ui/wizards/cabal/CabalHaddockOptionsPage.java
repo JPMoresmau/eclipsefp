@@ -42,9 +42,6 @@ public class CabalHaddockOptionsPage extends WizardPage  {
   private DistFolder dFolder;
   private final Collection<IProject> projects;
 
-  /**
-   * @param pageName
-   */
   public CabalHaddockOptionsPage(final Collection<IProject> projects) {
     super( "HaddockOptions", UITexts.exportDoc_options, null );
     this.projects=projects;

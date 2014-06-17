@@ -33,6 +33,7 @@ public abstract class Declaration extends Documented {
 		this.type = type;
 	}
 
+	@Override
 	public String getName() {
 		return this.name;
 	}

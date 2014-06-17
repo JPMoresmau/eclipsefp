@@ -36,6 +36,7 @@ public class UsageThread extends Thread {
 		setDaemon(true);
 	}
 
+	@Override
 	public void run(){
 		/**
 		 * create the API in a thread, since new UsageAPI does a new UsageDB, which loads the SQLite library, etc
@@ -97,12 +98,7 @@ public class UsageThread extends Thread {
 			ps.notifyAll();
 		}
 	}
-	
 
-	
-	/**
-	 * @param shouldStop the shouldStop to set
-	 */
 	public void setShouldStop() {
 		synchronized (ps) {
 			this.shouldStop = true;

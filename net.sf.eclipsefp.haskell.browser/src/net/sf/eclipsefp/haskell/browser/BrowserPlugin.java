@@ -68,6 +68,7 @@ public class BrowserPlugin extends AbstractUIPlugin implements IDatabaseLoadedLi
 	 * org.eclipse.ui.plugin.AbstractUIPlugin#start(org.osgi.framework.BundleContext
 	 * )
 	 */
+	@Override
 	public void start(BundleContext context) throws Exception {
 		super.start(context);
 		plugin = this;
@@ -95,6 +96,7 @@ public class BrowserPlugin extends AbstractUIPlugin implements IDatabaseLoadedLi
 	 * org.eclipse.ui.plugin.AbstractUIPlugin#stop(org.osgi.framework.BundleContext
 	 * )
 	 */
+	@Override
 	public void stop(BundleContext context) throws Exception {
 		plugin = null;
 		if (server != null)
@@ -207,7 +209,7 @@ public class BrowserPlugin extends AbstractUIPlugin implements IDatabaseLoadedLi
 	}
 
 	/**
-	 * Static version of {@link BrowserPlugin#changeInstance(IPath)}
+	 * Static version of {@link BrowserPlugin#changeInstance(IPath,boolean)}
 	 * 
 	 * @param path
 	 */
@@ -253,7 +255,7 @@ public class BrowserPlugin extends AbstractUIPlugin implements IDatabaseLoadedLi
 			getSharedInstance().loadLocalDatabase(getLocalDatabasePath().toOSString(), rebuild);
 			return Status.OK_STATUS;
 		} catch (Throwable ex) {
-			return new Status(Status.ERROR, PLUGIN_ID, BrowserText.error_loadlocaldb, ex);
+			return new Status(IStatus.ERROR, PLUGIN_ID, BrowserText.error_loadlocaldb, ex);
 		}
 	}
 	
@@ -268,7 +270,7 @@ public class BrowserPlugin extends AbstractUIPlugin implements IDatabaseLoadedLi
 			getSharedInstance().loadHackageDatabase(getHackageDatabasePath().toOSString(), rebuild);
 			return Status.OK_STATUS;
 		} catch (Throwable ex) {
-			return new Status(Status.ERROR, PLUGIN_ID, BrowserText.error_loadhackagedb, ex);
+			return new Status(IStatus.ERROR, PLUGIN_ID, BrowserText.error_loadhackagedb, ex);
 		}
 	}
 
@@ -362,18 +364,22 @@ public class BrowserPlugin extends AbstractUIPlugin implements IDatabaseLoadedLi
 			listener.hoogleUnloaded(e);
 	}
 
+	@Override
 	public void databaseLoaded(DatabaseLoadedEvent e) {
 		notifyDatabaseLoaded(e);
 	}
 	
+	@Override
 	public void databaseUnloaded(BrowserEvent e) {
 		notifyDatabaseUnloaded(e);
 	}
 	
+	@Override
 	public void hoogleLoaded(BrowserEvent e) {
 		notifyHoogleLoaded(e);
 	}
 	
+	@Override
 	public void hoogleUnloaded(BrowserEvent e) {
 		notifyHoogleUnloaded(e);
 	}
@@ -449,7 +455,7 @@ public class BrowserPlugin extends AbstractUIPlugin implements IDatabaseLoadedLi
 	}
 	
 	public static void logError(String message, Throwable cause) {
-		log(Status.ERROR, message, cause);
+		log(IStatus.ERROR, message, cause);
 	}
 
 	public static void log(int severity, String message, Throwable cause) {

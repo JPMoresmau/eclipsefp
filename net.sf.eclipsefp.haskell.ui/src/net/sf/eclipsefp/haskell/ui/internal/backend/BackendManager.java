@@ -312,9 +312,6 @@ public class BackendManager implements IResourceChangeListener {
 
   /**
    * Handle ScionPP preference changes.
-   *
-   * @param forceRebuildServer If using the built-in scion-server, should it be rebuilt?
-   * @param forceRebuildServer If using the built-in scion-browser, should it be rebuilt?
    */
   public void handlePreferenceChanges() {
     handlePreferenceChangesServer(  );

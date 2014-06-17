@@ -30,11 +30,11 @@ public class StylePlugin extends AbstractUIPlugin {
 	}
 
 	 public static void logError(Throwable cause) {
-	    log(Status.ERROR, cause.getLocalizedMessage(), cause);
+	    log(IStatus.ERROR, cause.getLocalizedMessage(), cause);
 	  }
 	
 	 public static void logError(String message, Throwable cause) {
-	    log(Status.ERROR, message, cause);
+	    log(IStatus.ERROR, message, cause);
 	  }
 
 	  public static void log(int severity, String message, Throwable cause) {
@@ -51,6 +51,7 @@ public class StylePlugin extends AbstractUIPlugin {
 	 * (non-Javadoc)
 	 * @see org.osgi.framework.BundleActivator#start(org.osgi.framework.BundleContext)
 	 */
+	@Override
 	public void start(BundleContext bundleContext) throws Exception {
 		super.start(bundleContext);
 		plugin=this;
@@ -60,6 +61,7 @@ public class StylePlugin extends AbstractUIPlugin {
 	 * (non-Javadoc)
 	 * @see org.osgi.framework.BundleActivator#stop(org.osgi.framework.BundleContext)
 	 */
+	@Override
 	public void stop(BundleContext bundleContext) throws Exception {
 		super.stop(bundleContext);
 		plugin=null;
