@@ -14,6 +14,7 @@ import org.eclipse.ui.IWorkbench;
  * @deprecated
  * @author JP Moresmau
  */
+@Deprecated
 public class TypingPP extends AbstractEditorPP {
 //  private DialogField spaceForTabs;
 

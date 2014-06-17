@@ -21,6 +21,7 @@ import org.eclipse.jface.text.templates.TemplateVariableResolver;
   * @author B. Scott Michel (bscottm@ieee.org)
   * @deprecated
  */
+@Deprecated
 public class HsModuleTemplateVariable extends TemplateVariableResolver {
   /** The template variable name */
   private static final String NAME = "module";

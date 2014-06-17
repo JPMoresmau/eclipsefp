@@ -8,6 +8,7 @@ package net.sf.eclipsefp.haskell.ui.internal.editors.haskell;
   * @author Leif Frenzel
   * @deprecated
   */
+@Deprecated
 public interface IPartitionTypes {
 
   String HS_COMMENT          = "__hs_comment";

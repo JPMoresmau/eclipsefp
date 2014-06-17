@@ -29,6 +29,7 @@ import org.eclipse.jface.text.rules.WordRule;
   * @author Leif Frenzel
   * @deprecated
   */
+@Deprecated
 public class HaskellCodeScanner extends RuleBasedScanner
                                 implements IEditorPreferenceNames {
   private final ScannerManager man;
