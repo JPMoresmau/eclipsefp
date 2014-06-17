@@ -209,7 +209,7 @@ public class BrowserPlugin extends AbstractUIPlugin implements IDatabaseLoadedLi
 	}
 
 	/**
-	 * Static version of {@link BrowserPlugin#changeInstance(IPath)}
+	 * Static version of {@link BrowserPlugin#changeInstance(IPath,boolean)}
 	 * 
 	 * @param path
 	 */

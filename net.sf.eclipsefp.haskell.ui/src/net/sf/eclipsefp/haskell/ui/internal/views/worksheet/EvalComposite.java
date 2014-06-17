@@ -74,10 +74,7 @@ public class EvalComposite extends Composite implements EvalHandler{
    * the parent page
    */
   private final WorkSheetViewPage page;
-  /**
-   * @param arg0
-   * @param arg1
-   */
+
   public EvalComposite(final WorkSheetViewPage page, final EvalExpression expression) {
     super( page.getMainComposite(), SWT.NONE );
     this.page=page;

@@ -767,13 +767,6 @@ public class HaskellEditor extends TextEditor implements IEditorPreferenceNames,
     return importsManager;
   }
 
-  /**
-   * Update the outline page, using a specific file (notably when the editor's
-   * input is changed.
-   *
-   * @param currentFile
-   *          The current file from which the outline is generated.
-   */
 //  private void updateOutline(final IFile currentFile) {
 //    if ( currentFile != null && outlinePage != null ) {
 //      //ScionInstance instance = getInstance( currentFile );

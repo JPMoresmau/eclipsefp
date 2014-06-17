@@ -175,8 +175,6 @@ public class HTFParser {
    * @param sobj the JSON string
    * @param parents the parents map
    * @param p the project for locations
-   * @param last the last encountered test result (null if non)
-   * @return the parsed test result or none
    * @throws JSONException
    */
   private static void parse1TestOutput(final String sobj,final Map<String,TestResult> parents,final IProject p) throws JSONException{

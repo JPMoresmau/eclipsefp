@@ -98,12 +98,7 @@ public class UsageThread extends Thread {
 			ps.notifyAll();
 		}
 	}
-	
 
-	
-	/**
-	 * @param shouldStop the shouldStop to set
-	 */
 	public void setShouldStop() {
 		synchronized (ps) {
 			this.shouldStop = true;

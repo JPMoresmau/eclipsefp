@@ -24,7 +24,6 @@ public class CustomProjectSupport {
    *
    * @param projectName
    * @param location
-   * @param natureId
    * @return
    */
   public static IProject createExampleProject(final String projectName, final URI location) {

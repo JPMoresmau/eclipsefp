@@ -38,7 +38,6 @@ public class EvalExpressionDialog extends InputDialog {
    * @param dialogTitle
    * @param dialogMessage
    * @param initialValue
-   * @param validator
    */
   public EvalExpressionDialog( final Shell parentShell, final String dialogTitle,
       final String dialogMessage, final EvalExpression initialValue) {

@@ -74,7 +74,6 @@ public class FirstCharAction extends AbstractAction {
      * Helper for setting caret
      *
      * @param pos
-     * @throws BadLocationException
      */
     protected void setCaretPosition( final int pos ) {
         getTextEditor().selectAndReveal(pos, 0);

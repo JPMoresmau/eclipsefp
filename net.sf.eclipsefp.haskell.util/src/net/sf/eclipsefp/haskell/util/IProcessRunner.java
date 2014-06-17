@@ -25,7 +25,7 @@ public interface IProcessRunner {
    * @param err the {@link Writer} to receive the process's stderr stream (may be equal to out, but not null)
    * @param args the command line
    *
-   * @see {@link NullWriter}
+   * @see NullWriter
    */
   int executeBlocking(File workingDir, Writer out, Writer err, String... args) throws IOException;
 
@@ -39,7 +39,7 @@ public interface IProcessRunner {
    *
    * @return the running process
    *
-   * @see {@link NullWriter}
+   * @see NullWriter
    */
   Process executeNonblocking(File workingDir, Writer out, Writer err, String... args) throws IOException;
 

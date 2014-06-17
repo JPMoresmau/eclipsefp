@@ -16,9 +16,6 @@ import org.eclipse.swt.widgets.Composite;
  */
 public class NewGtkProjectWizardPage extends WizardPage {
 
-  /**
-   * @param pageName
-   */
   public NewGtkProjectWizardPage( ) {
     super( UITexts.newGtkProjectWizard_pageTitle );
   }

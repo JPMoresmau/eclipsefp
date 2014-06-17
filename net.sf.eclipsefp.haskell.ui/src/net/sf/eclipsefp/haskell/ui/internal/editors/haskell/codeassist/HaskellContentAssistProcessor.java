@@ -745,15 +745,6 @@ public class HaskellContentAssistProcessor implements IContentAssistProcessor {
 	  return r;
 	}
 
-	/**
-	 * Initialize the state necessary for the 'import' statement's context.
-	 *
-	 * @param scion The scion-server instance for the document's file/project
-	 * @param prefix The prefix used to filter matching module names
-	 * @param offset Offset into the document where proposals could be inserted
-	 *
-	 * @return A ICompletionProposal array of matching module names, or null, if none.
-	 */
 //	private ICompletionProposal[] moduleNamesContext(final ScionInstance scion, final int offset) {
 //	  // Grab all of the module names, keep them cached for the duration of the completion session
 //
@@ -798,7 +789,6 @@ public class HaskellContentAssistProcessor implements IContentAssistProcessor {
 	/**
 	 * Filter module names given a matching prefix.
 	 *
-	 * @param prefix The module name prefix
 	 * @param offset The offset into the document where the completions will be inserted.
 	 * @return An ICompletionProposal array of matching completions, or null if none.
 	 */

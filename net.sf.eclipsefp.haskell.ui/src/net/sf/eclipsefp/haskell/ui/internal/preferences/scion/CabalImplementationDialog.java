@@ -52,7 +52,6 @@ public class CabalImplementationDialog extends StatusDialog {
 
   /** The dialog constructor
    * @param shell The shell that controls this dialog
-   * @param implementationsBlock The Cabal implementations perference page
    * @param impl The Cabal implementation
    */
   CabalImplementationDialog( final Shell shell, final CabalImplementation impl ) {

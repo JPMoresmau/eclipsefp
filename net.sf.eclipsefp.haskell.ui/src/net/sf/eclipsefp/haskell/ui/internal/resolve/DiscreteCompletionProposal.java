@@ -45,7 +45,6 @@ public class DiscreteCompletionProposal implements ICompletionProposal {
    * @param replacementString the actual string to be inserted into the document
    * @param replacementOffset the offset of the text to be replaced
    * @param replacementLength the length of the text to be replaced
-   * @param cursorPosition the position of the cursor following the insert relative to replacementOffset
    */
   public DiscreteCompletionProposal(final String replacementString, final int replacementOffset, final int replacementLength) {
     this(replacementString, replacementOffset, replacementLength, null, null, null, null);
@@ -57,7 +56,6 @@ public class DiscreteCompletionProposal implements ICompletionProposal {
    * @param replacementString the actual string to be inserted into the document
    * @param replacementOffset the offset of the text to be replaced
    * @param replacementLength the length of the text to be replaced
-   * @param cursorPosition the position of the cursor following the insert relative to replacementOffset
    * @param image the image to display for this proposal
    * @param displayString the string to be displayed for the proposal
    * @param contextInformation the context information associated with this proposal

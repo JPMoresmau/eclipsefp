@@ -312,7 +312,7 @@ public class FileUtil {
    * @param f the file
    * @param charSet the character set
    * @return a string, maybe empty, but not null
-   * @throws Exception
+   * @throws IOException
    */
   public static String getContents(File f,String charSet) throws IOException{
 	  String ret="";
