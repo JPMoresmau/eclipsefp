@@ -55,7 +55,7 @@ public class HLintPlugin extends AbstractUIPlugin {
 	}
 
 	  public static void logError(String message, Throwable cause) {
-	    log(Status.ERROR, message, cause);
+	    log(IStatus.ERROR, message, cause);
 	  }
 
 	  public static void log(int severity, String message, Throwable cause) {

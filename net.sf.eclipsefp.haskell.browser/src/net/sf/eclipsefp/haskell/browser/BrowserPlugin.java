@@ -255,7 +255,7 @@ public class BrowserPlugin extends AbstractUIPlugin implements IDatabaseLoadedLi
 			getSharedInstance().loadLocalDatabase(getLocalDatabasePath().toOSString(), rebuild);
 			return Status.OK_STATUS;
 		} catch (Throwable ex) {
-			return new Status(Status.ERROR, PLUGIN_ID, BrowserText.error_loadlocaldb, ex);
+			return new Status(IStatus.ERROR, PLUGIN_ID, BrowserText.error_loadlocaldb, ex);
 		}
 	}
 	
@@ -270,7 +270,7 @@ public class BrowserPlugin extends AbstractUIPlugin implements IDatabaseLoadedLi
 			getSharedInstance().loadHackageDatabase(getHackageDatabasePath().toOSString(), rebuild);
 			return Status.OK_STATUS;
 		} catch (Throwable ex) {
-			return new Status(Status.ERROR, PLUGIN_ID, BrowserText.error_loadhackagedb, ex);
+			return new Status(IStatus.ERROR, PLUGIN_ID, BrowserText.error_loadhackagedb, ex);
 		}
 	}
 
@@ -455,7 +455,7 @@ public class BrowserPlugin extends AbstractUIPlugin implements IDatabaseLoadedLi
 	}
 	
 	public static void logError(String message, Throwable cause) {
-		log(Status.ERROR, message, cause);
+		log(IStatus.ERROR, message, cause);
 	}
 
 	public static void log(int severity, String message, Throwable cause) {
