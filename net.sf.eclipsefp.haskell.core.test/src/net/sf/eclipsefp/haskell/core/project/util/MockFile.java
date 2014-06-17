@@ -155,7 +155,7 @@ public class MockFile implements IFile {
 	}
 
 	@Override
-  public Map<QualifiedName, String> getPersistentProperties() throws CoreException {
+	public Map<QualifiedName, String> getPersistentProperties() throws CoreException {
 		return null;
 	}
 
@@ -165,7 +165,7 @@ public class MockFile implements IFile {
 	}
 
 	@Override
-  public Map<QualifiedName, Object> getSessionProperties() throws CoreException {
+	public Map<QualifiedName, Object> getSessionProperties() throws CoreException {
 		return null;
 	}
 
