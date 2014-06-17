@@ -78,7 +78,7 @@ public class SHConfigurationPP extends PropertyPage implements
 	    	public void widgetSelected(org.eclipse.swt.events.SelectionEvent e) {
 	    		confComp.setEnabled(bProject.getSelection());
 	    		g.setEnabled(bProject.getSelection());
-	    	};
+	    	}
 		});
 	    
 	    boolean hasConfig=StylishHaskell.hasProjectConfiguration(project);

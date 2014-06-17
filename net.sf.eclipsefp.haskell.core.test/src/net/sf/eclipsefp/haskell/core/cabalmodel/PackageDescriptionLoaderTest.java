@@ -25,5 +25,5 @@ public class PackageDescriptionLoaderTest {
     Assert.assertEquals( Arrays.asList( "toto","titi","tutu"),ls );
     ls=PackageDescriptionLoader.parseList( "toto > 0.1,titi > 0.1 && < 1.0,"+PlatformUtil.NL+" tutu" );
     Assert.assertEquals( Arrays.asList( "toto > 0.1","titi > 0.1 && < 1.0","tutu"),ls );
-;  }
+  }
 }

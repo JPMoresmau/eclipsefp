@@ -28,7 +28,7 @@ import org.json.JSONObject;
  */
 public class Note {
 	
-	public enum Kind { ERROR, WARNING, INFO, OTHER };
+	public enum Kind { ERROR, WARNING, INFO, OTHER }
 	
 	private Kind kind; // error, warning, info or other
 	private Location location;

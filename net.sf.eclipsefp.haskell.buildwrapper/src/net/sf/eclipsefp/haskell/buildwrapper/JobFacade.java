@@ -84,7 +84,7 @@ public class JobFacade  {
 		   				ce.printStackTrace();
 		   			}
 	    		   
-	    	   };}).start();
+	    	   }}).start();
 	    	   
 	   			
 	   		}
@@ -499,7 +499,7 @@ public class JobFacade  {
 				        		  h.handleResult(lers.get(0));
 				        	  }
 				          }
-		        	  };
+		        	  }
 		          };
 		          realFacade.waitForThread(r, monitor,BuildWrapperPlugin.getMaxEvalTime());
 		          

@@ -179,7 +179,7 @@ public class JSONArray {
 	public JSONArray(Collection<? extends Object> collection, boolean includeSuperClass) {
 		this.myArrayList = new ArrayList<Object>();
 		if (collection != null) {
-			Iterator<? extends Object> iter = collection.iterator();;
+			Iterator<? extends Object> iter = collection.iterator();
 			while (iter.hasNext()) {
 			    Object o = iter.next();
 			    if (o instanceof Map) {
