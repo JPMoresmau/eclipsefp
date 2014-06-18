@@ -505,6 +505,7 @@ public void accept(final IResourceProxyVisitor visitor, final int depth, final i
 	  // unused
 	}
 
+  @Override
   public Object getAdapter(
       @SuppressWarnings("rawtypes") final Class adapter) {
 		return null;
