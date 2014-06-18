@@ -20,7 +20,7 @@ Require-Bundle: net.sf.eclipsefp.haskell.ghccompiler,
  net.sf.eclipsefp.haskell.compat,
  org.eclipse.ui.console,
  org.eclipse.ui.navigator
-Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Bundle-Localization: plugin
 Export-Package: net.sf.eclipsefp.haskell.debug.ui.internal;x-friends:="net.sf.eclipsefp.haskell.debug.ui.test",
  net.sf.eclipsefp.haskell.debug.ui.internal.launch;x-friends:="net.sf.eclipsefp.haskell.hugs",

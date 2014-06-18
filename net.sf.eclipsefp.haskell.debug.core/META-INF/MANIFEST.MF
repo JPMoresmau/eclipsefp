@@ -19,7 +19,7 @@ Require-Bundle: org.eclipse.core.runtime,
  org.eclipse.ui.editors,
  net.sf.eclipsefp.haskell.buildwrapper
 Bundle-ActivationPolicy: lazy
-Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Bundle-Localization: plugin
 Export-Package: net.sf.eclipsefp.haskell.debug.core.internal,
  net.sf.eclipsefp.haskell.debug.core.internal.debug,

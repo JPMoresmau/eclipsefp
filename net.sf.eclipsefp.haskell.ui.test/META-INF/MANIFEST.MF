@@ -19,4 +19,4 @@ Require-Bundle: org.junit;bundle-version="[4.8.0,4.12.0)",
  net.sf.eclipsefp.haskell.core.test,
  net.sf.eclipsefp.haskell.util
 Export-Package: net.sf.eclipsefp.haskell.ui.test
-Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+Bundle-RequiredExecutionEnvironment: JavaSE-1.7

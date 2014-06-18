@@ -12,4 +12,4 @@ Require-Bundle: net.sf.eclipsefp.haskell.core.test,
  net.sf.eclipsefp.haskell.style.test;bundle-version="2.3.1",
  net.sf.eclipsefp.haskell.hlint.test;bundle-version="2.5.0"
 Bundle-ActivationPolicy: lazy
-Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+Bundle-RequiredExecutionEnvironment: JavaSE-1.7

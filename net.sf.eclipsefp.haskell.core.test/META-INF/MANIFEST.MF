@@ -22,4 +22,4 @@ Export-Package: net.sf.eclipsefp.haskell.core.cabalmodel,
  net.sf.eclipsefp.haskell.core.project,
  net.sf.eclipsefp.haskell.core.project.util,
  net.sf.eclipsefp.haskell.core.test
-Bundle-RequiredExecutionEnvironment: J2SE-1.5
+Bundle-RequiredExecutionEnvironment: JavaSE-1.7
