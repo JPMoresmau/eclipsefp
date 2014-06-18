@@ -94,7 +94,7 @@ public class Commands {
 	public static HaskellPackage[] responseGetPackages(String response)
 			throws JSONException {
 		JSONArray jPkgs = new JSONArray(response);
-		ArrayList<HaskellPackage> aPkgs = new ArrayList<HaskellPackage>();
+		ArrayList<HaskellPackage> aPkgs = new ArrayList<>();
 		for (int i = 0; i < jPkgs.length(); i++) {
 			aPkgs.add(new HaskellPackage(jPkgs.getJSONObject(i)));
 		}
@@ -117,7 +117,7 @@ public class Commands {
 	public static Module[] responseGetModules(String response)
 			throws JSONException {
 		JSONArray jMods = new JSONArray(response);
-		ArrayList<Module> aMods = new ArrayList<Module>();
+		ArrayList<Module> aMods = new ArrayList<>();
 		for (int i = 0; i < jMods.length(); i++) {
 			aMods.add(new Module(jMods.getJSONObject(i)));
 		}
@@ -127,7 +127,7 @@ public class Commands {
 	public static DeclarationId[] responseGetDeclarationId(String response)
 			throws JSONException {
 		JSONArray jMods = new JSONArray(response);
-		ArrayList<DeclarationId> aMods = new ArrayList<DeclarationId>();
+		ArrayList<DeclarationId> aMods = new ArrayList<>();
 		for (int i = 0; i < jMods.length(); i++) {
 			aMods.add(new DeclarationId(jMods.getJSONArray(i)));
 		}
@@ -155,13 +155,13 @@ public class Commands {
 	public static Packaged<Declaration>[] responseGetDeclarations(
 			String response) throws Exception {
 		JSONArray jDecls = new JSONArray(response);
-		ArrayList<Packaged<Declaration>> aDecls = new ArrayList<Packaged<Declaration>>();
+		ArrayList<Packaged<Declaration>> aDecls = new ArrayList<>();
 
 		for (int i = 0; i < jDecls.length(); i++) {
 			JSONArray pair = jDecls.getJSONArray(i);
 			PackageIdentifier id = new PackageIdentifier(pair.getJSONObject(0));
 			Declaration decl = Declaration.fromJSONSingleton(pair.getJSONObject(1));
-			aDecls.add(new Packaged<Declaration>(id, decl));
+			aDecls.add(new Packaged<>(id, decl));
 		}
 
 		@SuppressWarnings("unchecked")
@@ -172,7 +172,7 @@ public class Commands {
 	public static Packaged<Declaration>[] responseGetDeclarationsFromPrefix(
 			String response) throws Exception {
 		JSONArray jDecls = new JSONArray(response);
-		ArrayList<Packaged<Declaration>> aDecls = new ArrayList<Packaged<Declaration>>();
+		ArrayList<Packaged<Declaration>> aDecls = new ArrayList<>();
 
 		for (int i = 0; i < jDecls.length(); i++) {
 			JSONArray pair = jDecls.getJSONArray(i);
@@ -180,7 +180,7 @@ public class Commands {
 			Module m=new Module(pair.getJSONObject(1));
 			Declaration decl = Declaration.fromJSONSingleton(pair.getJSONObject(2));
 			decl.setModule(m);
-			aDecls.add(new Packaged<Declaration>(id, decl));
+			aDecls.add(new Packaged<>(id, decl));
 		}
 
 		@SuppressWarnings("unchecked")
@@ -205,7 +205,7 @@ public class Commands {
 	
 	public static HoogleResult[] responseHoogleQuery(String response) throws JSONException, Exception {
 		JSONArray jResults = new JSONArray(response);
-		ArrayList<HoogleResult> aResults = new ArrayList<HoogleResult>();
+		ArrayList<HoogleResult> aResults = new ArrayList<>();
 		
 		for (int i = 0; i < jResults.length(); i++) {
 			aResults.add(HoogleResult.fromJSON(jResults.getJSONObject(i)));

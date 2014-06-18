@@ -62,7 +62,7 @@ public class CabalImplsBlock implements ISelectionProvider {
   private Button btnRemove;
   private Button btnEdit;
   private Button btnAutoDetect;
-  private final List<CabalImplementation> impls = new ArrayList<CabalImplementation>();
+  private final List<CabalImplementation> impls = new ArrayList<>();
   private final ListenerList selectionListeners = new ListenerList();
 
   Composite createControl( final Composite parent, final PreferencePage prefParent ) {

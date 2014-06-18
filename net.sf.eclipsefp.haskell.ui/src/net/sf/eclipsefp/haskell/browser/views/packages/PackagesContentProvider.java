@@ -80,7 +80,7 @@ public class PackagesContentProvider implements ITreeContentProvider {
 	private void cacheLocal() {
 		try {
 			//BrowserPlugin.getSharedInstance().setCurrentDatabase(DatabaseType.LOCAL, null);
-			ArrayList<PackagesItem> cache = new ArrayList<PackagesItem>();
+			ArrayList<PackagesItem> cache = new ArrayList<>();
 			for (HaskellPackage pkg : BrowserPlugin.getSharedInstance().getPackages(Database.LOCAL)) {
         cache.add(new PackagesItem(Database.LOCAL, pkg));
       }
@@ -93,7 +93,7 @@ public class PackagesContentProvider implements ITreeContentProvider {
 	private void cacheHackage() {
     try {
       //BrowserPlugin.getSharedInstance().setCurrentDatabase(DatabaseType.HACKAGE, null);
-      ArrayList<PackagesItem> cache = new ArrayList<PackagesItem>();
+      ArrayList<PackagesItem> cache = new ArrayList<>();
       for (HaskellPackage pkg : BrowserPlugin.getSharedInstance().getPackages(Database.HACKAGE)) {
         cache.add(new PackagesItem(Database.HACKAGE, pkg));
       }

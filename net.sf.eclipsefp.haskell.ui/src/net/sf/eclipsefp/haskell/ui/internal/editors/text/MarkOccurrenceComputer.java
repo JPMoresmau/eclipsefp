@@ -122,7 +122,7 @@ public class MarkOccurrenceComputer {
   ////////////////////
 
   private Annotation[] collectToRemove( final IAnnotationModel model ) {
-    List<Annotation> result = new ArrayList<Annotation>();
+    List<Annotation> result = new ArrayList<>();
     Iterator iterator = model.getAnnotationIterator();
     while( iterator.hasNext() ) {
       Object next = iterator.next();
@@ -155,7 +155,7 @@ public class MarkOccurrenceComputer {
 //  }
 
   private List<Position> computePositions( final List<Occurrence> occurrences ) {
-    List<Position> result = new ArrayList<Position>();
+    List<Position> result = new ArrayList<>();
     for( Occurrence occ: occurrences ) {
       try {
         int offs = document.getLineOffset( occ.getLine() - 1 );
@@ -169,7 +169,7 @@ public class MarkOccurrenceComputer {
   }
 
   private Map<Annotation, Position> computeAnnotations( final List<Occurrence> occs ) {
-    Map<Annotation, Position> result = new HashMap<Annotation, Position>();
+    Map<Annotation, Position> result = new HashMap<>();
     List<Position> poss = computePositions( occs );
     Iterator<Position> it = poss.iterator();
     while( it.hasNext() ) {

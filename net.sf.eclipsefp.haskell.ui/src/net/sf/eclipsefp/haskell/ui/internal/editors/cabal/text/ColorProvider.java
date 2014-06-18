@@ -34,8 +34,8 @@ public class ColorProvider {
   /** <p>constructs the singleton instance of ColorProvider. Private in order
    * to ensure the singleton pattern.</p> */
   public ColorProvider(final IPreferenceStore store) {
-    colors = new HashMap<RGB, Color>( 10 );
-    rgbs = new HashMap<String, RGB>( 10 );
+    colors = new HashMap<>( 10 );
+    rgbs = new HashMap<>( 10 );
     initRgbs(store);
   }
 

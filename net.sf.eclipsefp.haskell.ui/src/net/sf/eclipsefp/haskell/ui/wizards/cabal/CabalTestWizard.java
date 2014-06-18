@@ -37,7 +37,7 @@ public class CabalTestWizard extends Wizard {
   public boolean performFinish() {
     final String cabalExecutable=CabalImplementationManager.getCabalExecutable();
     if (cabalExecutable!=null){
-      final List<String> commands = new ArrayList<String>();
+      final List<String> commands = new ArrayList<>();
       commands.add( cabalExecutable );
       commands.add("test");
    // options

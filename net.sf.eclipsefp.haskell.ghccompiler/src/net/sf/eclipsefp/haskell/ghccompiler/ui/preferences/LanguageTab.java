@@ -19,7 +19,7 @@ import org.eclipse.swt.widgets.Control;
   * @author Leif Frenzel
   */
 public class LanguageTab extends GhcCompilerTab {
-  private final List<DialogField> fields=new LinkedList<DialogField>();
+  private final List<DialogField> fields=new LinkedList<>();
 
   public LanguageTab( final IPreferenceStore store ) {
     super( store );

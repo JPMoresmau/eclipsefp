@@ -21,7 +21,7 @@ public class Sample {
 	
 	public Sample(float time) {
 		this.time = time;
-		this.entries = new LinkedHashMap<String, Long>();
+		this.entries = new LinkedHashMap<>();
 	}
 	
 	public float getTime() {

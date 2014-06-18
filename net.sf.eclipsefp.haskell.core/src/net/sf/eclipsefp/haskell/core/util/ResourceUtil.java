@@ -65,7 +65,7 @@ public class ResourceUtil {
   }
 
   static Map<String,IFile> getExecutablesOfComponentType(final IProject project, final ComponentType type) {
-    Map<String,IFile> result = new HashMap<String, IFile>();
+    Map<String,IFile> result = new HashMap<>();
     if (hasHaskellNature(project) ){
       /*ScionInstance instance=ScionPlugin.getScionInstance( project );
       if (instance!=null){
@@ -201,7 +201,7 @@ public class ResourceUtil {
         IFile f=BuildWrapperPlugin.getCabalFile( project );
         PackageDescription pd=PackageDescriptionLoader.load(f);
         Map<String,List<PackageDescriptionStanza>> stzs=pd.getStanzasBySourceDir();
-        Collection<IContainer> ret=new ArrayList<IContainer>();
+        Collection<IContainer> ret=new ArrayList<>();
         for (String s:stzs.keySet()){
           ret.add(getContainer( project,s ));
         }
@@ -214,7 +214,7 @@ public class ResourceUtil {
 	}
 
 	public static Collection<IFile> getSourceFiles(final IContainer c){
-	  Collection<IFile> files=new HashSet<IFile>();
+	  Collection<IFile> files=new HashSet<>();
 	  try {
   	  for (IResource r:c.members()){
   	    if (r instanceof IFile){
@@ -278,7 +278,7 @@ public class ResourceUtil {
 
   public static IResource[] getResourcesFromSelection(final ISelection selection){
     if( selection != null && selection instanceof IStructuredSelection ) {
-      List<IResource> list = new ArrayList<IResource>();
+      List<IResource> list = new ArrayList<>();
       IStructuredSelection ssel = ( IStructuredSelection )selection;
       for( Object element: ssel.toList() ) {
         IResource res = ResourceUtil.findResource( element );
@@ -391,7 +391,7 @@ public class ResourceUtil {
 
   public static Collection<IContainer> getAllSourceContainers( final IResource resource ) {
     IProject project = resource.getProject();
-    Collection<IContainer> ret=new HashSet<IContainer>();
+    Collection<IContainer> ret=new HashSet<>();
     try {
       if(project.exists() && hasHaskellNature(project) ) {
 
@@ -420,7 +420,7 @@ public class ResourceUtil {
     if (files==null || files.length==0){
       return Collections.emptySet();
     }
-    Set<String> ret=new HashSet<String>();
+    Set<String> ret=new HashSet<>();
 
     Set<PackageDescriptionStanza> applicable=getApplicableStanzas( files );
 
@@ -433,7 +433,7 @@ public class ResourceUtil {
 
   public static Set<String> getHiddenImportPackages(final IFile[] files){
     Collection<String> ips=getImportPackages(files);
-    Set<String> hidden=new HashSet<String>();
+    Set<String> hidden=new HashSet<>();
     if (ips.size()>0){
       Map<String,CabalPackage[]> pkgs=BuildWrapperPlugin.getFacade( files[0].getProject() ).getPackagesByDB();
         //ScionPlugin.getScionInstance( files[0] ).getPackagesByDB();
@@ -456,7 +456,7 @@ public class ResourceUtil {
     if (files==null || files.length==0){
       return Collections.emptySet();
     }
-    Collection<String> ret=new HashSet<String>();
+    Collection<String> ret=new HashSet<>();
 
     Set<PackageDescriptionStanza> applicable=getApplicableStanzas( files );
 
@@ -473,7 +473,7 @@ public class ResourceUtil {
     }
     // if we put them in a set, it messes up options that are made of two words, like -package ghc
     // hopefully duplication of option will not be an issue
-    Collection<String> ret=new ArrayList<String>();
+    Collection<String> ret=new ArrayList<>();
 
     Set<PackageDescriptionStanza> applicable=getApplicableStanzas( files );
 
@@ -511,7 +511,7 @@ public class ResourceUtil {
 
   public static String getModuleName(final IFile file){
     IProject project = file.getProject();
-    Set<String> potential=new HashSet<String>();
+    Set<String> potential=new HashSet<>();
     try {
       if( hasHaskellNature(project ) ) {
 
@@ -559,7 +559,7 @@ public class ResourceUtil {
         PackageDescription pd=PackageDescriptionLoader.load(f);
         Map<String,List<PackageDescriptionStanza>> stzs=pd.getStanzasBySourceDir();
 
-        Set<PackageDescriptionStanza> applicable=new HashSet<PackageDescriptionStanza>();
+        Set<PackageDescriptionStanza> applicable=new HashSet<>();
 
         for (IFile fi:files){
           for (String src:stzs.keySet()){
@@ -654,7 +654,7 @@ public class ResourceUtil {
   public static IFolder mkdirs( final IPath folderPath,
                                 final IProject project ) throws CoreException {
     IFolder result = project.getFolder( folderPath );
-    List<IFolder> parents = new ArrayList<IFolder>();
+    List<IFolder> parents = new ArrayList<>();
     IContainer container = result;
     while( container instanceof IFolder && !container.exists() ) {
       parents.add( ( IFolder )container );
@@ -686,7 +686,7 @@ public class ResourceUtil {
   }
 
   public static Collection<IProject> getProjects(final ISelection arg1 ){
-    Set<IProject> projects=new LinkedHashSet<IProject>();
+    Set<IProject> projects=new LinkedHashSet<>();
     if (arg1 instanceof IStructuredSelection){
       for (Iterator<?> it=((IStructuredSelection)arg1).iterator();it.hasNext();){
         IResource res = ResourceUtil.findResource( it.next() );
@@ -699,7 +699,7 @@ public class ResourceUtil {
   }
 
   public static IProject[] getHaskellProjects( final IWorkspaceRoot root ) {
-    List<IProject> list = new ArrayList<IProject>();
+    List<IProject> list = new ArrayList<>();
     for( IProject project:root.getProjects() ) {
        if(  project.isOpen()
              && hasHaskellNature( project )) {
@@ -713,7 +713,7 @@ public class ResourceUtil {
 
   public static List<IProject> listHaskellProjects(  ) {
     IWorkspaceRoot root=ResourcesPlugin.getWorkspace().getRoot();
-    List<IProject> list = new ArrayList<IProject>();
+    List<IProject> list = new ArrayList<>();
     for( IProject project:root.getProjects() ) {
        if(project.isOpen()
              && hasHaskellNature( project )) {

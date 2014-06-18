@@ -85,7 +85,7 @@ public class UuagcSourceViewerConfiguration extends
         tokenByTypes.get( ITokenTypes.LITERATE_COMMENT ) );
 
 
-    ArrayList<IRule> rules = new ArrayList<IRule>();
+    ArrayList<IRule> rules = new ArrayList<>();
     rules.add( vars );
     rules.add( string );
     rules.add( comment );

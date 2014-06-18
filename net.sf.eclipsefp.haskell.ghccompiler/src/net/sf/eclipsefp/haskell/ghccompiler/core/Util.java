@@ -21,7 +21,7 @@ public class Util {
    * adds the command line options to include hidden packages
    */
   public static List<String> constructLibPath( final IFile... files ) {
-    List<String> ret=new ArrayList<String>();
+    List<String> ret=new ArrayList<>();
 
     // we only need hidden packages
     for (String s:ResourceUtil.getHiddenImportPackages( files )){

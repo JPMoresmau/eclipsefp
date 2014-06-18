@@ -72,7 +72,7 @@ public class CommandLineUtil {
   public static String[] parse( final String content ) {
     String[] result = new String[ 0 ];
     if( content != null && content.length() > 0 ) {
-      List<String> alResult = new ArrayList<String>();
+      List<String> alResult = new ArrayList<>();
       boolean inQuotes = false;
       int start = 0;
       int end = content.length();

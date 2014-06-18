@@ -15,7 +15,7 @@ public abstract class OutputWriter extends Thread {
 		/** the console doesn't like long lines **/
 		private static int LINE_LENGTH=200;
 	    /** the message list **/
-	    private final LinkedList<String> messages   = new LinkedList<String>();
+	    private final LinkedList<String> messages   = new LinkedList<>();
 	    /** should we stop? **/
 	    private boolean                  terminateFlag;
 

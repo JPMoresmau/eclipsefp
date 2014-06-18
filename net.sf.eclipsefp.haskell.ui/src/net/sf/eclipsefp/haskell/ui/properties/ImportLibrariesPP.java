@@ -74,7 +74,7 @@ public class ImportLibrariesPP extends PropertyPage
     tablePart.getTableViewer().setLabelProvider( lp );
 
     if (f!=null && f.getPackagesByDB()!=null){
-      List<CabalPackage> list=new ArrayList<CabalPackage>();
+      List<CabalPackage> list=new ArrayList<>();
       for (CabalPackage[] cps:f.getPackagesByDB().values()){
         for (CabalPackage cp:cps){
           if (cp.getComponents().length>0){

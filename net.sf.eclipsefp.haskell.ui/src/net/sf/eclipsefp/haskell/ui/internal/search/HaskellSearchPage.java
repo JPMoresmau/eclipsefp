@@ -59,7 +59,7 @@ public class HaskellSearchPage extends DialogPage implements ISearchPage{
   /**
    * previous search terms
    */
-  private static LinkedList<String> previous=new LinkedList<String>();
+  private static LinkedList<String> previous=new LinkedList<>();
   /**
    * previous type
    */
@@ -79,11 +79,11 @@ public class HaskellSearchPage extends DialogPage implements ISearchPage{
   /**
    * type buttons: buttons to type
    */
-  private final Map<Button,Integer> buttonsToType=new HashMap<Button, Integer>();
+  private final Map<Button,Integer> buttonsToType=new HashMap<>();
   /**
    * scope buttons: buttons to scope
    */
-  private final Map<Button,Integer> buttonsToScope=new HashMap<Button, Integer>();
+  private final Map<Button,Integer> buttonsToScope=new HashMap<>();
 
   public HaskellSearchPage() {
     super();
@@ -222,9 +222,9 @@ public class HaskellSearchPage extends DialogPage implements ISearchPage{
       IWorkingSet[] sets=container.getSelectedWorkingSets();
 
       // get all projects referenced in scope
-      Set<IProject> projs=new HashSet<IProject>();
+      Set<IProject> projs=new HashSet<>();
       // other resources to filter with
-      Set<IResource> otherResources=new HashSet<IResource>();
+      Set<IResource> otherResources=new HashSet<>();
       // projects selected
       if (projects!=null){
         IWorkspaceRoot root=ResourcesPlugin.getWorkspace().getRoot();

@@ -38,7 +38,7 @@ class CabalFoldingStructureProvider {
       ProjectionAnnotationModel model
         = ( ProjectionAnnotationModel )editor.getAdapter( ad );
 			if( model != null ) {
-  			Set<Position> currentRegions = new HashSet<Position>();
+  			Set<Position> currentRegions = new HashSet<>();
   			addFoldingRegions( currentRegions, pd.getStanzas() );
   			updateFoldingRegions( model, currentRegions );
       }
@@ -51,7 +51,7 @@ class CabalFoldingStructureProvider {
                                      final Set<Position> currentRegions ) {
 		Annotation[] deletions = diff( model, currentRegions );
 		Map<ProjectionAnnotation, Position> adds
-      = new HashMap<ProjectionAnnotation, Position>();
+      = new HashMap<>();
     Iterator<Position> it = currentRegions.iterator();
 		while( it.hasNext() ) {
 			adds.put( new ProjectionAnnotation(), it.next() );
@@ -64,7 +64,7 @@ class CabalFoldingStructureProvider {
 
 	private Annotation[] diff( final ProjectionAnnotationModel model,
                              final Set<Position> current) {
-		List<ProjectionAnnotation> deletions= new ArrayList<ProjectionAnnotation>();
+		List<ProjectionAnnotation> deletions= new ArrayList<>();
     Iterator<?> it = model.getAnnotationIterator();
 		while( it.hasNext() ) {
 			Object annotation = it.next();

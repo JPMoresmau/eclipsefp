@@ -54,7 +54,7 @@ public class SHUnicode {
 	}
 	
 	public Map<String,Object> toYAML(){
-		Map<String,Object> m=new HashMap<String, Object>();
+		Map<String,Object> m=new HashMap<>();
 		m.put("add_language_pragma", unicodePragmas);
 		return m;
 	}

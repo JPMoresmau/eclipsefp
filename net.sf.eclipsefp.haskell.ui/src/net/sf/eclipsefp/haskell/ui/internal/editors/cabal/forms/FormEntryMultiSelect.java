@@ -78,7 +78,7 @@ public class FormEntryMultiSelect extends FormEntry implements
 
     ignoreModify = true;
     String[] elements = newValue.split( "(,|\\s)" );
-    Set<String> set=new HashSet<String>();
+    Set<String> set=new HashSet<>();
     for( String element: elements ) {
       set.add(element.trim());
     }

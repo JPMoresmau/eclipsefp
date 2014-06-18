@@ -17,7 +17,7 @@ import org.json.JSONObject;
  *
  */
 public class BuildFlags {
-	List<String> ghcFlags=new LinkedList<String>();
+	List<String> ghcFlags=new LinkedList<>();
 	
 	public BuildFlags(JSONObject obj){
 		JSONArray arr=obj.optJSONArray("a");

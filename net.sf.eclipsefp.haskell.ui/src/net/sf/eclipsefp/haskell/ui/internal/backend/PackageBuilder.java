@@ -115,7 +115,7 @@ public abstract class PackageBuilder {
      retval.buildFailed( UITexts.cabalUpdateJob_title, UITexts.zerolenCabalExecutable_message );
      return retval;
    }
-   ArrayList<String> commands = new ArrayList<String>();
+   ArrayList<String> commands = new ArrayList<>();
    commands.add( cabalExecutable );
    commands.add( "update" );
    commands.add( "-v" );
@@ -158,7 +158,7 @@ public abstract class PackageBuilder {
   * @param conout The IOConsole output stream to which the build process' output is sent.
   */
  public ScionBuildStatus build( final CabalImplementation cabalImpl, final File destDir, final IOConsoleOutputStream conout ) {
-   ArrayList<String> commands = new ArrayList<String>();
+   ArrayList<String> commands = new ArrayList<>();
    ScionBuildStatus retval = new ScionBuildStatus();
 
    final String cabalExecutable = cabalImpl.getCabalExecutableName().toOSString();
@@ -238,7 +238,7 @@ public abstract class PackageBuilder {
 
    public OutputWriter(final String name, final OutputStream outStream) {
      super(name);
-     messages = new LinkedList<String>();
+     messages = new LinkedList<>();
      terminateFlag = false;
      this.outStream = null;
      try {

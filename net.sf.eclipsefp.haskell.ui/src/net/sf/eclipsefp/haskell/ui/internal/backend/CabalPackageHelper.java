@@ -105,7 +105,7 @@ public class CabalPackageHelper {
       all=list("",false); //$NON-NLS-1$
       // check which versions are installed
       List<CabalPackageRef> installed=getInstalled();
-      Map<String,CabalPackageRef> pkgByName=new HashMap<String, CabalPackageRef>();
+      Map<String,CabalPackageRef> pkgByName=new HashMap<>();
       for (CabalPackageRef r:installed){
         pkgByName.put( r.getName(),r );
       }
@@ -135,7 +135,7 @@ public class CabalPackageHelper {
 
   private List<CabalPackageRef> list(final String pkg,final boolean installedOnly)throws IOException{
 
-    List<CabalPackageRef> ret=new LinkedList<CabalPackageRef>();
+    List<CabalPackageRef> ret=new LinkedList<>();
     if (cabalPath==null){
       return ret;
     }

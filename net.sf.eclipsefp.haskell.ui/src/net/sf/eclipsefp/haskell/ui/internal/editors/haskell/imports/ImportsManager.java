@@ -66,7 +66,7 @@ public class ImportsManager {
 
   public ArrayList<AnImport> parseImports() {
     if(imports==null){
-      ArrayList<AnImport> myImports = new ArrayList<AnImport>();
+      ArrayList<AnImport> myImports = new ArrayList<>();
       OutlineResult or=null;
       if (doc!=null){
         HaskellEditor editor=HaskellUIPlugin.getHaskellEditor( doc );
@@ -95,7 +95,7 @@ public class ImportsManager {
   public Map<String, Documented> getDeclarations() {
     if(decls==null){
       Map<String, Imported> si=getImportedDeclarations();
-      Map<String, Documented> myDecls = new HashMap<String, Documented>(si.size());
+      Map<String, Documented> myDecls = new HashMap<>(si.size());
       for (String i:si.keySet()) {
         myDecls.put(i,si.get( i ).getDocumented().getDocumented()  );
       }
@@ -104,7 +104,7 @@ public class ImportsManager {
     Map<String, Documented> ret=decls;
     if (names!=null){
       // add the names dynamically
-      ret=new HashMap<String, Documented>(decls);
+      ret=new HashMap<>(decls);
       for(NameDef n:names){
         if (!ret.containsKey( n.getName() )){
           ret.put( n.getName(), AnImport.nameToBrowser( n ) );
@@ -119,7 +119,7 @@ public class ImportsManager {
       ArrayList<AnImport> imports = parseImports();
       // Add Prelude import
       boolean hasPrelude = false;
-      Map<String, Imported> myImportedDecls = new HashMap<String, Imported>();
+      Map<String, Imported> myImportedDecls = new HashMap<>();
 
 
       // Add me

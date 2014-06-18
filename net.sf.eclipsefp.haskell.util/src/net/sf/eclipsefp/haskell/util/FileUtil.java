@@ -60,10 +60,10 @@ public class FileUtil {
   public static final String UTF8="UTF8"; //$NON-NLS-1$
   
   /** Candidate locations to search for files on a path */
-  static final ArrayList<File> candidateLocations = new ArrayList<File>(32);
+  static final ArrayList<File> candidateLocations = new ArrayList<>(32);
 
   
-  public static Set<String> haskellExtensions=new HashSet<String>();
+  public static Set<String> haskellExtensions=new HashSet<>();
   
   static {
     // Initialize the candidate file locations list, since this doesn't
@@ -81,7 +81,7 @@ public class FileUtil {
     }
 
     // add common bin directories from the user's home directory
-    ArrayList<String> homes = new ArrayList<String>();
+    ArrayList<String> homes = new ArrayList<>();
     final String envHome = System.getenv("HOME"); //$NON-NLS-1$
 
     homes.add(envHome);
@@ -192,7 +192,7 @@ public class FileUtil {
 
   public static File findInPath(final String shortFileName, final FileFilter ff) {
     // Shallow copy is sufficient in this case
-    ArrayList<File> candidates = new ArrayList<File>(candidateLocations);
+    ArrayList<File> candidates = new ArrayList<>(candidateLocations);
 
     // Add the current working directory, since it might change.
     String pwd = System.getProperty("user.dir"); //$NON-NLS-1$

@@ -26,7 +26,7 @@ class ImageDescriptorRegistry {
     * All images managed by this registry will be disposed when the display
     * gets disposed.</p> */
   public ImageDescriptorRegistry() {
-    this.registry = new HashMap<ImageDescriptor, Image>();
+    this.registry = new HashMap<>();
     this.display = HaskellUIPlugin.getStandardDisplay();
     hookDisplay();
   }

@@ -18,7 +18,7 @@ public class ExportDef {
 	private String name;
 	private Location loc;
 	private ImportExportType type;
-	private List<String> children=new ArrayList<String>();
+	private List<String> children=new ArrayList<>();
 	
 	
 	public ExportDef(String name, Location loc, ImportExportType type) {

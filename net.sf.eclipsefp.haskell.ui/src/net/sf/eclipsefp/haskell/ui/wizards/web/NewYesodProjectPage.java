@@ -18,7 +18,7 @@ import org.eclipse.ui.dialogs.WizardNewProjectCreationPage;
 * @author JP Moresmau
 */
 public class NewYesodProjectPage extends WizardNewProjectCreationPage {
-  private static Map<String,String> dbs=new HashMap<String,String>();
+  private static Map<String,String> dbs=new HashMap<>();
   static {
     dbs.put( UITexts.newYesodProjectWizard_db_sqlite , "s");
     dbs.put( UITexts.newYesodProjectWizard_db_postgresql ,"p");

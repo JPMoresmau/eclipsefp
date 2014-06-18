@@ -37,14 +37,14 @@ public class DeclarationsContentProvider implements ITreeContentProvider {
   public void inputChanged( final Viewer viewer, final Object oldInput,
       final Object newInput ) {
     if( newInput == null || !( newInput instanceof ModulesItem ) ) {
-      cache = new ArrayList<QueryItem>();
+      cache = new ArrayList<>();
     } else {
       try {
         ModulesItem mitem = ( ModulesItem )newInput;
 
         // The module is a fake module from hierarchical view
         if( mitem.getModule() == null ) {
-          cache = new ArrayList<QueryItem>();
+          cache = new ArrayList<>();
           return;
         }
 
@@ -61,7 +61,7 @@ public class DeclarationsContentProvider implements ITreeContentProvider {
           db=Database.Package( item.getPackage().getIdentifier() );
         }
 
-        cache = new ArrayList<QueryItem>();
+        cache = new ArrayList<>();
         Packaged<Declaration>[] decls = BrowserPlugin.getSharedInstance()
             .getDeclarations( db,mitem.getModule().getName() );
         for( QueryItem decl: QueryItem.convertToQueryItem( decls ) ) {
@@ -73,7 +73,7 @@ public class DeclarationsContentProvider implements ITreeContentProvider {
         }
 
       } catch( Throwable ex ) {
-        cache = new ArrayList<QueryItem>();
+        cache = new ArrayList<>();
       }
     }
   }
@@ -87,7 +87,7 @@ public class DeclarationsContentProvider implements ITreeContentProvider {
   public Object[] getChildren( final Object parentElement ) {
     if( parentElement instanceof QueryItem ) {
       QueryItem item = ( QueryItem )parentElement;
-      ArrayList<Object> elements = new ArrayList<Object>();
+      ArrayList<Object> elements = new ArrayList<>();
       // If a GADT, add constructors
       if( item.getDeclaration() instanceof Gadt ) {
         for( Constructor c: ( ( Gadt )item.getDeclaration() ).getConstructors() ) {

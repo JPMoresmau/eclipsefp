@@ -80,7 +80,7 @@ public class TestSuitesPage extends CabalFormPage implements SelectionListener {
   }
 
   public void addStanza(final PackageDescription desc,final String pref,final TestSuiteDialog.TestSuiteDef def,final boolean overwrite){
-    Map<String,String> vars=new HashMap<String, String>();
+    Map<String,String> vars=new HashMap<>();
     vars.put( TemplateVariables.PROJECT_NAME, getPackageDescription().getPackageStanza().getName() );
     vars.put( TemplateVariables.SRC, def.getSrc().getProjectRelativePath().toPortableString() );
     vars.put( TemplateVariables.USER_NAME, PlatformUtil.getCurrentUser() );
@@ -89,7 +89,7 @@ public class TestSuitesPage extends CabalFormPage implements SelectionListener {
     PackageDescriptionStanza pd=PackageDescriptionLoader.loadStanza( t );
     if (pd!=null){
 
-      Set<String> srcs=new HashSet<String>();
+      Set<String> srcs=new HashSet<>();
       boolean needLibrary=false;
       StringBuilder imports=new StringBuilder();
 
@@ -474,7 +474,7 @@ public class TestSuitesPage extends CabalFormPage implements SelectionListener {
 
     ignoreModify = true;
     java.util.List<String> inList = Arrays.asList( execsList.getItems() );
-    Vector<String> inPackage = new Vector<String>();
+    Vector<String> inPackage = new Vector<>();
     for (PackageDescriptionStanza execStanza : this.getStanzas( packageDescription )) {
       inPackage.add( execStanza.getName() );
     }
@@ -513,7 +513,7 @@ public class TestSuitesPage extends CabalFormPage implements SelectionListener {
     public void run() {
       PackageDescription lastDescription = formEditor.getPackageDescription();
       IProject p=sourceDirsSection.getProject();
-      Set<String> names=new HashSet<String>(Arrays.asList(execsList.getItems()));
+      Set<String> names=new HashSet<>(Arrays.asList(execsList.getItems()));
       TestSuiteDialog dialog = new TestSuiteDialog( execsList.getShell(),p,lastDescription,names);
       if (dialog.open() == Window.OK) {
 

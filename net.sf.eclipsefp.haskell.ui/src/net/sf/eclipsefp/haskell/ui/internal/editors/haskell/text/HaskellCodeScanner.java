@@ -46,7 +46,7 @@ public class HaskellCodeScanner extends RuleBasedScanner
                                            EDITOR_COMMENT_BOLD );
     IToken defaultToken = man.createToken( EDITOR_DEFAULT_COLOR,
                                            EDITOR_DEFAULT_BOLD );
-    List<IRule> list = new ArrayList<IRule>();
+    List<IRule> list = new ArrayList<>();
 
     if( latexLiterate ) {
       list.add( new LiterateRule() );

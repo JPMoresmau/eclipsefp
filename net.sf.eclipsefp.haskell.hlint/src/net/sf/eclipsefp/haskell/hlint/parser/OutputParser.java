@@ -7,7 +7,7 @@ import net.sf.eclipsefp.haskell.hlint.*;
 public class OutputParser implements OutputParserConstants {
 
   final public List<Suggestion> suggestions() throws ParseException {
-  ArrayList<Suggestion > sugs= new ArrayList<Suggestion>();
+  ArrayList<Suggestion > sugs= new ArrayList<>();
   Suggestion sug;
   SourceLocation loc;
     if (jj_2_4(3)) {
@@ -857,7 +857,7 @@ public class OutputParser implements OutputParserConstants {
       return (jj_ntk = jj_nt.kind);
   }
 
-  private java.util.List<int[]> jj_expentries = new java.util.ArrayList<int[]>();
+  private java.util.List<int[]> jj_expentries = new java.util.ArrayList<>();
   private int[] jj_expentry;
   private int jj_kind = -1;
   private int[] jj_lasttokens = new int[100];

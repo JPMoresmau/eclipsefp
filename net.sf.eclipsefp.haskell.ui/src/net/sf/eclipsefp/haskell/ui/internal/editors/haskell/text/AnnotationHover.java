@@ -128,7 +128,7 @@ public class AnnotationHover implements IAnnotationHover,IAnnotationHoverExtensi
   }
 
   private List<String> collectMessages( final List<Annotation> annotations ) {
-    List<String> result = new ArrayList<String>();
+    List<String> result = new ArrayList<>();
     Iterator<Annotation> it = annotations.iterator();
     while( it.hasNext() ) {
       result.add( formatAnnotation( it.next() ) );
@@ -173,11 +173,11 @@ public class AnnotationHover implements IAnnotationHover,IAnnotationHoverExtensi
     List<Annotation> result = null;
     IAnnotationModel model = viewer.getAnnotationModel();
     if( model != null ) {
-      result = new ArrayList<Annotation>();
+      result = new ArrayList<>();
       IDocument document = viewer.getDocument();
 
       Iterator it = model.getAnnotationIterator();
-      Map<Position, Set<String>> msgs = new HashMap<Position, Set<String>>();
+      Map<Position, Set<String>> msgs = new HashMap<>();
       while( it.hasNext() ) {
         Object obj = it.next();
         if( obj instanceof Annotation ) {
@@ -219,7 +219,7 @@ public class AnnotationHover implements IAnnotationHover,IAnnotationHoverExtensi
       result = msgs.contains( message );
       msgs.add( message );
     } else {
-      Set<String> msgs = new HashSet<String>();
+      Set<String> msgs = new HashSet<>();
       msgs.add( message );
       messagesAtPosition.put( position, msgs );
     }

@@ -23,7 +23,7 @@ public class MakePointFree extends RefAction implements IEditorActionDelegate {
 
   @Override
   void openWizard() {
-    RefactoringProcessor processor = new RefProcessor<MakePointFreeDelegate>( new MakePointFreeDelegate( info ), UITexts.mkPointFreeProcessor_name );
+    RefactoringProcessor processor = new RefProcessor<>( new MakePointFreeDelegate( info ), UITexts.mkPointFreeProcessor_name );
     Ref ref = new Ref( processor );
     MakePointFreeWizard wizard = new MakePointFreeWizard( ref );
     RefactoringWizardOpenOperation op

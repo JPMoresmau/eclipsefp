@@ -75,7 +75,7 @@ public class WorkSheetViewPage extends Page {
   /**
    * the list of evaluation composite, one for each expression, in index order
    */
-  private final List<EvalComposite> evalComposites=new ArrayList<EvalComposite>();
+  private final List<EvalComposite> evalComposites=new ArrayList<>();
 
   private final AddExpressionAction addAction=new AddExpressionAction();
   private final RemoveAllExpressionsAction removeAllAction=new RemoveAllExpressionsAction();
@@ -207,7 +207,7 @@ public class WorkSheetViewPage extends Page {
 
           try {
             IMarker[] mks=f.findMarkers( MARKER_TYPE, true, IResource.DEPTH_ZERO );
-            List<EvalExpression> exprs=new ArrayList<EvalExpression>();
+            List<EvalExpression> exprs=new ArrayList<>();
             for (IMarker mk:mks){
               EvalExpression expr=new EvalExpression(mk);
               if (expr.isValid()){
@@ -258,7 +258,7 @@ public class WorkSheetViewPage extends Page {
     if (f!=null){
       try {
         IMarker[] mks=f.findMarkers( MARKER_TYPE, true, IResource.DEPTH_ZERO );
-        List<EvalExpression> exprs=new ArrayList<EvalExpression>();
+        List<EvalExpression> exprs=new ArrayList<>();
         int remove=0;
         for (IMarker mk:mks){
           EvalExpression expr=new EvalExpression(mk);
@@ -327,7 +327,7 @@ public class WorkSheetViewPage extends Page {
         BWFacade bwf=BuildWrapperPlugin.getFacade( f.getProject() );
         if (bwf!=null){
           // clone the list to avoid potential concurrent modifications
-          BuildWrapperPlugin.getJobFacade( f.getProject() ).eval( f, new ArrayList<EvalComposite>(evalComposites) );
+          BuildWrapperPlugin.getJobFacade( f.getProject() ).eval( f, new ArrayList<>(evalComposites) );
         }
       }
     }

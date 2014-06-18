@@ -60,7 +60,7 @@ public class SHTabs {
 	}
 	
 	public Map<String,Object> toYAML(){
-		Map<String,Object> m=new HashMap<String, Object>();
+		Map<String,Object> m=new HashMap<>();
 		m.put("spaces", spaces);
 		return m;
 	}

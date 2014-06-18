@@ -27,7 +27,7 @@ public class ProfileNumbers {
 	private double[] rest;
 	
 	public ProfileNumbers(List<Map.Entry<String, BigInteger>> entriesApart, int noSamples) {
-		this.entries = new LinkedHashMap<String, double[]>();
+		this.entries = new LinkedHashMap<>();
 		for (Map.Entry<String, BigInteger> e : entriesApart) {
 			double[] values = new double[noSamples];
 			Arrays.fill(values, 0.0);

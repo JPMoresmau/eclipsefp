@@ -575,7 +575,7 @@ public class BackendManager implements IResourceChangeListener {
         /* We ask to rebuild if more than one week passed since last update */
         boolean askRebuild = timeDiff > 7 /* days */ * 24 /* h/day */ * 3600 /* s/h */ * 1000 /* ms/s */;
         if (askRebuild) {
-          final Stack<Boolean> response = new Stack<Boolean>();
+          final Stack<Boolean> response = new Stack<>();
           display.asyncExec( new Runnable() {
             @Override
             public void run() {
@@ -990,7 +990,7 @@ public class BackendManager implements IResourceChangeListener {
   public List<String> getInstalledHcPkgOptions(){
     CabalImplDetails det=getCabalImplDetails();
     if (det.getType().equals( SandboxType.CABAL ) && det.isUniqueSandbox()){
-      List<String> ls=new ArrayList<String>();
+      List<String> ls=new ArrayList<>();
       ls.add( det.getExecutable() );
       ls.add("sandbox");
       ls.add("hc-pkg");
@@ -1233,7 +1233,7 @@ public class BackendManager implements IResourceChangeListener {
    */
   public static List<HaskellPackage> listProjectPackages(){
     List<IProject> prjs=ResourceUtil.listHaskellProjects();
-    List<HaskellPackage> hps=new ArrayList<HaskellPackage>(prjs.size());
+    List<HaskellPackage> hps=new ArrayList<>(prjs.size());
     for (IProject p:prjs){
       IFile f=BuildWrapperPlugin.getCabalFile( p );
       try {

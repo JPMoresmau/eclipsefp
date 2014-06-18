@@ -37,9 +37,9 @@ import org.json.JSONObject;
  */
 public class UserFlagsPP extends PropertyPage implements
     IWorkbenchPreferencePage {
-  private final Map<String,Boolean> current=new HashMap<String, Boolean>();
-  private final Map<String,Boolean> defaults=new HashMap<String, Boolean>();
-  private final Map<String,Button> buttons=new HashMap<String, Button>();
+  private final Map<String,Boolean> current=new HashMap<>();
+  private final Map<String,Boolean> defaults=new HashMap<>();
+  private final Map<String,Button> buttons=new HashMap<>();
 
   public UserFlagsPP() {
     super();

@@ -73,7 +73,7 @@ public class HaskellReconcilingStrategy extends SpellingReconcileStrategy {
        //partial reconciliation
        //preserve spelling annotations first
        Iterator iter = model.getAnnotationIterator();
-       Map<Annotation,Position> spellingErrors = new HashMap<Annotation,Position>();
+       Map<Annotation,Position> spellingErrors = new HashMap<>();
        while (iter.hasNext()) {
         Annotation annotation = (Annotation) iter.next();
         if (annotation instanceof SpellingAnnotation) {

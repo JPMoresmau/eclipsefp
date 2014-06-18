@@ -571,7 +571,7 @@ public class CabalModelTest extends TestCase {
     PackageDescriptionStanza pds=pd.getStanzas().get( 3 );
     assertEquals(CabalSyntax.SECTION_LIBRARY,pds.getType());
     Collection<String> ss=pds.getDependentPackages();
-    Set<String> expected=new HashSet<String>();
+    Set<String> expected=new HashSet<>();
     expected.addAll( Arrays.asList( "base"  ,
         "Cabal",
         "containers",

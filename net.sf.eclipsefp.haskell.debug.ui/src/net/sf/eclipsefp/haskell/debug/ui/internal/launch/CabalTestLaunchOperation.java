@@ -48,12 +48,12 @@ public class CabalTestLaunchOperation extends LaunchOperation {
 
   public List<ILaunchConfiguration> findConfiguration(
       final IProject project) throws CoreException {
-    List<ILaunchConfiguration> result = new LinkedList<ILaunchConfiguration>();
+    List<ILaunchConfiguration> result = new LinkedList<>();
     ILaunchConfiguration[] configurations = LaunchOperation
         .getConfigurations( LaunchOperation
             .getConfigType( getConfigTypeName() ) );
 
-    result = new ArrayList<ILaunchConfiguration>( configurations.length );
+    result = new ArrayList<>( configurations.length );
     for( int i = 0; i < configurations.length; i++ ) {
       ILaunchConfiguration configuration = configurations[ i ];
       String thisProject=configuration.getAttribute( ILaunchAttributes.PROJECT_NAME, (String)null );

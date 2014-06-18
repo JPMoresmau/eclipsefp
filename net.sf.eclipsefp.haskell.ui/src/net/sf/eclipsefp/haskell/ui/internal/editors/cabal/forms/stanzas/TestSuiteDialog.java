@@ -71,7 +71,7 @@ public class TestSuiteDialog extends StatusDialog {
     /**
      * modules to test
      */
-    private final Set<ModuleDef> modules=new HashSet<ModuleDef>();
+    private final Set<ModuleDef> modules=new HashSet<>();
 
     /**
      * @return the name
@@ -237,11 +237,11 @@ public class TestSuiteDialog extends StatusDialog {
     Label lMods=new Label(composite,SWT.WRAP);
     lMods.setText( UITexts.cabalEditor_newTestSuite_modules);
 
-    Set<ModuleDef> modules = new HashSet<ModuleDef>();
+    Set<ModuleDef> modules = new HashSet<>();
 
     for (PackageDescriptionStanza stz:pkgDesc.getStanzas()){
       if (CabalSyntax.SECTION_LIBRARY.equals( stz.getType()) || CabalSyntax.SECTION_EXECUTABLE.equals( stz.getType() )){
-        Collection<String> sourceDirs = new HashSet<String>();
+        Collection<String> sourceDirs = new HashSet<>();
         if( stz.getProperties()
             .containsKey( CabalSyntax.FIELD_HS_SOURCE_DIRS.getCabalName() ) ) {
           //sourceDirs = root.getStanza().getProperties()
@@ -251,7 +251,7 @@ public class TestSuiteDialog extends StatusDialog {
           sourceDirs.add("");
         }
         for (String s:sourceDirs){
-          List<String> thisModules=new ArrayList<String>();
+          List<String> thisModules=new ArrayList<>();
           ModulesVisitor visitor = new ModulesVisitor( thisModules, Collections.singletonList( s ) );
           try {
             project.accept( visitor );

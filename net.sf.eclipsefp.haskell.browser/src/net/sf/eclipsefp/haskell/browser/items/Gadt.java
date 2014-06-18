@@ -33,7 +33,7 @@ public abstract class Gadt extends Declaration {
 	protected void setInfo(JSONObject o) throws JSONException {
 		this.setDoc(o);
 
-		ArrayList<Constructor> aCons = new ArrayList<Constructor>();
+		ArrayList<Constructor> aCons = new ArrayList<>();
 		JSONArray jCons = o.getJSONArray("decls");
 		for (int i = 0; i < jCons.length(); i++) {
 			aCons.add(new Constructor(jCons.getJSONObject(i)));

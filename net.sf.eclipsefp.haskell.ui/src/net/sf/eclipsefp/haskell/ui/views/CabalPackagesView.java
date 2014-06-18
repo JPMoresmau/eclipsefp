@@ -21,8 +21,8 @@ import net.sf.eclipsefp.haskell.core.cabal.CabalPackageVersion;
 import net.sf.eclipsefp.haskell.debug.core.internal.launch.AbstractHaskellLaunchDelegate;
 import net.sf.eclipsefp.haskell.ui.HaskellUIPlugin;
 import net.sf.eclipsefp.haskell.ui.handlers.OpenDefinitionHandler;
-import net.sf.eclipsefp.haskell.ui.internal.backend.CabalPackageHelper;
 import net.sf.eclipsefp.haskell.ui.internal.backend.BackendManager;
+import net.sf.eclipsefp.haskell.ui.internal.backend.CabalPackageHelper;
 import net.sf.eclipsefp.haskell.ui.internal.util.UITexts;
 import net.sf.eclipsefp.haskell.ui.properties.ImportLibrariesLabelProvider;
 import net.sf.eclipsefp.haskell.ui.util.HaskellUIImages;
@@ -471,7 +471,7 @@ public class CabalPackagesView extends ViewPart {
   private void install(final boolean global,final String options){
     final String cabalExecutable=CabalImplementationManager.getCabalExecutable();
     if (cabalExecutable!=null){
-      final List<String> commands = new ArrayList<String>();
+      final List<String> commands = new ArrayList<>();
       commands.add( cabalExecutable );
       commands.add("install");
       commands.add(currentName);
@@ -521,7 +521,7 @@ public class CabalPackagesView extends ViewPart {
     lUpdate.setText( UITexts.cabalPackagesView_action_update_running );
     final String cabalExecutable=CabalImplementationManager.getCabalExecutable();
     if (cabalExecutable!=null){
-      final List<String> commands = new ArrayList<String>();
+      final List<String> commands = new ArrayList<>();
       commands.add( cabalExecutable );
       commands.add("update");
       try {

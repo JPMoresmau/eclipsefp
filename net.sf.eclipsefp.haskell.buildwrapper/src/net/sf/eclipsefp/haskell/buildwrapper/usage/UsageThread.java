@@ -25,7 +25,7 @@ import org.eclipse.core.resources.IProject;
 public class UsageThread extends Thread {
 	private boolean shouldStop=false;
 	
-	private LinkedHashSet<IProject> ps=new LinkedHashSet<IProject>();
+	private LinkedHashSet<IProject> ps=new LinkedHashSet<>();
 	/**
 	 * are we currently working?
 	 */

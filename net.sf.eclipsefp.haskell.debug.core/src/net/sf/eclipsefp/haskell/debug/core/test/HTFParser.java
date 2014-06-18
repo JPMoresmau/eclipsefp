@@ -55,7 +55,7 @@ public class HTFParser {
     if (s.length()==0){
       return;
     }
-    Map<String,TestResult> parents=new HashMap<String, TestResult>();
+    Map<String,TestResult> parents=new HashMap<>();
     parents.put( new JSONArray().toString(), root );
     int ix=s.indexOf(SEP);
     if (ix>-1){
@@ -146,7 +146,7 @@ public class HTFParser {
     if (s.length()==0){
       return;
     }
-    Map<String,TestResult> parents=new HashMap<String, TestResult>();
+    Map<String,TestResult> parents=new HashMap<>();
     fillParents(root, new JSONArray(),parents );
     //int ix=s.indexOf(SEP);
     //int start=0;

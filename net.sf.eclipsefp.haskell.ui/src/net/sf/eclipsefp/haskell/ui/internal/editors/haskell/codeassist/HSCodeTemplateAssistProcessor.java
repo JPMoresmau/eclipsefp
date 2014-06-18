@@ -89,7 +89,7 @@ public class HSCodeTemplateAssistProcessor extends TemplateCompletionProcessor {
 
     Template[] templates = getTemplates( context.getContextType().getId() );
     String contextId = context.getContextType().getId();
-    List<ICompletionProposal> matches = new ArrayList<ICompletionProposal>();
+    List<ICompletionProposal> matches = new ArrayList<>();
 
     for( int i = 0; i < templates.length; i++ ) {
       try {

@@ -16,11 +16,11 @@ public class CabalPackageRef {
   /**
    * all versions
    */
-  private final ArrayList<String> versions=new ArrayList<String>();
+  private final ArrayList<String> versions=new ArrayList<>();
   /**
    * versions installed
    */
-  private final Set<String> installed=new HashSet<String>();
+  private final Set<String> installed=new HashSet<>();
 
   public String getName() {
     return name;
@@ -35,7 +35,7 @@ public class CabalPackageRef {
   }
 
   public List<CabalPackageVersion> getCabalPackageVersions(){
-    List<CabalPackageVersion> ret=new ArrayList<CabalPackageVersion>();
+    List<CabalPackageVersion> ret=new ArrayList<>();
     for (int a=0;a<versions.size();a++){
       ret.add(new CabalPackageVersion( this, a,installed.contains( versions.get(a) )));
     }

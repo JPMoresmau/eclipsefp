@@ -54,7 +54,7 @@ public abstract class ExecutableOrTestSuiteLaunchOperation extends LaunchOperati
 
   protected Map<String,IFile> getExecutables(final IProject project){
     /** offer the option to run a test executable without any special options and processing **/
-    Map<String,IFile> m=new HashMap<String, IFile>();
+    Map<String,IFile> m=new HashMap<>();
     m.putAll(ResourceUtil.getProjectExecutables( project ));
     m.putAll(ResourceUtil.getProjectTestSuites( project ));
     m.putAll(ResourceUtil.getProjectBenchmarks( project ));
@@ -65,7 +65,7 @@ public abstract class ExecutableOrTestSuiteLaunchOperation extends LaunchOperati
       final Map<String,IFile> executables ,final PackageDescriptionStanza stanza) throws CoreException {
     List<ILaunchConfiguration> configurations = findConfiguration( project,getConfigTypeName(),stanza );
     // match existing configurations with executables
-    Set<String> exesExisting=new HashSet<String> ();
+    Set<String> exesExisting=new HashSet<> ();
     for (Iterator<ILaunchConfiguration> it=configurations.iterator();it.hasNext();){
         ILaunchConfiguration c=it.next();
         String exe=getExePath( c );
@@ -132,7 +132,7 @@ public abstract class ExecutableOrTestSuiteLaunchOperation extends LaunchOperati
 
   public static List<ILaunchConfiguration> findConfiguration(
       final IProject project,final String configTypeName,final PackageDescriptionStanza stanza  ) throws CoreException {
-    List<ILaunchConfiguration> result = new LinkedList<ILaunchConfiguration>();
+    List<ILaunchConfiguration> result = new LinkedList<>();
     ILaunchConfiguration[] configurations = LaunchOperation
         .getConfigurations( LaunchOperation
             .getConfigType( configTypeName ) );
@@ -141,7 +141,7 @@ public abstract class ExecutableOrTestSuiteLaunchOperation extends LaunchOperati
     if (stanza!=null){
       exe=ResourceUtil.getExecutableLocation( project, stanza.getName() );
     }
-    result = new ArrayList<ILaunchConfiguration>( configurations.length );
+    result = new ArrayList<>( configurations.length );
     for( int i = 0; i < configurations.length; i++ ) {
       ILaunchConfiguration configuration = configurations[ i ];
       String thisProject=configuration.getAttribute( ILaunchAttributes.PROJECT_NAME, (String)null );

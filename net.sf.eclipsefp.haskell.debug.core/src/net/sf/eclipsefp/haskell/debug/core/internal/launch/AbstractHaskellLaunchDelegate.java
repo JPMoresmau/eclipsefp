@@ -195,7 +195,7 @@ public abstract class AbstractHaskellLaunchDelegate extends LaunchConfigurationD
     try {
       preProcessDefinitionCreation( configuration, mode, launch );
 
-      Map<String, String> processAttrs = new HashMap<String, String>();
+      Map<String, String> processAttrs = new HashMap<>();
       String programName = determineProgramName( location );
       processAttrs.put( IProcess.ATTR_PROCESS_TYPE, programName );
       preProcessCreation( configuration, mode, launch, processAttrs );

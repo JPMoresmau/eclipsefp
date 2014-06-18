@@ -226,7 +226,7 @@ public abstract class ProfileViewerBirtImpl extends ProfileViewerImpl{
 	
 	private void populateChart(Chart chart,int numberApart) {
 		int n = entries.size() < numberApart ? entries.size() : numberApart;
-		List<Map.Entry<String, BigInteger>> entriesApart = new ArrayList<Map.Entry<String, BigInteger>>(
+		List<Map.Entry<String, BigInteger>> entriesApart = new ArrayList<>(
 				entries.subList(0, n));
 		Axis xAxis = ((ChartWithAxes) chart).getPrimaryBaseAxes()[0];
 		Axis yAxis = ((ChartWithAxes) chart).getPrimaryOrthogonalAxis(xAxis);

@@ -83,7 +83,7 @@ public class LiterateContentDescriber_PDETest extends TestCase {
   private class FTContentDescription implements IContentDescription {
 
     private final Map<QualifiedName, Object> props
-      = new HashMap<QualifiedName, Object>();
+      = new HashMap<>();
 
 
     // interface methods of IContentDescription

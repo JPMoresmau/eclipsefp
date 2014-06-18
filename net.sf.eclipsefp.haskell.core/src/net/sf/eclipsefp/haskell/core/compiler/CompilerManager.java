@@ -84,7 +84,7 @@ public class CompilerManager {
 	            new ProcessRunner().executeBlocking( f.getParentFile(), sw, null, f.getAbsolutePath(),GHCSyntax.EXTENSIONS );
 	            String s=sw.toString();
 	            BufferedReader br=new BufferedReader( new StringReader( s ) );
-	            extensions=new ArrayList<String>();
+	            extensions=new ArrayList<>();
 	            String line=br.readLine();
 	            while (line!=null){
 	              extensions.add(line.trim());
@@ -146,10 +146,10 @@ public class CompilerManager {
   }
 
   private static Map<String, IHsImplementation> loadImpls() {
-    List<IHsImplementation> impls = new ArrayList<IHsImplementation>();
+    List<IHsImplementation> impls = new ArrayList<>();
     String xml = Platform.getPreferencesService().getString( HaskellCorePlugin.getPluginId(), ICorePreferenceNames.HS_IMPLEMENTATIONS, null, null );
     HsImplementationPersister.fromXML( xml, impls );
-    Map<String, IHsImplementation> result = new HashMap<String, IHsImplementation>();
+    Map<String, IHsImplementation> result = new HashMap<>();
     for( IHsImplementation impl: impls ) {
       if (isValid( impl )){
         result.put( impl.getName(), impl );
@@ -185,7 +185,7 @@ public class CompilerManager {
 
   public static List<IHsImplementation> autodetectGHCImpls(){
     ArrayList<File> candidateLocs = FileUtil.getCandidateLocations();
-    List<IHsImplementation> impls=new ArrayList<IHsImplementation>();
+    List<IHsImplementation> impls=new ArrayList<>();
     for (File loc : candidateLocs) {
       File[] files = loc.listFiles( new FilenameFilter() {
         @Override

@@ -94,7 +94,7 @@ public class JSONArray {
      * Construct an empty JSONArray.
      */
     public JSONArray() {
-        this.myArrayList = new ArrayList<Object>();
+        this.myArrayList = new ArrayList<>();
     }
 
     /**
@@ -165,8 +165,8 @@ public class JSONArray {
      */
     public JSONArray(Collection<? extends Object> collection) {
         this.myArrayList = (collection == null) ?
-            new ArrayList<Object>() :
-            new ArrayList<Object>(collection);
+            new ArrayList<>() :
+            new ArrayList<>(collection);
     }
 
     /**
@@ -175,7 +175,7 @@ public class JSONArray {
      */
 
 	public JSONArray(Collection<? extends Object> collection, boolean includeSuperClass) {
-		this.myArrayList = new ArrayList<Object>();
+		this.myArrayList = new ArrayList<>();
 		if (collection != null) {
 			Iterator<? extends Object> iter = collection.iterator();
 			while (iter.hasNext()) {

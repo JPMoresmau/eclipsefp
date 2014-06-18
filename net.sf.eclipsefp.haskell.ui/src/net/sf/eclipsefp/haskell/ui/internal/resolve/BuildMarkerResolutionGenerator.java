@@ -53,7 +53,7 @@ public class BuildMarkerResolutionGenerator implements
     if (marker==null || !marker.exists()){
       return new IMarkerResolution[0];
     }
-    List<IMarkerResolution> res=new ArrayList<IMarkerResolution>();
+    List<IMarkerResolution> res=new ArrayList<>();
 
     IMarkerResolution hlr=getHLintResolution( marker );
     if (hlr!=null){
@@ -162,7 +162,7 @@ public class BuildMarkerResolutionGenerator implements
               length=GhcMessages.MISSING_MODULE_ADD_START_7_8.length();
             }
             if (ix>-1){
-              Set<String> pkgs=new HashSet<String>();
+              Set<String> pkgs=new HashSet<>();
               while (ix>-1){
                 int ix2=msgL.indexOf( GhcMessages.MISSING_MODULE_ADD_END,ix);
                 if (ix2==-1){
@@ -253,7 +253,7 @@ public class BuildMarkerResolutionGenerator implements
             // either it's badly spelt or we don't have internet connnection...
             if (!BackendManager.getCabalImplDetails().isSandboxed()){
               int nlid=msg.indexOf( "\n",ix );
-              Set<String> all=new HashSet<String>();
+              Set<String> all=new HashSet<>();
               for (String s:msg.substring( nlid ).split( "\\n" )){
                 s=s.trim();
                 if (s.length()>0){
@@ -348,7 +348,7 @@ public class BuildMarkerResolutionGenerator implements
             return c;
           }
         });
-        Set<String> modules=new HashSet<String>();
+        Set<String> modules=new HashSet<>();
         for (DeclarationId place : availableMods) {
           String module=place.getModule().getName();
           if (!modules.contains(module  )){
@@ -498,7 +498,7 @@ public class BuildMarkerResolutionGenerator implements
 
   private static Set<String> getReferencedPackages(final IMarker marker){
     IResource res=marker.getResource();
-    Set<String> ret=new HashSet<String>();
+    Set<String> ret=new HashSet<>();
     if (res instanceof IFile){
       return ResourceUtil.getImportPackages( new IFile[]{(IFile)res} );
     }

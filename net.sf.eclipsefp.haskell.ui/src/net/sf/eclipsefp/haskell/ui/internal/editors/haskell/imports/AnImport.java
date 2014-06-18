@@ -143,10 +143,10 @@ public class AnImport {
     // we will put names qualified with alias if it exist and with the full module name
     String aliasName =  importDef.getAlias() != null && importDef.getAlias().length()>0 ? importDef.getAlias() : null;
 
-    HashMap<String, FileDocumented> r = new HashMap<String, FileDocumented>();
+    HashMap<String, FileDocumented> r = new HashMap<>();
     try {
       List<FileDocumented> decls;
-      Set<String> visited=new HashSet<String>();
+      Set<String> visited=new HashSet<>();
       if (isMe) {
         HaskellEditor ed=HaskellUIPlugin.getHaskellEditor( doc );
         OutlineResult or=ed!=null?ed.getLastOutlineResult():null;
@@ -168,7 +168,7 @@ public class AnImport {
                   Packaged<Declaration>[] browserDecls = BrowserPlugin.getSharedInstance().getDeclarations(pkg, importDef.getModule() );
                   if (browserDecls.length > 0) {
                     // If the browser found the module
-                    decls = new ArrayList<FileDocumented>();
+                    decls = new ArrayList<>();
                     for (Packaged<Declaration> browserDecl : browserDecls) {
                       decls.add(new FileDocumented( browserDecl.getElement(),null) );
                       if (browserDecl.getElement() instanceof Gadt) {
@@ -196,7 +196,7 @@ public class AnImport {
         }
       } else {
         //List<String> itemsExplode = Arrays.asList( this.items.split( "[ ]*,[ ]*" ) );
-        Set<String> itemsExplode=new HashSet<String>();
+        Set<String> itemsExplode=new HashSet<>();
         for (ImportSpecDef isd:importDef.getChildren()){
             itemsExplode.add(isd.getName());
         }
@@ -250,11 +250,11 @@ public class AnImport {
       HaskellUIPlugin.log( e );
 
     }
-    return new ArrayList<FileDocumented>();
+    return new ArrayList<>();
   }
 
   public static List<FileDocumented> getDeclarationsFromFile( final IFile file ) {
-    Set<String> visited = new HashSet<String>();
+    Set<String> visited = new HashSet<>();
     return getDeclarationsFromFile( file, visited );
   }
 
@@ -271,13 +271,13 @@ public class AnImport {
       HaskellUIPlugin.log( e );
 
     }
-      return new ArrayList<FileDocumented>();
+      return new ArrayList<>();
 
   }
 
 
   private static List<FileDocumented> getDeclarationsFromOutlineResult( final IFile file, final OutlineResult or,final Set<String> visited ) {
-    ArrayList<FileDocumented> decls = new ArrayList<FileDocumented>();
+    ArrayList<FileDocumented> decls = new ArrayList<>();
 
     for (OutlineDef def : or.getOutlineDefs()) {
       outlineToBrowser( def,null,file,decls );

@@ -86,7 +86,7 @@ public class CabalSDistOptionsPage extends WizardPage implements PropertyChangeL
   }
 
   private void getFileNames(){
-    fileNamesByProjectPaths=new HashMap<String,String>();
+    fileNamesByProjectPaths=new HashMap<>();
     for (IProject prj:projects){
       IFile cf=BuildWrapperPlugin.getCabalFile( prj);
       try {

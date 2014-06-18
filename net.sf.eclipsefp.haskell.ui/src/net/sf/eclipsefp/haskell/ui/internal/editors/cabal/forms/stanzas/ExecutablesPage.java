@@ -245,6 +245,7 @@ public class ExecutablesPage extends CabalFormPage implements SelectionListener 
 
     ignoreModify = true;
     java.util.List<String> inList = Arrays.asList( execsList.getItems() );
+    @SuppressWarnings ( "unused" )
     Vector<String> inPackage = new Vector<String>();
     for (PackageDescriptionStanza execStanza : this.getStanzas( packageDescription )) {
       inPackage.add( execStanza.getName() );

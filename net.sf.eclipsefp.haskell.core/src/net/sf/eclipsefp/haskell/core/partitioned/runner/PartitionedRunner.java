@@ -40,7 +40,7 @@ public abstract class PartitionedRunner {
       // Parse the output
       return OutputParser.errors(selectStream( out, err ).toString());
 		} catch (Throwable ex) {
-			return new ArrayList<ProcessorError>();
+			return new ArrayList<>();
 		}
 	}
 }

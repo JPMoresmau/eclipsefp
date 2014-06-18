@@ -42,7 +42,7 @@ public class FormEntryModules extends FormEntry {
   static final int OTHER_COL = 1;
   static final int NAME_COL = 2;
 
-  private final ArrayList<IOtherValueEntryListener> otherListeners = new ArrayList<IOtherValueEntryListener>();
+  private final ArrayList<IOtherValueEntryListener> otherListeners = new ArrayList<>();
 
   ArrayList<String> prevElements;
   boolean onlyOne;
@@ -63,11 +63,11 @@ public class FormEntryModules extends FormEntry {
     super();
     this.exposedString = exposedString;
     this.onlyOne = onlyOne;
-    this.exposed = new ArrayList<String>();
-    this.other = new ArrayList<String>();
-    this.exposedBoxes = new HashMap<String, Button>();
-    this.otherBoxes = new HashMap<String, Button>();
-    this.prevElements = new ArrayList<String>();
+    this.exposed = new ArrayList<>();
+    this.other = new ArrayList<>();
+    this.exposedBoxes = new HashMap<>();
+    this.otherBoxes = new HashMap<>();
+    this.prevElements = new ArrayList<>();
   }
 
 
@@ -134,7 +134,7 @@ public class FormEntryModules extends FormEntry {
         sourceDirs = Collections.singleton( "" );
       }
 
-      ArrayList<String> modules = new ArrayList<String>();
+      ArrayList<String> modules = new ArrayList<>();
       ModulesVisitor visitor = new ModulesVisitor( modules, sourceDirs );
       try {
         root.getProject().accept( visitor );
@@ -279,7 +279,7 @@ public class FormEntryModules extends FormEntry {
     // Get ordered value
     String newValue = value == null ? "" : value;
     String[] elementsA = newValue.split( "," );
-    ArrayList<String> elements = new ArrayList<String>();
+    ArrayList<String> elements = new ArrayList<>();
     for( String e: elementsA ) {
       elements.add( e.trim() );
     }
@@ -395,7 +395,7 @@ public class FormEntryModules extends FormEntry {
     public ModulesVisitor( final Collection<String> whereAdd,
         final Collection<String> dirs ) {
       this.elts = whereAdd;
-      this.possiblePrefixes = new Vector<String>();
+      this.possiblePrefixes = new Vector<>();
       for( String dir: dirs ) {
         String d=dir.trim();
         // current or empty -> empty

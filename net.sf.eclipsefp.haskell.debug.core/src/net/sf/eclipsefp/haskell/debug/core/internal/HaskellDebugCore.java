@@ -77,7 +77,7 @@ public class HaskellDebugCore extends Plugin {
 
 
   public List<ILaunchConfiguration> listHaskellLaunchConfigurations(final IProject p) throws CoreException{
-    List<ILaunchConfiguration> confs=new LinkedList<ILaunchConfiguration>();
+    List<ILaunchConfiguration> confs=new LinkedList<>();
     for (ILaunchConfiguration c:DebugPlugin.getDefault().getLaunchManager().getLaunchConfigurations()){
       if (c.getType().getContributorName().equals( getPluginId())){
         if (p.getName().equals(getProjectName( c ))){

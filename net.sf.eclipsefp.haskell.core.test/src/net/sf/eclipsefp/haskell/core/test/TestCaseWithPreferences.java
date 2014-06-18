@@ -22,7 +22,7 @@ import org.eclipse.core.runtime.preferences.InstanceScope;
  */
 public class TestCaseWithPreferences extends TestCase {
 
-  private final ArrayList<String> fQualifiers = new ArrayList<String>();
+  private final ArrayList<String> fQualifiers = new ArrayList<>();
   private IScopeContext fPrefsScope;
 
   public TestCaseWithPreferences() {

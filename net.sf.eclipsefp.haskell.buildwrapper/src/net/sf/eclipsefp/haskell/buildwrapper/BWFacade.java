@@ -90,7 +90,7 @@ public class BWFacade {
 	private String cabalShortName;
 	
 	private String flags;
-	private List<String> extraOpts=new LinkedList<String>();
+	private List<String> extraOpts=new LinkedList<>();
 	
 	private File workingDir;
 	
@@ -122,7 +122,7 @@ public class BWFacade {
 	/**
 	 * the progress monitor for the current thread, so we don't need to pass it everywhere
 	 */
-	 private static ThreadLocal<IProgressMonitor> monitor=new ThreadLocal<IProgressMonitor>();
+	 private static ThreadLocal<IProgressMonitor> monitor=new ThreadLocal<>();
 	
 	/**
 	 * where ever we come from, we only launch one build operation at a time, and lose the intermediate operations
@@ -137,18 +137,18 @@ public class BWFacade {
 	/**
 	 * where ever we come from, we only launch one synchronize operation per file at a time, and lose the intermediate operations
 	 */
-	private Map<IFile,SingleJobQueue> syncEditorJobQueue=new HashMap<IFile, SingleJobQueue>();
+	private Map<IFile,SingleJobQueue> syncEditorJobQueue=new HashMap<>();
 	private Map<IFile,Process> buildProcesses=Collections.synchronizedMap(new HashMap<IFile, Process>());
 	private Set<IFile> runningFiles=Collections.synchronizedSet(new HashSet<IFile>());
 	/**
 	 * query for thing at point for a given file, so that we never have more than two jobs at one time
 	 */
-	private Map<IFile,SingleJobQueue> tapQueuesByFiles=new HashMap<IFile, SingleJobQueue>();
+	private Map<IFile,SingleJobQueue> tapQueuesByFiles=new HashMap<>();
 	
 	/**
 	 * map of outlines for files (key is relative path)
 	 */
-	private Map<String,OutlineResult> outlines=new HashMap<String, OutlineResult>();
+	private Map<String,OutlineResult> outlines=new HashMap<>();
 
 	/**
 	 * map of flag info for files
@@ -232,7 +232,7 @@ public class BWFacade {
 			hasCabalProblems=false;
 		}
 
-		LinkedList<String> command=new LinkedList<String>();
+		LinkedList<String> command=new LinkedList<>();
 		command.add("build");
 		command.add("--output="+buildOptions.isOutput());
 		command.add("--cabaltarget="+buildOptions.getTarget().toString());
@@ -253,7 +253,7 @@ public class BWFacade {
 	
 	public boolean parseBuildResult(JSONArray arr){
 		if (arr!=null && arr.length()>1){
-			Set<IResource> ress=new HashSet<IResource>();
+			Set<IResource> ress=new HashSet<>();
 			JSONObject obj=arr.optJSONObject(0);
 			if (obj!=null){
 				JSONArray files=obj.optJSONArray("fps");
@@ -302,7 +302,7 @@ public class BWFacade {
 	public Collection<NameDef> build1(IFile file,IDocument d){
 		//BuildFlagInfo i=getBuildFlags(file);
 		String path=file.getProjectRelativePath().toOSString();
-		LinkedList<String> command=new LinkedList<String>();
+		LinkedList<String> command=new LinkedList<>();
 		command.add("build1");
 		command.add("--file="+path);
 		addEditorStanza(file,command);
@@ -314,17 +314,17 @@ public class BWFacade {
 			BuildWrapperPlugin.logInfo("build:"+(t1-t0)+"ms");
 		}
 		if (arr!=null && arr.length()>1){
-			Set<IResource> ress=new HashSet<IResource>();
+			Set<IResource> ress=new HashSet<>();
 			ress.add(file);
 			BuildWrapperPlugin.deleteProblems(file);
 			JSONArray notes=arr.optJSONArray(1);
 			//notes.putAll(i.getNotes());
-			Map<IResource,IDocument> m=new HashMap<IResource,IDocument>();
+			Map<IResource,IDocument> m=new HashMap<>();
 			m.put(file, d);
 			parseNotes(notes,ress,m,null);
 			JSONArray names=arr.optJSONArray(0);
 			if(names!=null){
-				Collection<NameDef> ret=new ArrayList<NameDef>();
+				Collection<NameDef> ret=new ArrayList<>();
 				for (int a=0;a<names.length();a++){
 					try {
 						ret.add(new NameDef(names.getJSONObject(a)));
@@ -367,7 +367,7 @@ public class BWFacade {
 				BuildWrapperPlugin.logError(BWText.error_noexe, null);
 				showedNoExeError=true;
 			}
-			return new ArrayList<NameDef>();
+			return new ArrayList<>();
 		}
 		showedNoExeError=false;
 		while (!runningFiles.add(file)){
@@ -384,7 +384,7 @@ public class BWFacade {
 			if (p==null){
 			
 				String path=file.getProjectRelativePath().toOSString();
-				LinkedList<String> command=new LinkedList<String>();
+				LinkedList<String> command=new LinkedList<>();
 				command.add(bwPath);
 				command.add("build1");
 				command.add("--file="+path);
@@ -455,17 +455,17 @@ public class BWFacade {
 
 			
 		if (arr!=null && arr.length()>1){
-			Set<IResource> ress=new HashSet<IResource>();
+			Set<IResource> ress=new HashSet<>();
 			ress.add(file);
 			BuildWrapperPlugin.deleteProblems(file);
 			JSONArray notes=arr.optJSONArray(1);
 			//notes.putAll(i.getNotes());
-			Map<IResource,IDocument> m=new HashMap<IResource,IDocument>();
+			Map<IResource,IDocument> m=new HashMap<>();
 			m.put(file, d);
 			parseNotes(notes,ress,m,null);
 			JSONArray names=arr.optJSONArray(0);
 			if(names!=null){
-				Collection<NameDef> ret=new ArrayList<NameDef>();
+				Collection<NameDef> ret=new ArrayList<>();
 				for (int a=0;a<names.length();a++){
 					try {
 						ret.add(new NameDef(names.getJSONObject(a)));
@@ -575,7 +575,7 @@ public class BWFacade {
 	public JSONArray configure(BuildOptions buildOptions){
 		parseFlags(); // reset flags in case they have changed
 		//BuildWrapperPlugin.deleteProblems(getProject());
-		LinkedList<String> command=new LinkedList<String>();
+		LinkedList<String> command=new LinkedList<>();
 		command.add("configure");
 		command.add("--cabaltarget="+buildOptions.getTarget().toString());
 		JSONArray arr=run(command,ARRAY);
@@ -587,7 +587,7 @@ public class BWFacade {
 	}
 	
 	public void synchronize(boolean force){
-		LinkedList<String> command=new LinkedList<String>();
+		LinkedList<String> command=new LinkedList<>();
 		command.add("synchronize");
 		command.add("--force="+force);
 		JSONArray arr=run(command,ARRAY);
@@ -666,7 +666,7 @@ public class BWFacade {
 	}
 	
 	public void generateUsage(Component c,boolean returnAll){
-		LinkedList<String> command=new LinkedList<String>();
+		LinkedList<String> command=new LinkedList<>();
 		command.add("generateusage");
 		command.add("--cabalcomponent="+serializeComponent(c));
 		command.add("--returnall="+returnAll);
@@ -710,7 +710,7 @@ public class BWFacade {
 	
 	public boolean synchronize1(IFile file,boolean force){
 		String path=file.getProjectRelativePath().toOSString();
-		LinkedList<String> command=new LinkedList<String>();
+		LinkedList<String> command=new LinkedList<>();
 		command.add("synchronize1");
 		command.add("--file="+path);
 		command.add("--force="+force);
@@ -754,10 +754,10 @@ public class BWFacade {
 		if (components!=null){
 			return components;
 		}
-		LinkedList<String> command=new LinkedList<String>();
+		LinkedList<String> command=new LinkedList<>();
 		command.add("components");
 		JSONArray arr=run(command,ARRAY);
-		List<Component> cps=new LinkedList<Component>();
+		List<Component> cps=new LinkedList<>();
 		if (arr!=null){
 			if (arr.length()>1){
 		
@@ -781,16 +781,16 @@ public class BWFacade {
 		if (packageDB!=null){
 			return packageDB;
 		}
-		LinkedList<String> command=new LinkedList<String>();
+		LinkedList<String> command=new LinkedList<>();
 		command.add("dependencies");
 		if (SandboxHelper.isSandboxed(this)){
 			command.add("--sandbox="+getCabalImplDetails().getSandboxPath());
 		}
 		JSONArray arr=run(command,ARRAY);
 		if (arr==null){
-			return new HashMap<String, CabalPackage[]>();
+			return new HashMap<>();
 		}
-		Map<String, CabalPackage[]> cps=new HashMap<String, CabalPackage[]>();
+		Map<String, CabalPackage[]> cps=new HashMap<>();
 		if (arr.length()>1){
 			JSONArray notes=arr.optJSONArray(1);
 			parseNotes(notes);
@@ -822,7 +822,7 @@ public class BWFacade {
 			return or;
 		}
 		//BuildFlagInfo i=getBuildFlags(file);
-		LinkedList<String> command=new LinkedList<String>();
+		LinkedList<String> command=new LinkedList<>();
 		command.add("outline");
 		command.add("--file="+path);
 		addEditorStanza(file,command);
@@ -852,8 +852,8 @@ public class BWFacade {
 			if (arr.length()>1){
 				JSONArray notes=arr.optJSONArray(1);
 				//notes.putAll(i.getNotes());
-				List<Note> ns=new ArrayList<Note>();
-				Map<IResource,IDocument> m=new HashMap<IResource,IDocument>();
+				List<Note> ns=new ArrayList<>();
+				Map<IResource,IDocument> m=new HashMap<>();
 				m.put(file, d);
 				boolean b=parseNotes(notes,null,m,ns);
 				or.setNotes(ns);
@@ -892,7 +892,7 @@ public class BWFacade {
 		} 
 		if (arr==null){
 			String path=file.getProjectRelativePath().toOSString();
-			LinkedList<String> command=new LinkedList<String>();
+			LinkedList<String> command=new LinkedList<>();
 			command.add("tokentypes");
 			command.add("--file="+path);
 			addEditorStanza(file,command);
@@ -906,7 +906,7 @@ public class BWFacade {
 				parseNotes(notes);
 			}
 			JSONArray objs=arr.optJSONArray(0);
-			cps=new ArrayList<TokenDef>(objs.length());
+			cps=new ArrayList<>(objs.length());
 			String fn=file.getLocation().toOSString();
 			for (int a=0;a<objs.length();a++){
 				try {
@@ -916,7 +916,7 @@ public class BWFacade {
 				}
 			}
 		} else {
-			cps=new ArrayList<TokenDef>();
+			cps=new ArrayList<>();
 		}
 		//long t1=System.currentTimeMillis();
 		//BuildWrapperPlugin.logInfo("tokenTypes:"+(t1-t0)+"ms, parsing:"+(t1-t01)+"ms");
@@ -925,7 +925,7 @@ public class BWFacade {
 	
 	public List<TokenDef> tokenTypes(String fn){
 		//long t0=System.currentTimeMillis();
-		LinkedList<String> command=new LinkedList<String>();
+		LinkedList<String> command=new LinkedList<>();
 		command.add("tokentypes");
 		command.add("--file="+fn);
 		JSONArray arr=run(command,ARRAY);
@@ -937,7 +937,7 @@ public class BWFacade {
 				parseNotes(notes);
 			}
 			JSONArray objs=arr.optJSONArray(0);
-			cps=new ArrayList<TokenDef>(objs.length());
+			cps=new ArrayList<>(objs.length());
 			for (int a=0;a<objs.length();a++){
 				try {
 					cps.add(new TokenDef(fn,objs.getJSONObject(a)));
@@ -946,7 +946,7 @@ public class BWFacade {
 				}
 			}
 		} else {
-			cps=new ArrayList<TokenDef>();
+			cps=new ArrayList<>();
 		}
 		//long t1=System.currentTimeMillis();
 		//BuildWrapperPlugin.logInfo("tokenTypes:"+(t1-t0)+"ms, parsing:"+(t1-t01)+"ms");
@@ -955,7 +955,7 @@ public class BWFacade {
 	
 	public BuildFlags getBuildFlags(IFile file){
 		String path=file.getProjectRelativePath().toOSString();
-		LinkedList<String> command=new LinkedList<String>();
+		LinkedList<String> command=new LinkedList<>();
 		command.add("getbuildflags");
 		command.add("--file="+path);
 		addEditorStanza(file,command);
@@ -976,13 +976,13 @@ public class BWFacade {
 	
 	public List<ImportClean> cleanImports(IFile file,boolean format){
 		String path=file.getProjectRelativePath().toOSString();
-		LinkedList<String> command=new LinkedList<String>();
+		LinkedList<String> command=new LinkedList<>();
 		command.add("cleanimports");
 		command.add("--file="+path);
 		command.add("--format="+format);
 		addEditorStanza(file,command);
 		JSONArray arr=run(command,ARRAY);
-		List<ImportClean> ret=new ArrayList<ImportClean>();
+		List<ImportClean> ret=new ArrayList<>();
 		if (arr!=null){
 			if (arr.length()>1){
 				JSONArray notes=arr.optJSONArray(1);
@@ -1008,7 +1008,7 @@ public class BWFacade {
 		//BuildFlagInfo i=getBuildFlags(file);
 		long t0=System.currentTimeMillis();
 		String path=file.getProjectRelativePath().toOSString();
-		LinkedList<String> command=new LinkedList<String>();
+		LinkedList<String> command=new LinkedList<>();
 		command.add("occurrences");
 		command.add("--file="+path);
 		command.add("--token="+s);
@@ -1023,7 +1023,7 @@ public class BWFacade {
 				parseNotes(notes);
 			}
 			JSONArray objs=arr.optJSONArray(0);
-			cps=new ArrayList<Occurrence>(objs.length());
+			cps=new ArrayList<>(objs.length());
 			String fn=file.getLocation().toOSString();
 			for (int a=0;a<objs.length();a++){
 				try {
@@ -1034,7 +1034,7 @@ public class BWFacade {
 				}
 			}
 		} else {
-			cps=new ArrayList<Occurrence>();
+			cps=new ArrayList<>();
 		}
 		if (logBuildTimes){
 			long t1=System.currentTimeMillis();
@@ -1067,7 +1067,7 @@ public class BWFacade {
 		} 
 		if (arr==null){
 			String path=file.getProjectRelativePath().toOSString();
-			LinkedList<String> command=new LinkedList<String>();
+			LinkedList<String> command=new LinkedList<>();
 			command.add("thingatpoint");
 			command.add("--file="+path);
 			command.add("--line="+location.getStartLine());
@@ -1127,7 +1127,7 @@ public class BWFacade {
 		} 
 		if (arr==null){
 			String path=file.getProjectRelativePath().toOSString();
-			LinkedList<String> command=new LinkedList<String>();
+			LinkedList<String> command=new LinkedList<>();
 			command.add("locals");
 			command.add("--file="+path);
 			command.add("--sline="+location.getStartLine());
@@ -1138,7 +1138,7 @@ public class BWFacade {
 			arr=run(command,ARRAY);
 			
 		}
-		List<ThingAtPoint> taps=new ArrayList<ThingAtPoint>();
+		List<ThingAtPoint> taps=new ArrayList<>();
 		if (arr!=null){
 			if (arr.length()>1){
 				JSONArray notes=arr.optJSONArray(1);
@@ -1163,7 +1163,7 @@ public class BWFacade {
 	}
 	
 	public void clean(boolean everything){
-		LinkedList<String> command=new LinkedList<String>();
+		LinkedList<String> command=new LinkedList<>();
 		command.add("clean");
 		command.add("--everything="+everything);
 		run(command,BOOL);
@@ -1196,7 +1196,7 @@ public class BWFacade {
 		if (notes!=null){
 			try {
 				if (ress==null){
-					ress=new HashSet<IResource>();
+					ress=new HashSet<>();
 				}
 				for (int a=0;a<notes.length();a++){
 					JSONObject o=notes.getJSONObject(a);
@@ -1454,7 +1454,7 @@ public class BWFacade {
 					}
 				}
 				configure(new BuildOptions());
-				return run(new LinkedList<String>(args.subList(1, args.size()-4)),f,false);
+				return run(new LinkedList<>(args.subList(1, args.size()-4)),f,false);
 			} else if (needDelete){
 				configureFailures++;
 				if (BuildWrapperPlugin.getMaxConfigureFailures()>=0 && configureFailures>=BuildWrapperPlugin.getMaxConfigureFailures()){
@@ -2002,7 +2002,7 @@ public class BWFacade {
 		} 
 		if (arr==null){
 			String path=file.getProjectRelativePath().toOSString();
-			LinkedList<String> command=new LinkedList<String>();
+			LinkedList<String> command=new LinkedList<>();
 			command.add("eval");
 			command.add("--file="+path);
 			command.add("--expression="+expression);
@@ -2010,7 +2010,7 @@ public class BWFacade {
 			arr=run(command,ARRAY);
 			
 		}
-		List<EvalResult> ers=new ArrayList<EvalResult>();
+		List<EvalResult> ers=new ArrayList<>();
 		if (arr!=null){
 			JSONArray locs=arr.optJSONArray(0);
 			if (locs!=null){

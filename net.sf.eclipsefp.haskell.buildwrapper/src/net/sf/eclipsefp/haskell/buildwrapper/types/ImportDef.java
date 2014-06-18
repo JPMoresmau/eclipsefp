@@ -44,7 +44,7 @@ public class ImportDef {
 		alias=obj.optString("a");
 		JSONArray arr=obj.optJSONArray("c");
 		if (arr!=null){
-			children=new ArrayList<ImportSpecDef>();
+			children=new ArrayList<>();
 			for (int a=0;a<arr.length();a++){
 				children.add(new ImportSpecDef(f,arr.getJSONObject(a)));
 			}

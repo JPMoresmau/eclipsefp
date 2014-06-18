@@ -1,8 +1,9 @@
 // Copyright (c) 2003-2004 by Leif Frenzel - see http://leiffrenzel.de
 package net.sf.eclipsefp.common.ui.preferences.overlay;
 
-import java.util.*;
-
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.PreferenceStore;
 import org.eclipse.jface.util.IPropertyChangeListener;
@@ -11,7 +12,7 @@ import org.eclipse.jface.util.PropertyChangeEvent;
 /** <p>A preference store that can be used for caching preference values
   * (e.g. on tabbed pages).</p>
   *
-  * @author Leif Frenzel  
+  * @author Leif Frenzel
   */
 public class OverlayPreferenceStore implements IPreferenceStore {
 
@@ -26,7 +27,7 @@ public class OverlayPreferenceStore implements IPreferenceStore {
 
   public OverlayPreferenceStore( final IPreferenceStore parent ) {
     this.parent = parent;
-    overlayKeys = new ArrayList<OverlayKey>();
+    overlayKeys = new ArrayList<>();
     store = new PreferenceStore();
   }
 
@@ -121,7 +122,7 @@ public class OverlayPreferenceStore implements IPreferenceStore {
   }
 
   @Override
-  public void firePropertyChangeEvent( final String name, 
+  public void firePropertyChangeEvent( final String name,
                                        final Object oldValue,
                                        final Object newValue ) {
     store.firePropertyChangeEvent( name, oldValue, newValue );
@@ -301,7 +302,7 @@ public class OverlayPreferenceStore implements IPreferenceStore {
   /**
    * Tries to find and return the overlay key for the given preference key
    * string.
-   * 
+   *
    * @param key
    *          the preference key string
    * @return the overlay key or <code>null</code> if none can be found
@@ -319,7 +320,7 @@ public class OverlayPreferenceStore implements IPreferenceStore {
   }
 
   protected final void propagateProperty( final IPreferenceStore origin,
-                                          final OverlayKey key, 
+                                          final OverlayKey key,
                                           final IPreferenceStore target ) {
     if( origin.isDefault( key.getKey() ) ) {
       if( !target.isDefault( key.getKey() ) ) {

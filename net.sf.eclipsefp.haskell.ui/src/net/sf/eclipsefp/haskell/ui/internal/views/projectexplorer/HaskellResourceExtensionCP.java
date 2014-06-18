@@ -48,7 +48,7 @@ public class HaskellResourceExtensionCP implements ICommonContentProvider {
 
   @Override
   public Object[] getChildren( final Object parentElement ) {
-    final List<Object> result = new ArrayList<Object>();
+    final List<Object> result = new ArrayList<>();
     try {
       if( parentElement instanceof IProject
           && ResourceUtil.hasHaskellNature( ( IProject )parentElement ) ){
@@ -58,7 +58,7 @@ public class HaskellResourceExtensionCP implements ICommonContentProvider {
         if (f != null && f.exists()) {
           result.add( f );
         }
-        Set<IContainer> srcs=new HashSet<IContainer>(ResourceUtil.getSourceFolders( p ));
+        Set<IContainer> srcs=new HashSet<>(ResourceUtil.getSourceFolders( p ));
         srcs.remove( parentElement ); // may happen if . is a source folder
         result.addAll(srcs);
 

@@ -17,7 +17,7 @@ public class CabalPackage {
 	private String version;
 	private boolean exposed;
 	private Component[] components;
-	private Set<String> modules=new HashSet<String>();
+	private Set<String> modules=new HashSet<>();
 	
 	public CabalPackage(){
 		
@@ -33,7 +33,7 @@ public class CabalPackage {
 			components[a]=new Component(arr.getJSONObject(a));
 		}
 		arr=obj.getJSONArray("modules");
-		modules=new HashSet<String>(arr.length());
+		modules=new HashSet<>(arr.length());
 		for (int a=0;a<arr.length();a++){
 			modules.add(arr.getString(a));
 		}

@@ -73,7 +73,7 @@ public class FolderSelectionDialog extends ElementTreeSelectionDialog {
         }
         if (o instanceof IContainer){
           final IContainer f=(IContainer)o;
-          final Set<String> names=new HashSet<String>();
+          final Set<String> names=new HashSet<>();
           try {
             for (IResource r:f.members()){
               names.add( r.getName() );

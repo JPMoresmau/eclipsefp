@@ -37,7 +37,7 @@ public class GHCPackageConf implements ITreeElement {
     this.systemLibrary = systemLibrary;
     this.location = location;
 //    this.content=null;
-    children=new ArrayList<GHCPackage>();
+    children=new ArrayList<>();
     for (CabalPackage pkg:pkgs){
       // only referenced libraries!
       if (pkg.getComponents().length>0){

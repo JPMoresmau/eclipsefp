@@ -26,7 +26,7 @@ public class UsageResults {
 	/**
 	 * results, keyed by IProject, then by IFile, then by section
 	 */
-	private Map<IProject,Map<IFile,Map<String,Collection<SearchResultLocation>>>> allResults=new HashMap<IProject, Map<IFile,Map<String,Collection<SearchResultLocation>>>>();
+	private Map<IProject,Map<IFile,Map<String,Collection<SearchResultLocation>>>> allResults=new HashMap<>();
 	
 	private int size=0;
 	
@@ -39,18 +39,18 @@ public class UsageResults {
 		IProject p=file.getProject();
 		Map<IFile,Map<String,Collection<SearchResultLocation>>> m=allResults.get(p);
 		if (m==null){
-			m=new HashMap<IFile, Map<String,Collection<SearchResultLocation>>>();
+			m=new HashMap<>();
 			allResults.put(p, m);
 		}
 		Map<String,Collection<SearchResultLocation>> sections=m.get(file);
 		if (sections==null){
-			sections=new HashMap<String, Collection<SearchResultLocation>>();
+			sections=new HashMap<>();
 			m.put(file, sections);
 		}
 		for (String s:locs.keySet()){
 			Collection<SearchResultLocation> allLocs=sections.get(s);
 			if (allLocs==null){
-				allLocs=new ArrayList<SearchResultLocation>();
+				allLocs=new ArrayList<>();
 				sections.put(s, allLocs);
 			}
 			Collection<SearchResultLocation> sLocs=locs.get(s);

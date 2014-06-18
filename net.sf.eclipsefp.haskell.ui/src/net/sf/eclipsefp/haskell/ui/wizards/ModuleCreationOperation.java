@@ -90,15 +90,15 @@ public class ModuleCreationOperation implements IRunnableWithProgress {
             }
           }
         } else {
-          Set<String> sIncluded=new HashSet<String>();
+          Set<String> sIncluded=new HashSet<>();
           for (PackageDescriptionStanza pds:info.getIncluded()){
             sIncluded.add( pds.toTypeName() );
           }
-          Set<String> sExposed=new HashSet<String>();
+          Set<String> sExposed=new HashSet<>();
           for (PackageDescriptionStanza pds:info.getExposed()){
             sExposed.add( pds.toTypeName() );
           }
-         List<PackageDescriptionStanza> pdss=new ArrayList<PackageDescriptionStanza>( pd.getStanzas() );
+         List<PackageDescriptionStanza> pdss=new ArrayList<>( pd.getStanzas() );
           for (PackageDescriptionStanza pds:pdss){
             if (pds.getType()!=null && (pds.getType().equals( CabalSyntax.SECTION_LIBRARY ) || pds.getType().equals( CabalSyntax.SECTION_EXECUTABLE )  || pds.getType().equals( CabalSyntax.SECTION_TESTSUITE ))){
               pds=pd.getSameStanza( pds );

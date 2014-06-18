@@ -17,7 +17,7 @@ import org.json.JSONException;
 public class Util {
 
 	public static String[] getStringArray(JSONArray array) throws JSONException {
-		ArrayList<String> r = new ArrayList<String>();
+		ArrayList<String> r = new ArrayList<>();
 		for (int i = 0; i < array.length(); i++) {
 			r.add(array.getString(i));
 		}

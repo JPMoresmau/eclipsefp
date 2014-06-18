@@ -209,7 +209,7 @@ public class PartitionedScionTokenScanner implements IPartitionTokenScanner,
 
         TokenDef def = new TokenDef( ITokenTypes.LITERATE_COMMENT,
             new Location( "", document, new Region( realOffset, realLength ) ) );
-        lTokenDefs = new ArrayList<TokenDef>();
+        lTokenDefs = new ArrayList<>();
         lTokenDefs.add( def );
       } else {
         // We are not in a comment

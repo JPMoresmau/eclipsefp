@@ -57,7 +57,7 @@ public class BuildWrapperPlugin extends AbstractUIPlugin {
 	// The shared instance
 	private static BuildWrapperPlugin plugin;
 	
-	private static Map<IProject, BWFacade> facades=new HashMap<IProject, BWFacade>();
+	private static Map<IProject, BWFacade> facades=new HashMap<>();
 	
 	private static String bwPath;
 	private static int maxConfigureFailures=10;
@@ -293,7 +293,7 @@ public class BuildWrapperPlugin extends AbstractUIPlugin {
 	  /**
 	   * cache project cabal file if cabal file doesn't have same name than project
 	   */
-	  private static Map<IProject,IFile> m=new HashMap<IProject,IFile>();
+	  private static Map<IProject,IFile> m=new HashMap<>();
 	  
 	  /**
 	   * get the cabal file path
@@ -421,7 +421,7 @@ public class BuildWrapperPlugin extends AbstractUIPlugin {
 	public static Set<String> getExtensions(IFile file){
 		IProject p=file.getProject();
 		BWFacade bwf=BuildWrapperPlugin.getFacade( p );
-        Set<String> extensions=new HashSet<String>();
+        Set<String> extensions=new HashSet<>();
         if (bwf !=null){
           BuildFlags bf=bwf.getBuildFlags( file );
           if (bf!=null){

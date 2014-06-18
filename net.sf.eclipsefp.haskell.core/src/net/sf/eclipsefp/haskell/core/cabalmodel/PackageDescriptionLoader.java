@@ -72,7 +72,7 @@ public class PackageDescriptionLoader {
   }
 
   public static List<String> parseList(final String value,final String seps){
-    List<String> ret=new LinkedList<String>();
+    List<String> ret=new LinkedList<>();
 
     if (value!=null && value.length()>0){
       StringTokenizer st=new StringTokenizer( value,seps );
@@ -119,7 +119,7 @@ public class PackageDescriptionLoader {
 
 
     private PackageDescriptionStanza lastStanza=null;
-    private final LinkedList<PackageDescriptionStanza> stanzaStack=new LinkedList<PackageDescriptionStanza>();
+    private final LinkedList<PackageDescriptionStanza> stanzaStack=new LinkedList<>();
 
     private int currentIndent=0;
 

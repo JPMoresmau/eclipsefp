@@ -24,7 +24,7 @@ public class TestListenerManager {
   public static Map<String,ITestListener> getContributors(){
     if (contribs==null){
       IConfigurationElement[] elts=HaskellDebugCore.getDefault().getExtensions( HaskellDebugCore.ID_EXT_POINT_TEST_LISTENERS );
-      contribs=new HashMap<String, ITestListener>();
+      contribs=new HashMap<>();
       for (IConfigurationElement elem:elts){
         try {
           Object o = elem.createExecutableExtension(HaskellCorePlugin.ATT_CLASS);

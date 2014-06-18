@@ -41,15 +41,15 @@ public class CabalFolder {
         case BENCHMARK:
           return getStanzas(descr.getBenchmarkStanzas());
       }
-      return new ArrayList<ProjectExplorerStanza>();
+      return new ArrayList<>();
     } catch (Throwable e) {
       HaskellUIPlugin.log( e );
-      return new ArrayList<ProjectExplorerStanza>();
+      return new ArrayList<>();
     }
   }
 
   private List<ProjectExplorerStanza> getStanzas(final List<PackageDescriptionStanza> pds){
-    List<ProjectExplorerStanza> ret=new ArrayList<ProjectExplorerStanza>(pds.size());
+    List<ProjectExplorerStanza> ret=new ArrayList<>(pds.size());
     for (PackageDescriptionStanza st:pds){
       ret.add( new ProjectExplorerStanza( cabalFile, st ) );
     }

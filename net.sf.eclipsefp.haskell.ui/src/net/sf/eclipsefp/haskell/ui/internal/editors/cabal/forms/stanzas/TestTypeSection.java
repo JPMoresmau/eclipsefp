@@ -43,7 +43,7 @@ class TestTypeSection extends CabalFormSection implements IFormEntryListener {
     GridData data = new GridData( GridData.FILL_HORIZONTAL );
     getSection().setLayoutData( data );
 
-    choice = new FormEntryCombo<TestSuiteType>( new TestSuiteTypeChoice() );
+    choice = new FormEntryCombo<>( new TestSuiteTypeChoice() );
     setCustomFormEntry( choice, CabalSyntax.FIELD_TYPE, toolkit, container );
     GridData entryGD = new GridData( GridData.FILL_HORIZONTAL );
     entryGD.heightHint = 20;

@@ -18,7 +18,7 @@ public final class ValidatorManager {
 
   private final WizardPage fWizardPage;
 
-  private final ArrayList<Validator> validators = new ArrayList<Validator>();
+  private final ArrayList<Validator> validators = new ArrayList<>();
 
   public ValidatorManager(final WizardPage wizardPage) {
     fWizardPage = wizardPage;

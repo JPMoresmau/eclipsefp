@@ -71,7 +71,7 @@ public class AddPackageDependencyProposal implements ICompletionProposal {
 
       // find applicable stanzas if any, to not modify all of the cabal stanzas
       Set<PackageDescriptionStanza> apps=ResourceUtil.getApplicableStanzas( new IFile[]{res} );
-      Set<String> appNames=new HashSet<String>();
+      Set<String> appNames=new HashSet<>();
       for (PackageDescriptionStanza pds:apps){
         Collection<String> pkgs=pds.getDependentPackages();
         // some stanzas may already have the dependency

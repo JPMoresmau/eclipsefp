@@ -219,7 +219,7 @@ public class NewModuleWizardPage extends StatusWizardPage implements IModuleCrea
     cvTemplates.setContentProvider( new ArrayContentProvider() );
     cvTemplates.setComparator( new WorkbenchViewerComparator() );
 
-    List<TemplateDef> ltds=new ArrayList<NewModuleWizardPage.TemplateDef>();
+    List<TemplateDef> ltds=new ArrayList<>();
     defTemplate = new TemplateDef( ICorePreferenceNames.TEMPLATE_MODULE, UITexts.preferences_project_file_TEMPLATE_MODULE );
     ltds.add(defTemplate );
     ltds.add( new TemplateDef( ICorePreferenceNames.TEMPLATE_MODULE_HTF, UITexts.preferences_project_file_TEMPLATE_MODULE_HTF ) );

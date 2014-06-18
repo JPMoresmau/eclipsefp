@@ -51,7 +51,7 @@ public class UuagcProjectManager {
 
   public void initFromContents( final String contents ) {
     // Initialize the files
-    files = new ArrayList<UuagcFile>();
+    files = new ArrayList<>();
     // Parse the file
     String[] lines = contents.split( "[\r\n]+" ); //$NON-NLS-1$
     for (int i = 0; i < lines.length; i++) {
@@ -68,7 +68,7 @@ public class UuagcProjectManager {
           if (line.startsWith( OPTIONS_INIT )) {
             colonPos = line.indexOf( ':' );
             String options = line.substring( colonPos + 1 ).trim();
-            ArrayList<String> optionsList = new ArrayList<String>(  );
+            ArrayList<String> optionsList = new ArrayList<>(  );
             for (String option : options.split( "[ ]*,[ ]*" )) { //$NON-NLS-1$
               optionsList.add( option );
             }

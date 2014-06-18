@@ -77,8 +77,8 @@ public class HaskellDebugTarget extends HaskellDebugElement implements IDebugTar
   private String fName;
 
   private final StringBuilder response=new StringBuilder();
-  private final Map<IBreakpoint,Integer> breakpointIds=new IdentityHashMap<IBreakpoint, Integer>();
-  private final Map<String,HaskellBreakpoint> breakpointNames=new HashMap<String,HaskellBreakpoint>();
+  private final Map<IBreakpoint,Integer> breakpointIds=new IdentityHashMap<>();
+  private final Map<String,HaskellBreakpoint> breakpointNames=new HashMap<>();
 
 
   private boolean connected=true;
@@ -578,7 +578,7 @@ public class HaskellDebugTarget extends HaskellDebugElement implements IDebugTar
     String s=getResultWithoutPrompt();
     BufferedReader br=new BufferedReader(new StringReader( s ));
     try {
-      List<IVariable> ret=new ArrayList<IVariable>();
+      List<IVariable> ret=new ArrayList<>();
       String line=br.readLine();
       StringBuilder sb=new StringBuilder();
       while (line!=null){

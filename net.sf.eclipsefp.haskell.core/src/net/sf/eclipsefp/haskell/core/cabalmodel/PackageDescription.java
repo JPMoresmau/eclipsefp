@@ -28,7 +28,7 @@ public class PackageDescription {
   private final List<PackageDescriptionStanza> stanzas;
 
   PackageDescription() {
-    stanzas = new ArrayList<PackageDescriptionStanza>();
+    stanzas = new ArrayList<>();
   }
 
   public PackageDescription(final String name){
@@ -54,7 +54,7 @@ public class PackageDescription {
   }
 
   public List<PackageDescriptionStanza> getExecutableStanzas() {
-    Vector<PackageDescriptionStanza> result = new Vector<PackageDescriptionStanza>();
+    Vector<PackageDescriptionStanza> result = new Vector<>();
     for (PackageDescriptionStanza stanza : getStanzas()) {
       if (stanza.getType() == CabalSyntax.SECTION_EXECUTABLE) {
         result.add( stanza );
@@ -64,7 +64,7 @@ public class PackageDescription {
   }
 
   public List<PackageDescriptionStanza> getTestSuiteStanzas() {
-    Vector<PackageDescriptionStanza> result = new Vector<PackageDescriptionStanza>();
+    Vector<PackageDescriptionStanza> result = new Vector<>();
     for (PackageDescriptionStanza stanza : getStanzas()) {
       if (stanza.getType() == CabalSyntax.SECTION_TESTSUITE) {
         result.add( stanza );
@@ -74,7 +74,7 @@ public class PackageDescription {
   }
 
   public List<PackageDescriptionStanza> getBenchmarkStanzas() {
-    Vector<PackageDescriptionStanza> result = new Vector<PackageDescriptionStanza>();
+    Vector<PackageDescriptionStanza> result = new Vector<>();
     for (PackageDescriptionStanza stanza : getStanzas()) {
       if (stanza.getType() == CabalSyntax.SECTION_BENCHMARK) {
         result.add( stanza );
@@ -119,7 +119,7 @@ public class PackageDescription {
   }
 
   public Map<String, List<PackageDescriptionStanza>> getStanzasBySourceDir(){
-    Map<String, List<PackageDescriptionStanza>> ret=new HashMap<String, List<PackageDescriptionStanza>>();
+    Map<String, List<PackageDescriptionStanza>> ret=new HashMap<>();
 
     for (PackageDescriptionStanza pds:stanzas){
       Collection<String> sds=pds.getSourceDirs();
@@ -127,7 +127,7 @@ public class PackageDescription {
         if (t.length()>0){
           List<PackageDescriptionStanza> pdss=ret.get( t );
           if (pdss==null){
-            pdss=new LinkedList<PackageDescriptionStanza>();
+            pdss=new LinkedList<>();
             ret.put( t, pdss );
           }
           pdss.add(pds);
@@ -140,7 +140,7 @@ public class PackageDescription {
   }
 
   public Collection<String> getAllSourceDirs() {
-    HashSet<String> result = new HashSet<String>();
+    HashSet<String> result = new HashSet<>();
     for (PackageDescriptionStanza pds:stanzas){
       Collection<String> sds=pds.getSourceDirs();
       result.addAll( sds );
@@ -150,7 +150,7 @@ public class PackageDescription {
 
 
   public Collection<String> getAllNonHaskellFiles() {
-    HashSet<String> result = new HashSet<String>();
+    HashSet<String> result = new HashSet<>();
     for (PackageDescriptionStanza pds:stanzas){
       Collection<String> sds=pds.getNonHaskellFiles();
       result.addAll( sds );

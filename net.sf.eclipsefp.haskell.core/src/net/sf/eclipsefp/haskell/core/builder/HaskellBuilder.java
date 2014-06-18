@@ -164,11 +164,11 @@ public class HaskellBuilder extends IncrementalProjectBuilder {
       IWorkspaceRoot root=ResourcesPlugin.getWorkspace().getRoot();
       try {
         PackageDescription pd=PackageDescriptionLoader.load( BuildWrapperPlugin.getCabalFile( prj ) );
-        Set<String> pkgs=new HashSet<String>();
+        Set<String> pkgs=new HashSet<>();
         for (PackageDescriptionStanza pds:pd.getStanzas()){
           pkgs.addAll( pds.getDependentPackages() );
         }
-        Set<IProject> deps=new HashSet<IProject>();
+        Set<IProject> deps=new HashSet<>();
         for (String pkg:pkgs){
             IProject p=root.getProject( pkg );
             // avoid reference to itself

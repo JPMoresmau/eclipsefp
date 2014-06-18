@@ -37,11 +37,11 @@ import org.eclipse.swt.widgets.Label;
   * @author JP Moresmau
  */
 public class ModuleInclusionComposite extends Composite {
-  private final Set<PackageDescriptionStanza> included=new HashSet<PackageDescriptionStanza>();
-  private final Set<PackageDescriptionStanza> exposed=new HashSet<PackageDescriptionStanza>();
+  private final Set<PackageDescriptionStanza> included=new HashSet<>();
+  private final Set<PackageDescriptionStanza> exposed=new HashSet<>();
   private PackageDescriptionStanza editorStanza=null;
 
-  private final Collection<Button> editorStanzaButtons=new ArrayList<Button>();
+  private final Collection<Button> editorStanzaButtons=new ArrayList<>();
 
   private final SelectionListener editorButtonL=new SelectionAdapter() {
     /* (non-Javadoc)

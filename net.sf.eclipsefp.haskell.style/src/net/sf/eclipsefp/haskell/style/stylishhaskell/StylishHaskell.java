@@ -51,7 +51,7 @@ public class StylishHaskell {
 	 * @throws Exception
 	 */
 	public static void runStylishHaskell(String exe, IProject project, File filePath,String charset,Set<String> extensions) throws Exception{
-		List<String> cmd=new ArrayList<String>();
+		List<String> cmd=new ArrayList<>();
 		cmd.add(exe);
 		cmd.add("-i"); // in place
 		String cf=getConfigFile(project);

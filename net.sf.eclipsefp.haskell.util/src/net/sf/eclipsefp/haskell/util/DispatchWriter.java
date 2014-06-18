@@ -18,7 +18,7 @@ import java.util.List;
  */
 public class DispatchWriter extends Writer {
 	private final List<Writer> writers=Collections.synchronizedList(new ArrayList<Writer>());
-	private final List<Writer> fClosedOutputs = new ArrayList<Writer>();
+	private final List<Writer> fClosedOutputs = new ArrayList<>();
 	
 	/**
 	 * @return the writers

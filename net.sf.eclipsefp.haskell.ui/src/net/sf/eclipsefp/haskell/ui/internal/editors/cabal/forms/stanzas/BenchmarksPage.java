@@ -247,7 +247,7 @@ public class BenchmarksPage extends CabalFormPage implements SelectionListener {
 
     ignoreModify = true;
     java.util.List<String> inList = Arrays.asList( benchmarksList.getItems() );
-    Vector<String> inPackage = new Vector<String>();
+    Vector<String> inPackage = new Vector<>();
     for (PackageDescriptionStanza execStanza : this.getStanzas( packageDescription )) {
       inPackage.add( execStanza.getName() );
     }

@@ -51,11 +51,11 @@ public class DependenciesDialog extends Dialog implements
   /**
    * exact packages selected (with exact versions)
    */
-  private final List<HaskellPackage> selectedPackages=new ArrayList<HaskellPackage>();
+  private final List<HaskellPackage> selectedPackages=new ArrayList<>();
   /**
    * exact items selection (with version ranges)
    */
-  private final List<DependencyItem> selectedItems=new ArrayList<DependencyItem>();
+  private final List<DependencyItem> selectedItems=new ArrayList<>();
 
   private Button versionNone;
   private Button versionMajor;

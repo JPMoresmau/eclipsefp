@@ -46,7 +46,7 @@ public class ProjectModelFilesOp implements IProjectCreationOperationExtraOp {
     if (isExecutable() || isLibrary()){
       String name = project.getName();
       String src=HaskellProjectCreationOperation.getSourceDir();
-      Map<String,String> vars=new HashMap<String, String>();
+      Map<String,String> vars=new HashMap<>();
       /**
        * put vars
        */

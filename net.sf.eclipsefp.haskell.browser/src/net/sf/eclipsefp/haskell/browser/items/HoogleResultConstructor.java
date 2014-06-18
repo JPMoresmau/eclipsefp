@@ -23,7 +23,7 @@ public class HoogleResultConstructor extends HoogleResult {
 
 	public HoogleResultConstructor(PackageIdentifier pkg, String mod, Declaration decl, Constructor con) {
 		setType(HoogleResultType.CONSTRUCTOR);
-		this.pkg = new ArrayList<PackageIdentifier>();
+		this.pkg = new ArrayList<>();
 		this.pkg.add(pkg);
 		this.mod = mod;
 		this.decl = decl;
@@ -39,7 +39,7 @@ public class HoogleResultConstructor extends HoogleResult {
 		this.decl = Declaration.fromJSON(first_result.getJSONObject(2)).iterator().next();
 		this.con = new Constructor(first_result.getJSONObject(3));
 		// Add packages
-		this.pkg = new ArrayList<PackageIdentifier>();
+		this.pkg = new ArrayList<>();
 		for (int i = 0; i < results.length(); i++) {
 			JSONArray result = results.getJSONArray(i);
 			this.pkg.add(new PackageIdentifier(result.getJSONObject(0)));

@@ -36,7 +36,7 @@ public class UsageQuery implements ISearchQuery {
   /**
    * projects to search into (if it contains null -> all projects)
    */
-  private final Collection<IProject> projects=new LinkedList<IProject>();
+  private final Collection<IProject> projects=new LinkedList<>();
   /**
    * result structure
    */

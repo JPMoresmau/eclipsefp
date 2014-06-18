@@ -37,7 +37,7 @@ class BuildSection extends CabalFormSection {
     GridData data = new GridData( GridData.FILL_BOTH );
     getSection().setLayoutData( data );
 
-    MinimalVersionFormEntryCombo<String> combo = new MinimalVersionFormEntryCombo<String>(
+    MinimalVersionFormEntryCombo<String> combo = new MinimalVersionFormEntryCombo<>(
         new CabalVersionChoice() );
     createCustomFormEntry( combo, CabalSyntax.FIELD_CABAL_VERSION,
         toolkit, container, UITexts.advancedPage_cabalMinimalVersion, SWT.NONE );

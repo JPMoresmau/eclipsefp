@@ -36,7 +36,7 @@ public class DebugPP extends PreferencePage implements IWorkbenchPreferencePage 
     store.setDefault( ICorePreferenceNames.RUN_COMMAND_HISTORY_MAX, 20 );
   }
 
-  private final List<Button> buttons=new LinkedList<Button>();
+  private final List<Button> buttons=new LinkedList<>();
   private IntegerFieldEditor historyMax;
 
   public DebugPP() {

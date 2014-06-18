@@ -43,7 +43,7 @@ public abstract class CabalFormSection extends SectionPart {
     super( parent, page.getManagedForm().getToolkit(), Section.DESCRIPTION
         | ExpandableComposite.TITLE_BAR );
     this.editor = editor;
-    entries = new ArrayList<FormEntry>();
+    entries = new ArrayList<>();
     this.project = project;
     initialize( page.getManagedForm() );
     getSection().clientVerticalSpacing = 6;
@@ -114,7 +114,7 @@ public abstract class CabalFormSection extends SectionPart {
   protected <T> FormEntry createComboFormEntry( final CabalSyntax property,
       final Choice<T> choices, final FormToolkit toolkit,
       final Composite container, final String label ) {
-    return createCustomFormEntry( new FormEntryCombo<T>( choices ), property, toolkit, container, label, SWT.NONE );
+    return createCustomFormEntry( new FormEntryCombo<>( choices ), property, toolkit, container, label, SWT.NONE );
   }
 
   protected FormEntry createFileFormEntry (final CabalSyntax property, final FormToolkit toolkit, final Composite container) {
@@ -134,7 +134,7 @@ public abstract class CabalFormSection extends SectionPart {
       @Override
       public void setValue( final String value, final boolean blockNotification ) {
         ignoreModify=true;
-        Set<String> s=getStanza()!=null?new HashSet<String>(getStanza().getSourceDirs()):Collections.<String>emptySet();
+        Set<String> s=getStanza()!=null?new HashSet<>(getStanza().getSourceDirs()):Collections.<String>emptySet();
 
         setValues(s);
         ignoreModify = false;

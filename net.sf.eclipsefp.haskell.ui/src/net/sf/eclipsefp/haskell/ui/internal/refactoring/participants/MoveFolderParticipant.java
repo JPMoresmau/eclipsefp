@@ -41,7 +41,7 @@ public class MoveFolderParticipant extends MoveParticipant {
     if( element instanceof IFolder ) {
       this.folder = (IFolder)element;
       // Precompute files to be changed
-      this.haskellFiles = new ArrayList<IFile>();
+      this.haskellFiles = new ArrayList<>();
       try {
         folder.accept( new IResourceVisitor() {
           @Override

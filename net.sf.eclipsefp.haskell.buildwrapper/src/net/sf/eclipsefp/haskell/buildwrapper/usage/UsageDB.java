@@ -404,7 +404,7 @@ public class UsageDB {
 	
 	public List<Module> listLocalModules() throws SQLException {
 		checkConnection();
-		List<Module> ret=new ArrayList<Module>();
+		List<Module> ret=new ArrayList<>();
 		PreparedStatement ps=conn.prepareStatement("select moduleid,package,module,fileid from modules where fileid is not null");
 		try {
 			ResultSet rs=ps.executeQuery();
@@ -507,7 +507,7 @@ public class UsageDB {
 			sb.append(" and f.fileid=m.fileid and f.project=?");
 		}
 		PreparedStatement ps=conn.prepareStatement(sb.toString());
-		List<String> ret=new ArrayList<String>();
+		List<String> ret=new ArrayList<>();
 		try {
 			int ix=1;
 			if (module!=null){
@@ -635,7 +635,7 @@ public class UsageDB {
 	}
 		
 	private UsageResults getUsageResults(PreparedStatement ps,String query) throws SQLException{
-		Map<Long,Map<String,Collection<SearchResultLocation>>> m=new HashMap<Long, Map<String,Collection<SearchResultLocation>>>();
+		Map<Long,Map<String,Collection<SearchResultLocation>>> m=new HashMap<>();
 	
 		ResultSet rs=ps.executeQuery();
 		try {
@@ -643,13 +643,13 @@ public class UsageDB {
 				long fileid=rs.getLong(1);
 				Map<String,Collection<SearchResultLocation>> sections=m.get(fileid);
 				if (sections==null){
-					sections=new HashMap<String, Collection<SearchResultLocation>>();
+					sections=new HashMap<>();
 					m.put(fileid, sections);
 				}
 				String section=rs.getString(2);
 				Collection<SearchResultLocation> locs=sections.get(section);
 				if (locs==null){
-					locs=new ArrayList<SearchResultLocation>();
+					locs=new ArrayList<>();
 					sections.put(section,locs);
 				}
 				//IProject p=ResourcesPlugin.getWorkspace().getRoot().getProject(project);
@@ -696,7 +696,7 @@ public class UsageDB {
 		sb.append("and s.symbolid=sd.symbolid ");
 		sb.append("and sd.location is not null");
 		PreparedStatement ps=conn.prepareStatement(sb.toString());
-		List<SymbolDef> ret=new ArrayList<SymbolDef>();
+		List<SymbolDef> ret=new ArrayList<>();
 		try {
 			ps.setString(1, p.getName());
 			ResultSet rs=ps.executeQuery();
@@ -720,7 +720,7 @@ public class UsageDB {
 	public Map<String,List<ReferenceLocation>> listReferencesInFile(IFile f)throws SQLException,JSONException{
 		checkConnection();
 		long fileid=getFileID(f);
-		Map<String,List<ReferenceLocation>> ret=new HashMap<String, List<ReferenceLocation>>();
+		Map<String,List<ReferenceLocation>> ret=new HashMap<>();
 		PreparedStatement ps=conn.prepareStatement("select mu.section,m.module,mu.location from module_usages mu,modules m where mu.fileid=? and mu.moduleid=m.moduleid");
 		try {
 			ps.setLong(1, fileid);
@@ -755,7 +755,7 @@ public class UsageDB {
 	private void addReference(IFile f,Map<String,List<ReferenceLocation>> m,String section,String name,String loc,boolean mod) throws JSONException{
 		List<ReferenceLocation> s=m.get(section);
 		if (s==null){
-			s=new ArrayList<ReferenceLocation>();
+			s=new ArrayList<>();
 			m.put(section, s);
 		}
 		ReferenceLocation rl=new ReferenceLocation(name, f, new JSONArray(loc));

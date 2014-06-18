@@ -15,7 +15,7 @@ public class OutputParser {
   static Pattern msg = Pattern.compile("^(.*?):([0-9]+)(?::([0-9]+))?:\\s*(.*)$"); //$NON-NLS-1$
 
   public static List<ProcessorError> errors( final String s ) {
-    ArrayList<ProcessorError> r = new ArrayList<ProcessorError>();
+    ArrayList<ProcessorError> r = new ArrayList<>();
 
     String[] lines = s.split( "[\r\n]+" ); //$NON-NLS-1$
     for( String line: lines ) {

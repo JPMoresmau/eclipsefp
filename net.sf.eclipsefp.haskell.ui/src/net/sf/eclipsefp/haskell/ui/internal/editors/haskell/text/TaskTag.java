@@ -31,7 +31,7 @@ public class TaskTag implements Cloneable{
 
     public static Set<TaskTag> getTasksTags(final IPreferenceStore prefStore){
       String s=prefStore.getString( EDITOR_TASK_TAGS );
-      Set<TaskTag> tags=new HashSet<TaskTag>();
+      Set<TaskTag> tags=new HashSet<>();
       if (s!=null){
 
         try {

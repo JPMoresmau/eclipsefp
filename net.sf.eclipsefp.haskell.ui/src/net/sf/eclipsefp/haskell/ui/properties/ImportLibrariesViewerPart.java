@@ -30,7 +30,7 @@ import org.eclipse.swt.widgets.Label;
   * @author Leif Frenzel
   */
 class ImportLibrariesViewerPart extends TablePart {
-  private final Collection<CabalPackage> allPackages= new ArrayList<CabalPackage>();
+  private final Collection<CabalPackage> allPackages= new ArrayList<>();
   private List<Component> components;
 
   public ImportLibrariesViewerPart() {
@@ -42,8 +42,8 @@ class ImportLibrariesViewerPart extends TablePart {
                           "Deselect All" });
   }
 
-  private final Map<String,CabalPackage> added=new HashMap<String, CabalPackage>();
-  private final Set<String> removed=new HashSet<String>();
+  private final Map<String,CabalPackage> added=new HashMap<>();
+  private final Set<String> removed=new HashSet<>();
 
 
   public void setAllPackages( final Collection<CabalPackage[]> allPackages ) {
@@ -110,7 +110,7 @@ class ImportLibrariesViewerPart extends TablePart {
   }
 
   private void handleAdd() {
-    Collection<CabalPackage> addablePackages=new ArrayList<CabalPackage>(allPackages.size());
+    Collection<CabalPackage> addablePackages=new ArrayList<>(allPackages.size());
     for (CabalPackage cp:allPackages){
       if (!added.containsKey( cp.getName()) && (cp.getComponents().length==0 || removed.contains( cp.getName() )) ){
         addablePackages.add(cp);

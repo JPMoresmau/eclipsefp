@@ -22,7 +22,7 @@ public class HoogleResultDeclaration extends HoogleResult {
 
 	public HoogleResultDeclaration(PackageIdentifier pkg, String mod, Declaration decl) {
 		setType(HoogleResultType.DECLARATION);
-		this.pkg = new ArrayList<PackageIdentifier>();
+		this.pkg = new ArrayList<>();
 		this.pkg.add(pkg);
 		this.mod = mod;
 		this.decl = decl;
@@ -36,7 +36,7 @@ public class HoogleResultDeclaration extends HoogleResult {
 		this.mod = first_result.getString(1);
 		this.decl = Declaration.fromJSON(first_result.getJSONObject(2)).iterator().next();
 		// Add packages
-		this.pkg = new ArrayList<PackageIdentifier>();
+		this.pkg = new ArrayList<>();
 		for (int i = 0; i < results.length(); i++) {
 			JSONArray result = results.getJSONArray(i);
 			this.pkg.add(new PackageIdentifier(result.getJSONObject(0)));

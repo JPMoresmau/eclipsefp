@@ -90,9 +90,9 @@ public class ExtraCabalParamsPP extends PropertyPage implements
     extraFrees.setAddMessage( UITexts.properties_extra_free_message );
     extraFrees.setAddTitle( UITexts.properties_extra_free_title );
     extraFrees.setLayoutData( new GridData(GridData.FILL_HORIZONTAL | GridData.GRAB_HORIZONTAL) );
-    List<String> extraLibs=new ArrayList<String>();
-    List<String> extraIncs=new ArrayList<String>();
-    List<String> extraFrees=new ArrayList<String>();
+    List<String> extraLibs=new ArrayList<>();
+    List<String> extraIncs=new ArrayList<>();
+    List<String> extraFrees=new ArrayList<>();
 
     IProject project=( IProject )getElement();
     try {

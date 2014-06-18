@@ -45,7 +45,7 @@ public abstract class InteractiveLaunchShortcut implements ILaunchShortcut2 {
   public void launch( final ISelection selection, final String mode ) {
     // launched from workbench selection
     if( selection != null && selection instanceof IStructuredSelection ) {
-      List<IResource> list = new ArrayList<IResource>();
+      List<IResource> list = new ArrayList<>();
       IStructuredSelection ssel = ( IStructuredSelection )selection;
       for( Object element: ssel.toList() ) {
         IResource res = ResourceUtil.findResource( element );

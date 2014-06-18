@@ -21,7 +21,7 @@ import org.eclipse.swt.widgets.Control;
   * @author Leif Frenzel
   */
 public class MoreOptimizationTab extends GhcCompilerTab  {
-  private final List<DialogField> fields=new LinkedList<DialogField>();
+  private final List<DialogField> fields=new LinkedList<>();
 
   public MoreOptimizationTab( final IPreferenceStore store ) {
     super( store );

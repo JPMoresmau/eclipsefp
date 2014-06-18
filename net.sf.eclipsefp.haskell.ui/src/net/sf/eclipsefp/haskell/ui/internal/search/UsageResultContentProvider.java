@@ -31,7 +31,7 @@ public class UsageResultContentProvider implements ITreeContentProvider {
   /**
    * children by parents
    */
-  private Map<Object,Collection<Object>> uiresults=new HashMap<Object,Collection<Object>>();
+  private Map<Object,Collection<Object>> uiresults=new HashMap<>();
   /**
    * roots
    */
@@ -62,7 +62,7 @@ public class UsageResultContentProvider implements ITreeContentProvider {
           Map<IFile,Map<String,Collection<SearchResultLocation>>> m=results.getUsageInProject( p );
           for (IFile f:m.keySet()){
             Map<String,Collection<SearchResultLocation>> uls=m.get( f );
-            Collection<Object> l=new ArrayList<Object>();
+            Collection<Object> l=new ArrayList<>();
             for (String sec:uls.keySet()){
               l.add(new SectionSearchResult( f,sec, uls.get( sec ) ));
             }
@@ -83,7 +83,7 @@ public class UsageResultContentProvider implements ITreeContentProvider {
   private void add(final Object parent,final Object child){
     Collection<Object> cs=uiresults.get( parent );
     if (cs==null){
-      cs=new HashSet<Object>();
+      cs=new HashSet<>();
       uiresults.put( parent, cs );
     }
     cs.add( child );

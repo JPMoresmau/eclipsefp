@@ -58,8 +58,8 @@ public class ScionTokenScanner implements IPartitionTokenScanner, IEditorPrefere
   private List<TokenDef> lMergedTokenDefs;
   private ListIterator<TokenDef> tokenDefs;
 
-  private final Map<List<String>,List<TokenDef>> occurrences=new HashMap<List<String>,List<TokenDef>>();
-  private final List<List<String>> tokenLocations=new ArrayList<List<String>>();
+  private final Map<List<String>,List<TokenDef>> occurrences=new HashMap<>();
+  private final List<List<String>> tokenLocations=new ArrayList<>();
 
   private IToken currentToken;
   private int currentOffset;
@@ -222,7 +222,7 @@ public class ScionTokenScanner implements IPartitionTokenScanner, IEditorPrefere
         || name.equals( ITokenTypes.SYMBOL_RESERVED )
         ){  //|| name.equals( IScionTokens.SYMBOL_SPECIAL )
 
-      List<String> key=new LinkedList<String>();
+      List<String> key=new LinkedList<>();
       key.add(td.getName());
       if (end>s.length()){
         end=s.length();
@@ -240,7 +240,7 @@ public class ScionTokenScanner implements IPartitionTokenScanner, IEditorPrefere
       }
       List<TokenDef> l=occurrences.get( key );
       if (l==null){
-        l=new LinkedList<TokenDef>();
+        l=new LinkedList<>();
         occurrences.put( key, l );
       }
       l.add(td);
@@ -254,7 +254,7 @@ public class ScionTokenScanner implements IPartitionTokenScanner, IEditorPrefere
    * @return
    */
   public List<Occurrence> getOccurrences(final int offset){
-    LinkedList<Occurrence> ret=new LinkedList<Occurrence>();
+    LinkedList<Occurrence> ret=new LinkedList<>();
     if (offset>0 && offset<tokenLocations.size()){
       List<String> key=tokenLocations.get( offset );
       if (key!=null){
@@ -287,7 +287,7 @@ public class ScionTokenScanner implements IPartitionTokenScanner, IEditorPrefere
    * @return
    */
   private List<TokenDef> mergeTokens(final List<TokenDef> tds){
-    LinkedList<TokenDef> ret=new LinkedList<TokenDef>();
+    LinkedList<TokenDef> ret=new LinkedList<>();
     TokenDef last=null;
     for (TokenDef td:tds){
       if (last!=null && td.getName().equals( last.getName() )){
@@ -381,7 +381,7 @@ public class ScionTokenScanner implements IPartitionTokenScanner, IEditorPrefere
           HaskellUIPlugin.log( ex.getLocalizedMessage(), ex );
         }
       } else {
-        lTokenDefs=new ArrayList<TokenDef>();
+        lTokenDefs=new ArrayList<>();
       }
     }
 

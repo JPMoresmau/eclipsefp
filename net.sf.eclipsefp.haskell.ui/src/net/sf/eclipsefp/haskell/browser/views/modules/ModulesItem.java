@@ -31,7 +31,7 @@ public class ModulesItem {
 		this.name = name;
 		this.mod = mod;
 		this.parent = parent;
-		this.children = new ArrayList<ModulesItem>();
+		this.children = new ArrayList<>();
 	}
 
 	public Object getDatabaseInfo() {

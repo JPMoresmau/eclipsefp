@@ -23,7 +23,7 @@ public class HaskellThread extends HaskellDebugElement implements IThread {
   private final HaskellStrackFrame frame;
   private String name=CoreTexts.thread_default_name;
 
-  private final List<HaskellStrackFrame> historyFrames=new ArrayList<HaskellStrackFrame>();
+  private final List<HaskellStrackFrame> historyFrames=new ArrayList<>();
 
   public HaskellThread(final HaskellDebugTarget target,final IProject p){
     super( target );
