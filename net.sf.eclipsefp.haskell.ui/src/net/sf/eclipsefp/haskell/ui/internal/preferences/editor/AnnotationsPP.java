@@ -47,9 +47,11 @@ public class AnnotationsPP extends AbstractEditorPP {
   @Override
   protected void addPreferences( final OverlayPreferenceStore store ) {
     MarkerAnnotationPreferences preferences = new MarkerAnnotationPreferences();
-    Iterator iter = preferences.getAnnotationPreferences().iterator();
+    @SuppressWarnings("unchecked")
+    Iterator<AnnotationPreference> iter =
+        preferences.getAnnotationPreferences().iterator();
     while( iter.hasNext() ) {
-      AnnotationPreference info = ( AnnotationPreference )iter.next();
+      AnnotationPreference info = iter.next();
       store.addStringKey( info.getColorPreferenceKey() );
       store.addBooleanKey( info.getTextPreferenceKey() );
       store.addBooleanKey( info.getOverviewRulerPreferenceKey() );
@@ -207,9 +209,11 @@ public class AnnotationsPP extends AbstractEditorPP {
   private String[][] createAnnotationTypeListModel() {
     MarkerAnnotationPreferences preferences = new MarkerAnnotationPreferences();
     ArrayList<String[]> listModelItems = new ArrayList<>();
-    Iterator i = preferences.getAnnotationPreferences().iterator();
+    @SuppressWarnings("unchecked")
+    Iterator<AnnotationPreference> i =
+        preferences.getAnnotationPreferences().iterator();
     while( i.hasNext() ) {
-      AnnotationPreference info = ( AnnotationPreference )i.next();
+      AnnotationPreference info = i.next();
       listModelItems.add( new String[] {
         info.getPreferenceLabel(),
         info.getColorPreferenceKey(),

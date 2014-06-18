@@ -422,10 +422,11 @@ public class CabalImplsBlock implements ISelectionProvider {
     IStructuredSelection ssel = ( IStructuredSelection ) viewer.getSelection();
     IStructuredSelection prev = ( IStructuredSelection ) getSelection();
     CabalImplementation[] insts = new CabalImplementation[ ssel.size() ];
-    Iterator iter = ssel.iterator();
+    @SuppressWarnings("unchecked")
+    Iterator<CabalImplementation> iter = ssel.iterator();
     int i = 0;
     while( iter.hasNext() ) {
-      insts[ i ] = ( CabalImplementation ) iter.next();
+      insts[ i ] = iter.next();
       i++;
     }
     removeCabalImplementations( insts );

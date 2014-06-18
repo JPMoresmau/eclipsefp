@@ -123,7 +123,7 @@ public class MarkOccurrenceComputer {
 
   private Annotation[] collectToRemove( final IAnnotationModel model ) {
     List<Annotation> result = new ArrayList<>();
-    Iterator iterator = model.getAnnotationIterator();
+    Iterator<?> iterator = model.getAnnotationIterator();
     while( iterator.hasNext() ) {
       Object next = iterator.next();
       if( next instanceof Annotation ) {

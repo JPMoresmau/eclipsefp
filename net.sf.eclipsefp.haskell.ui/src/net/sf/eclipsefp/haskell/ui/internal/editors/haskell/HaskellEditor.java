@@ -462,7 +462,8 @@ public class HaskellEditor extends TextEditor implements IEditorPreferenceNames,
   }
 
   @Override
-  public Object getAdapter( final Class required ) {
+  public Object getAdapter(
+      @SuppressWarnings("rawtypes") final Class required ) {
     Object result = null;
     // adapt the displayed source file to the outline viewer
     if( IContentOutlinePage.class.equals( required ) ) {

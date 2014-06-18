@@ -14,7 +14,8 @@ import org.eclipse.debug.ui.actions.IToggleBreakpointsTarget;
 public class HaskellBreakpointAdapterFactory implements IAdapterFactory {
 
   @Override
-  public Object getAdapter( final Object adaptableObject, final Class adapterType ) {
+  public Object getAdapter( final Object adaptableObject,
+      @SuppressWarnings("rawtypes") final Class adapterType ) {
     if (adaptableObject instanceof HaskellEditor) {
       HaskellEditor editorPart = (HaskellEditor) adaptableObject;
       IResource resource = (IResource) editorPart.getEditorInput().getAdapter(IResource.class);
