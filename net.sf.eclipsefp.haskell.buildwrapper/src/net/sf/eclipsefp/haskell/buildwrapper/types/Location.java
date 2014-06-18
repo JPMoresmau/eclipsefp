@@ -13,6 +13,7 @@ import net.sf.eclipsefp.haskell.buildwrapper.util.BWText;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.DefaultLineTracker;
 import org.eclipse.jface.text.IDocument;
@@ -183,28 +184,16 @@ public class Location {
 		 */
 		private static ILineTracker getLineTracker(String filePath) {
 			ILineTracker lineTracker;
-	    InputStream input = null;
-	    
-	    try {
+	    try (InputStream input = new FileInputStream( filePath ) ){
 	      lineTracker = new DefaultLineTracker();
-	      input = new FileInputStream( filePath );
-	             
+
 	      byte[] contents = new byte[input.available()];
 	      input.read(contents);
 	      String stringContents = new String(contents);
 	      lineTracker.set(stringContents);
 	    }
-	    catch(Exception e) { // CoreException or IOException
+	    catch(IOException e) {
 	      lineTracker = null;
-	    }
-	    finally {
-	      if (input != null)
-	        try {
-	          input.close();
-	        }
-	        catch (IOException e) {
-	         lineTracker = null; 
-	        }
 	    }
 	    return lineTracker;
 	  }

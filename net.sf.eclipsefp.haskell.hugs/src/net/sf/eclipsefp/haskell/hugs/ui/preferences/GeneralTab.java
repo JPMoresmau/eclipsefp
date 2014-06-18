@@ -52,32 +52,32 @@ public class GeneralTab extends Tab implements IHugsPreferenceNames {
 			        }
 			        // read first space
 			        is.read();
-			        OutputStream os=p.getOutputStream();
-			        // write version command
-			        os.write((":version"+PlatformUtil.NL).getBytes());
-			        os.flush();
-			        StringBuffer sb=new StringBuffer();
-			        r=is.read();
-			        // read everything till the first line return
-			        while (((char)r)!='\n' && ((char)r)!='\r' && r>-1){
-			        	sb.append((char)r);
-			        	r=is.read();
-			        }
-			        // read the rest
-			        while (is.available()>0){
-			        	is.read();
-			        }
-			        // quit
-			        os.write((":quit"+PlatformUtil.NL).getBytes());
-			        os.flush();
-			        os.close();
-			        is.close();
-			        // the version, usually starting with --
-			        String version=sb.toString();
-			        if (version.startsWith("--")){
-			        	version=version.substring(2).trim();
-			        }
-			        return version;
+              try (OutputStream os=p.getOutputStream()) {
+                // write version command
+                os.write((":version"+PlatformUtil.NL).getBytes());
+                os.flush();
+                StringBuffer sb=new StringBuffer();
+                r=is.read();
+                // read everything till the first line return
+                while (((char)r)!='\n' && ((char)r)!='\r' && r>-1){
+                  sb.append((char)r);
+                  r=is.read();
+                }
+                // read the rest
+                while (is.available()>0){
+                  is.read();
+                }
+                // quit
+                os.write((":quit"+PlatformUtil.NL).getBytes());
+                os.flush();
+                is.close();
+                // the version, usually starting with --
+                String version=sb.toString();
+                if (version.startsWith("--")){
+                  version=version.substring(2).trim();
+                }
+                return version;
+              }
     		  	}
     		  	return UITexts.prefs_notfound;
     	  } catch (IOException ioe){

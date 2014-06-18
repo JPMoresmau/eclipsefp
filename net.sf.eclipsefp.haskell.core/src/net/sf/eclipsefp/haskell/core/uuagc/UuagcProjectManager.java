@@ -1,6 +1,7 @@
 package net.sf.eclipsefp.haskell.core.uuagc;
 
 import java.io.ByteArrayInputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -37,11 +38,11 @@ public class UuagcProjectManager {
   public void initFromProject() {
     IPath path = new Path( UUAGC_OPTIONS_FILENAME );
     if( project.exists( path ) ) {
-      try {
-        InputStream stream = project.getFile( path ).getContents();
-        String contents = new Scanner( stream ).useDelimiter( "\\Z" ).next(); //$NON-NLS-1$
+      try (InputStream stream = project.getFile( path ).getContents();
+          Scanner scanner = new Scanner( stream )) {
+        String contents = scanner.useDelimiter( "\\Z" ).next(); //$NON-NLS-1$
         initFromContents( contents );
-      } catch( CoreException e ) {
+      } catch( CoreException | IOException e ) {
         initFromContents( "" ); //$NON-NLS-1$
       }
     } else {

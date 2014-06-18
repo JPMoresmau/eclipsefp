@@ -460,18 +460,9 @@ public class UsageAPI {
 	 * @return
 	 */
 	private JSONArray parseUsageFile(IFile uf){
-		try {
-			InputStream is=uf.getContents();
-			try {
-				BufferedReader br = new BufferedReader(new InputStreamReader( is,uf.getCharset() ));
-				try {
-					return new JSONArray(new JSONTokener(br));
-				} finally {
-					br.close();
-				}
-			} finally {
-				is.close();
-			}
+		try (InputStream is=uf.getContents();
+		        BufferedReader br = new BufferedReader(new InputStreamReader( is,uf.getCharset() ))) {
+			return new JSONArray(new JSONTokener(br));
 		} catch (Exception e){
 			BuildWrapperPlugin.logError(BWText.error_parsing_usage_file, e);
 		}

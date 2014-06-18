@@ -93,6 +93,7 @@ public class StreamBrowserServer extends BrowserServer {
 	@Override
 	public void setLogError(boolean logError) {
 		if (logError!=this.logError && allErrWs!=null){
+			@SuppressWarnings("resource")
 			Writer logStream=getLogStream();
 			if (logStream!=null){
 				if (logError){

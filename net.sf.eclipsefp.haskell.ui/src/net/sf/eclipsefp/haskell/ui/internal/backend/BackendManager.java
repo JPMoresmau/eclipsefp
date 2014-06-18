@@ -981,9 +981,12 @@ public class BackendManager implements IResourceChangeListener {
   private synchronized void startInstance( final IProject project ) {
     if (BuildWrapperPlugin.getFacade( project )==null && CabalImplementationManager.getCabalExecutable()!=null){
       HaskellConsole cbw=getBWHaskellConsole( project );
-      Writer outStreamBw = cbw.createOutputWriter();
-      CabalImplDetails cid=getCabalImplDetails();
-      BuildWrapperPlugin.createFacade(project,cid, outStreamBw );
+      try (Writer outStreamBw = cbw.createOutputWriter()) {
+        CabalImplDetails cid=getCabalImplDetails();
+        BuildWrapperPlugin.createFacade(project,cid, outStreamBw );
+      } catch (IOException e) {
+        // Suppress IOException if close fails.
+      }
     }
   }
 

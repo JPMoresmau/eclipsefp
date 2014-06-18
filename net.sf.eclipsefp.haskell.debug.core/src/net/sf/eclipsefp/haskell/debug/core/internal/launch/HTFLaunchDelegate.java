@@ -62,12 +62,11 @@ public class HTFLaunchDelegate extends ExecutableOrTestSuiteHaskellLaunchDelegat
     String [] cmd2=new String[cmdLine.length];
     System.arraycopy( cmdLine, 0, cmd2, 0, cmd2.length-1 ); /** remove --split **/
     cmd2[cmd2.length-1]="--list"; //$NON-NLS-1$
-    StringWriter sw=new StringWriter();
     final String fname = getFilename();
     final File file = new File( fname );
     final IProject p=getProject( configuration );
 
-    try {
+    try (StringWriter sw=new StringWriter()) {
       new ProcessRunner().executeBlocking( workingDir, sw, null, cmd2 );
 
       root=new TestResult( configuration.getName() );

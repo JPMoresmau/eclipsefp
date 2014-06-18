@@ -40,16 +40,16 @@ public class LiterateContentDescriber implements IContentDescriber {
     int result = INDETERMINATE;
     if( description != null && description.isRequested( STYLE ) ) {
       result = VALID;
-      BufferedReader br = getReader( contents, description );
-      String line = br.readLine();
-      boolean latexDetected = false;
-      while( line != null && !latexDetected ) {
-        latexDetected = containsLatex( line );
-        line = br.readLine();
+      try (BufferedReader br = getReader( contents, description )) {
+        String line = br.readLine();
+        boolean latexDetected = false;
+        while( line != null && !latexDetected ) {
+          latexDetected = containsLatex( line );
+          line = br.readLine();
+        }
+        QualifiedName value = latexDetected ? LATEX : BIRD;
+        description.setProperty( STYLE, value );
       }
-      br.close();
-      QualifiedName value = latexDetected ? LATEX : BIRD;
-      description.setProperty( STYLE, value );
     }
     return result;
   }

@@ -38,7 +38,9 @@ public class TemplateFileGenerator {
   }
 
   public TemplateFileGenerator(final InputStream stream, final String extension) {
-    this.contents = new Scanner(stream).useDelimiter("\\Z").next();
+    @SuppressWarnings("resource")
+    Scanner scanner = new Scanner(stream);
+    this.contents = scanner.useDelimiter("\\Z").next();
     this.fileExtension = extension;
   }
 

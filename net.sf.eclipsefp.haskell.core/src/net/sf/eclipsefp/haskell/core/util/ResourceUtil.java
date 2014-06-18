@@ -238,8 +238,7 @@ public class ResourceUtil {
 	 */
 	public static String readStream(final InputStream is) throws IOException {
 		StringBuilder sbResult = new StringBuilder();
-		BufferedReader br = new BufferedReader(new InputStreamReader(is));
-		try {
+		try (BufferedReader br = new BufferedReader(new InputStreamReader(is))) {
   		String line = br.readLine();
   		while (line != null) {
   			sbResult.append(line);
@@ -252,7 +251,6 @@ public class ResourceUtil {
   			line = br.readLine();
   		}
 		} finally {
-		  br.close();
 		  is.close();
 		}
 		return sbResult.toString();

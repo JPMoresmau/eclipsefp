@@ -5,6 +5,7 @@
 package net.sf.eclipsefp.haskell.ui.internal.editors.cabal.forms.overview;
 
 import java.io.ByteArrayInputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.StringWriter;
@@ -180,17 +181,18 @@ class LegalSection extends CabalFormSection {
       if (tempFile!=null && tempFile.length()>0){
         InputStream is=getClass().getResourceAsStream( "/licenses/"+tempFile );
         if (is!=null){
-          StringWriter sw=new StringWriter();
-          StreamRedirect sr=new StreamRedirect( new InputStreamReader( is ), sw );
-          sr.run();
-          String s=sw.toString();
-          IStringVariableManager mgr=VariablesPlugin.getDefault().getStringVariableManager();
-          IValueVariable[] vars = new IValueVariable[] {
-              mgr.newValueVariable( "year", "", true, String.valueOf(Calendar.getInstance().get( Calendar.YEAR )) ),
-              mgr.newValueVariable( "owner", "", true, getStanza().getProperties().get( CabalSyntax.FIELD_AUTHOR.toString() )),
-              mgr.newValueVariable( "OWNER", "", true, LangUtil.toUpper( getStanza().getProperties().get( CabalSyntax.FIELD_AUTHOR.toString()))),
-          };
-          try {
+          try (StringWriter sw=new StringWriter();
+              InputStreamReader isr = new InputStreamReader( is )) {
+            StreamRedirect sr=new StreamRedirect( isr, sw );
+            sr.run();
+            String s=sw.toString();
+            IStringVariableManager mgr=VariablesPlugin.getDefault().getStringVariableManager();
+            IValueVariable[] vars = new IValueVariable[] {
+                mgr.newValueVariable( "year", "", true, String.valueOf(Calendar.getInstance().get( Calendar.YEAR )) ),
+                mgr.newValueVariable( "owner", "", true, getStanza().getProperties().get( CabalSyntax.FIELD_AUTHOR.toString() )),
+                mgr.newValueVariable( "OWNER", "", true, LangUtil.toUpper( getStanza().getProperties().get( CabalSyntax.FIELD_AUTHOR.toString()))),
+            };
+
             mgr.addVariables( vars );
             try {
               s=mgr.performStringSubstitution( s );
@@ -204,7 +206,7 @@ class LegalSection extends CabalFormSection {
             } finally {
               mgr.removeVariables( vars );
             }
-          } catch (CoreException ce){
+          } catch (CoreException | IOException ce){
             HaskellUIPlugin.log( ce );
           }
         }

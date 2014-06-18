@@ -50,43 +50,45 @@ public class SHConfigurationTest {
 	@Test
 	public void testIODefault() throws IOException{
 		SHConfiguration def=new SHConfiguration();
-		InputStream is=getClass().getResourceAsStream("stylish-haskell-default.yaml");
-		assertNotNull(is);
-		SHConfiguration defRead=StylishHaskell.load(is);
-		assertEquals(def,defRead);
-		ByteArrayOutputStream baos=new ByteArrayOutputStream();
-		StylishHaskell.save(defRead, baos);
-		SHConfiguration defRead2=StylishHaskell.load(new ByteArrayInputStream(baos.toByteArray()));
-		assertEquals(def,defRead2);
+		try (InputStream is=getClass().getResourceAsStream("stylish-haskell-default.yaml")) {
+			assertNotNull(is);
+			SHConfiguration defRead=StylishHaskell.load(is);
+			assertEquals(def,defRead);
+			ByteArrayOutputStream baos=new ByteArrayOutputStream();
+			StylishHaskell.save(defRead, baos);
+			SHConfiguration defRead2=StylishHaskell.load(new ByteArrayInputStream(baos.toByteArray()));
+			assertEquals(def,defRead2);
+		}
 	}
 	
 	@Test
 	public void testIOFull() throws IOException{
-		InputStream is=getClass().getResourceAsStream("stylish-haskell-full.yaml");
-		assertNotNull(is);
-		SHConfiguration confRead=StylishHaskell.load(is);
-		assertNotNull(confRead.getTabs());
-		assertEquals(4,confRead.getTabs().getSpaces());
-		assertNotNull(confRead.getUnicode());
-		assertTrue(confRead.getUnicode().isUnicodePragmas());
-		
-		
-		assertNotNull(confRead.getImports());
-		assertEquals(SHImportAlign.GROUP, confRead.getImports().getAlign());
-		assertNotNull(confRead.getPragmas());
-		assertFalse(confRead.getPragmas().isRemoveRedundant());
-		assertEquals(SHPragmaStyle.COMPACT,confRead.getPragmas().getStyle());
-		assertNotNull(confRead.getTrailingWhitespace());
-		
-		assertEquals(75,confRead.getColumns());
-		assertNotNull(confRead.getRecords());
-		assertEquals(2,confRead.getLanguageExtensions().size());
-		assertTrue(confRead.getLanguageExtensions().contains("TemplateHaskell"));
-		assertTrue(confRead.getLanguageExtensions().contains("QuasiQuotes"));
-		
-		ByteArrayOutputStream baos=new ByteArrayOutputStream();
-		StylishHaskell.save(confRead, baos);
-		SHConfiguration confRead2=StylishHaskell.load(new ByteArrayInputStream(baos.toByteArray()));
-		assertEquals(confRead,confRead2);
+		try (InputStream is=getClass().getResourceAsStream("stylish-haskell-full.yaml")) {
+			assertNotNull(is);
+			SHConfiguration confRead=StylishHaskell.load(is);
+			assertNotNull(confRead.getTabs());
+			assertEquals(4,confRead.getTabs().getSpaces());
+			assertNotNull(confRead.getUnicode());
+			assertTrue(confRead.getUnicode().isUnicodePragmas());
+			
+			
+			assertNotNull(confRead.getImports());
+			assertEquals(SHImportAlign.GROUP, confRead.getImports().getAlign());
+			assertNotNull(confRead.getPragmas());
+			assertFalse(confRead.getPragmas().isRemoveRedundant());
+			assertEquals(SHPragmaStyle.COMPACT,confRead.getPragmas().getStyle());
+			assertNotNull(confRead.getTrailingWhitespace());
+			
+			assertEquals(75,confRead.getColumns());
+			assertNotNull(confRead.getRecords());
+			assertEquals(2,confRead.getLanguageExtensions().size());
+			assertTrue(confRead.getLanguageExtensions().contains("TemplateHaskell"));
+			assertTrue(confRead.getLanguageExtensions().contains("QuasiQuotes"));
+			
+			ByteArrayOutputStream baos=new ByteArrayOutputStream();
+			StylishHaskell.save(confRead, baos);
+			SHConfiguration confRead2=StylishHaskell.load(new ByteArrayInputStream(baos.toByteArray()));
+			assertEquals(confRead,confRead2);
+		}
 	}
 }

@@ -294,14 +294,14 @@ public class FileUtil {
 	  String ret="";
 	  if (f.exists()){
 		  ByteArrayOutputStream baos=new ByteArrayOutputStream();
-		  InputStream is=f.getContents(true);
-		  byte[] buf=new byte[4096];
-		  int r=is.read(buf);
-		  while (r>-1){
-			  baos.write(buf,0,r);
-			  r=is.read(buf);
+		  try (InputStream is=f.getContents(true)) {
+		      byte[] buf=new byte[4096];
+		      int r=is.read(buf);
+		      while (r>-1){
+		          baos.write(buf,0,r);
+		          r=is.read(buf);
+		      }
 		  }
-		  is.close();
 		  ret=new String(baos.toByteArray(),f.getCharset());
 	  }
 	  return ret;
@@ -317,26 +317,24 @@ public class FileUtil {
   public static String getContents(File f,String charSet) throws IOException{
 	  String ret="";
 	  if (f.exists()){
-		  ByteArrayOutputStream baos=new ByteArrayOutputStream();
-		  InputStream is=new BufferedInputStream(new FileInputStream(f));
-		  byte[] buf=new byte[4096];
-		  int r=is.read(buf);
-		  while (r>-1){
-			  baos.write(buf,0,r);
-			  r=is.read(buf);
-		  }
-		  is.close();
-		  ret=new String(baos.toByteArray(),charSet);
+			try (ByteArrayOutputStream baos=new ByteArrayOutputStream();
+					InputStream is=new BufferedInputStream(new FileInputStream(f))) {
+				byte[] buf=new byte[4096];
+				int r=is.read(buf);
+				while (r>-1){
+					baos.write(buf,0,r);
+					r=is.read(buf);
+			}
+			ret=new String(baos.toByteArray(),charSet);
+		}
 	  }
 	  return ret;
   }
   
   
   public static void writeSharedFile(File tgt,String contents,int tries) throws IOException{
-	  try {
-			Writer w=new OutputStreamWriter(new BufferedOutputStream(new FileOutputStream(tgt)),UTF8);
+	  try (Writer w=new OutputStreamWriter(new BufferedOutputStream(new FileOutputStream(tgt)),UTF8)) {
 			w.write(contents);
-			w.close();
 	  } catch (FileNotFoundException e){
 		  if (tries>1 && e.getMessage().toLowerCase(Locale.ENGLISH).contains("another process")){
 			  try {
@@ -348,8 +346,6 @@ public class FileUtil {
 			  return;
 		  }
 		  throw e;
-		} catch (IOException e){
-			throw e;
 		}
   }
 }

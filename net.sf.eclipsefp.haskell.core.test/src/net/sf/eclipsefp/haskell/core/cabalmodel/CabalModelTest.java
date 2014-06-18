@@ -36,14 +36,12 @@ public class CabalModelTest extends TestCase {
   }
 
   public static String getContent(final String fileName){
-    try {
-      InputStream is=CabalModelTest.class.getResourceAsStream( fileName);
-      ByteArrayOutputStream baos=new ByteArrayOutputStream();
+    try (InputStream is=CabalModelTest.class.getResourceAsStream( fileName);
+        ByteArrayOutputStream baos=new ByteArrayOutputStream()) {
       int c=-1;
       while ((c=is.read())!=-1){
         baos.write(c);
       }
-      is.close();
       return new String(baos.toByteArray(),FileUtil.UTF8);
     } catch (Exception e){
       e.printStackTrace();

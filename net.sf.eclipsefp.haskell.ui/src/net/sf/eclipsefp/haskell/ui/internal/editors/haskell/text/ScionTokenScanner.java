@@ -363,9 +363,9 @@ public class ScionTokenScanner implements IPartitionTokenScanner, IEditorPrefere
 
           File file=File.createTempFile( "temp", ".hs" );
           try {
-            Writer fw=new BufferedWriter( new OutputStreamWriter( new FileOutputStream( file ), FileUtil.UTF8 ) );
-            fw.write( contents );
-            fw.close();
+            try (Writer fw=new BufferedWriter( new OutputStreamWriter( new FileOutputStream( file ), FileUtil.UTF8 ) )) {
+              fw.write( contents );
+            }
             f.setCabalFile( new File(file.getParentFile(),"temp.cabal") .getAbsolutePath());
             File newP= new File(file.getParentFile(),BWFacade.DIST_FOLDER);
             newP.mkdirs();

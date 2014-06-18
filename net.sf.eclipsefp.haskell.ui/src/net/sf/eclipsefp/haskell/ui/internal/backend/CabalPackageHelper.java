@@ -120,17 +120,17 @@ public class CabalPackageHelper {
   }
 
   public String getInfo(final String name)throws IOException {
-    BufferedReader br=run(cabalPath,"info",name);  //$NON-NLS-1$
-    StringBuilder sb=new StringBuilder();
-    String line=br.readLine();
+    try (BufferedReader br=run(cabalPath,"info",name)) { //$NON-NLS-1$
+      StringBuilder sb=new StringBuilder();
+      String line=br.readLine();
 
-    while (line!=null){
-      sb.append(line);
-      sb.append( PlatformUtil.NL );
-      line=br.readLine();
+      while (line!=null){
+        sb.append(line);
+        sb.append( PlatformUtil.NL );
+        line=br.readLine();
+      }
+      return sb.toString().substring( 2 ); // starts with *<space>
     }
-    br.close();
-    return sb.toString().substring( 2 ); // starts with *<space>
   }
 
   private List<CabalPackageRef> list(final String pkg,final boolean installedOnly)throws IOException{
@@ -140,26 +140,26 @@ public class CabalPackageHelper {
       return ret;
     }
     String opt=installedOnly?"--installed":"";
-    BufferedReader br=run(cabalPath,"list",pkg,opt,"--simple-output");  //$NON-NLS-1$//$NON-NLS-2$
-    String line=br.readLine();
-    CabalPackageRef last=null;
-    while (line!=null){
-      CabalPackageRef r=parseRef(line);
-      if (r!=null){
-        if (last==null || !r.getName().equals( last.getName() )){
-          if (last!=null){
-            last.getVersions().trimToSize();
+    try (BufferedReader br=run(cabalPath,"list",pkg,opt,"--simple-output")) {  //$NON-NLS-1$//$NON-NLS-2$
+      String line=br.readLine();
+      CabalPackageRef last=null;
+      while (line!=null){
+        CabalPackageRef r=parseRef(line);
+        if (r!=null){
+          if (last==null || !r.getName().equals( last.getName() )){
+            if (last!=null){
+              last.getVersions().trimToSize();
+            }
+            ret.add(r);
+            last=r;
+          } else {
+            last.getVersions().addAll(r.getVersions());
           }
-          ret.add(r);
-          last=r;
-        } else {
-          last.getVersions().addAll(r.getVersions());
         }
+        line=br.readLine();
       }
-      line=br.readLine();
+      return ret;
     }
-    br.close();
-    return ret;
   }
 
   private CabalPackageRef parseRef(final String line){

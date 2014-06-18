@@ -30,19 +30,12 @@ public class PackageDescriptionLoader {
       if (!file.getWorkspace().isTreeLocked()){
         file.refreshLocal( 0, new NullProgressMonitor() );
     }
-      InputStream is=file.getContents();
-      try {
-        BufferedReader br = new BufferedReader(new InputStreamReader( is,file.getCharset() ));
+      try (InputStream is=file.getContents();
+          BufferedReader br = new BufferedReader(new InputStreamReader( is,file.getCharset() ))) {
         new CabalParser(result).parse(br);
       }  catch( final IOException ioex ) {
         // very unlikely
         HaskellCorePlugin.log( "Loading cabal file", ioex ); //$NON-NLS-1$
-      } finally {
-        try {
-          is.close();
-        } catch ( final IOException ignore ) {
-          //NOOP
-        }
       }
     }
     return result;

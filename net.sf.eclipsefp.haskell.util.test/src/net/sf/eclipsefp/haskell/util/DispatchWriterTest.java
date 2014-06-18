@@ -68,43 +68,46 @@ public class DispatchWriterTest extends TestCase {
 
 	public void testWritingErrorIsolatedFromOtherWriters() throws InterruptedException, IOException {
 		final StringWriter fstOut = new StringWriter();
-		final Writer sndOut = new ProblematicWriter();
-		final StringWriter trdOut = new StringWriter();
-		multiplexTo(fstOut, sndOut, trdOut);
-		assertEquals(EXPECTED_CONTENTS, fstOut.toString());
-		assertEquals(EXPECTED_CONTENTS, trdOut.toString());
+		try (final Writer sndOut = new ProblematicWriter();
+				final StringWriter trdOut = new StringWriter()) {
+			multiplexTo(fstOut, sndOut, trdOut);
+			assertEquals(EXPECTED_CONTENTS, fstOut.toString());
+			assertEquals(EXPECTED_CONTENTS, trdOut.toString());
+		}
 	}
 
 	public void testFlushesAndClosesOutputs() throws IOException {
-		final StubWriter out = new StubWriter();
-		DispatchWriter multiplexer = new DispatchWriter();
-		multiplexer.getWriters().add(out);
-		assertFalse(out.flushed);
-		multiplexer.flush();
-		assertTrue(out.flushed);
-
-		assertFalse(out.closed);
-		multiplexer.close();
-		assertTrue(out.closed);
+		try (StubWriter out = new StubWriter();
+				DispatchWriter multiplexer = new DispatchWriter()) {
+			multiplexer.getWriters().add(out);
+			assertFalse(out.flushed);
+			multiplexer.flush();
+			assertTrue(out.flushed);
+	
+			assertFalse(out.closed);
+			multiplexer.close();
+			assertTrue(out.closed);
+		}
 	}
 
 	public void testDoNotMultiplexToRemovedOutput() throws IOException {
-		final StringWriter output = new StringWriter();
-		DispatchWriter multiplexer = new DispatchWriter();
+		try (final StringWriter output = new StringWriter();
+				DispatchWriter multiplexer = new DispatchWriter()) {
 
-		multiplexer.getWriters().add(output);
-		multiplexer.getWriters().remove(output);
-		multiplexer.write("This should not be outputed to the removed writer");
-		multiplexer.close();
-
-		assertEquals(0, output.toString().length());
+			multiplexer.getWriters().add(output);
+			multiplexer.getWriters().remove(output);
+			multiplexer.write("This should not be outputed to the removed writer");
+			multiplexer.close();
+	
+			assertEquals(0, output.toString().length());
+		}
 	}
 
 	private void multiplexTo(final Writer... outputs) throws InterruptedException, IOException {
-		DispatchWriter multiplexer = new DispatchWriter();
-		multiplexer.getWriters().addAll(Arrays.asList(outputs));
-		multiplexer.write(EXPECTED_CONTENTS);
-		multiplexer.close();
+		try (DispatchWriter multiplexer = new DispatchWriter()) {
+			multiplexer.getWriters().addAll(Arrays.asList(outputs));
+			multiplexer.write(EXPECTED_CONTENTS);
+		}
 	}
 }
 

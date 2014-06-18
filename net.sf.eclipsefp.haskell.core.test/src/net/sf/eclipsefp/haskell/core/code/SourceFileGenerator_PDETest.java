@@ -87,13 +87,12 @@ public class SourceFileGenerator_PDETest extends HaskellProject_PDETestCase {
 		IFile file = getProject().getFile(SOURCE_FOLDER_NAME + '/' + fileName);
 		assertTrue(file.exists());
 
-		BufferedReader input = new BufferedReader(
-								new InputStreamReader(file.getContents()));
-		char[] inBuffer = new char[expected.length()];
-		int n = input.read(inBuffer);
-		input.close();
-
-		final String actual = new String(inBuffer, 0, n);
-		assertEquals(expected, actual);
+		try (BufferedReader input = new BufferedReader(
+								new InputStreamReader(file.getContents()))) {
+		  char[] inBuffer = new char[expected.length()];
+		  int n = input.read(inBuffer);
+	    final String actual = new String(inBuffer, 0, n);
+	    assertEquals(expected, actual);
+		}
 	}
 }

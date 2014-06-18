@@ -272,13 +272,13 @@ public abstract class ProfileViewerBirtImpl extends ProfileViewerImpl{
 				IContainer con = gen.generateContainer(null);
 				IFile file = con.getFile(Path.fromPortableString(path.lastSegment()));
 				byte[] bytes = getFileContents(input).getBytes();
-				InputStream source = new ByteArrayInputStream(bytes);
-				if (!file.exists()) {
-					file.create(source, IResource.NONE, null);
-				} else {
-					file.setContents(source, IResource.NONE, null);
+				try (InputStream source = new ByteArrayInputStream(bytes)) {
+				    if (!file.exists()) {
+				        file.create(source, IResource.NONE, null);
+				    } else {
+				        file.setContents(source, IResource.NONE, null);
+				   }
 				}
-				source.close();
 				setPartName(path.lastSegment());
 			} catch (Exception e) {
 				// Do nothing

@@ -54,12 +54,9 @@ public class UsageDB {
 			conn =
 			      DriverManager.getConnection("jdbc:sqlite:"+f.getAbsolutePath());
 			conn.setAutoCommit(true);
-			Statement s=conn.createStatement();
 			// foreign key support
-			try {
+			try (Statement s=conn.createStatement()) {
 				s.executeUpdate("PRAGMA foreign_keys = ON;");
-			}  finally {
-				s.close();
 			}
 			// we do explicit commits for performance and coherence
 			conn.setAutoCommit(false);
@@ -101,8 +98,7 @@ public class UsageDB {
 	 */
 	protected void setup() throws SQLException{
 		checkConnection();
-		Statement s=conn.createStatement();
-		try {
+		try (Statement s=conn.createStatement()) {
 			s.execute("create table if not exists files (fileid INTEGER PRIMARY KEY ASC,project TEXT not null, name TEXT not null)");
 			s.execute("create unique index if not exists filenames on files (project, name)");
 			
@@ -121,104 +117,69 @@ public class UsageDB {
 			s.execute("create table if not exists symbol_usages(symbolid INTEGER not null,fileid INTEGER not null,section TEXT not null,location TEXT not null,foreign key (symbolid) references symbols(symbolid) on delete cascade,foreign key (fileid) references files(fileid) on delete cascade)");
 			
 			
-		} finally {
-			s.close();
 		}
 		conn.commit();
 	}
 	
 	public long getFileID(IFile f) throws SQLException{
 		checkConnection();
-		PreparedStatement ps=conn.prepareStatement("select fileid from files where project=? and name=?");
 		Long fileID=null;
-		try {
+		try (PreparedStatement ps=conn.prepareStatement("select fileid from files where project=? and name=?")) {
 			ps.setString(1, f.getProject().getName());
 			ps.setString(2, f.getProjectRelativePath().toPortableString());
-			ResultSet rs=ps.executeQuery();
-			try {
+			try (ResultSet rs=ps.executeQuery()) {
 				if (rs.next()){
 					fileID=rs.getLong(1);
 				}
-			} finally {
-				rs.close();
 			}
-			
-		} finally {
-			ps.close();
 		}
 		if (fileID==null){
-			 ps=conn.prepareStatement("insert into files (project,name) values(?,?)");
-			 try {
+			try (PreparedStatement ps=conn.prepareStatement("insert into files (project,name) values(?,?)")) {
 				ps.setString(1, f.getProject().getName());
 				ps.setString(2, f.getProjectRelativePath().toPortableString());
 				ps.execute();
-				ResultSet rs=ps.getGeneratedKeys();
-				try {
+				try (ResultSet rs=ps.getGeneratedKeys()) {
 					rs.next();
 					fileID=rs.getLong(1);
-				} finally {
-					rs.close();
 				}
-			 } finally {
-				ps.close();
-			}
+			 }
 		}
 		return fileID;
 	}
 	
 	public void removeFile(IFile f) throws SQLException{
 		checkConnection();
-		PreparedStatement ps=conn.prepareStatement("select fileid from files where project=? and name=?");
 		Long fileID=null;
-		try {
+		try (PreparedStatement ps=conn.prepareStatement("select fileid from files where project=? and name=?")) {
 			ps.setString(1, f.getProject().getName());
 			ps.setString(2, f.getProjectRelativePath().toPortableString());
-			ResultSet rs=ps.executeQuery();
-			try {
+			try (ResultSet rs=ps.executeQuery()) {
 				if (rs.next()){
 					fileID=rs.getLong(1);
 				}
-			} finally {
-				rs.close();
 			}
-			
-		} finally {
-			ps.close();
 		}
 		if (fileID!=null){
-			ps=conn.prepareStatement("delete from files where fileid=?");
-			try {
+			try (PreparedStatement ps=conn.prepareStatement("delete from files where fileid=?")) {
 				ps.setLong(1, fileID);
 				ps.executeUpdate();
-			} finally {
-				ps.close();
 			}
-			
 		}
 	}
 	
 	public void clearUsageInFile(long fileid) throws SQLException{
 		checkConnection();
-		PreparedStatement ps=conn.prepareStatement("delete from module_usages where fileid=?");
-		try {
+		try (PreparedStatement ps=conn.prepareStatement("delete from module_usages where fileid=?")) {
 			ps.setLong(1, fileid);
 			ps.executeUpdate();
-		} finally {
-			ps.close();
 		}
-		ps=conn.prepareStatement("delete from symbol_usages where fileid=?");
-		try {
+		try (PreparedStatement ps=conn.prepareStatement("delete from symbol_usages where fileid=?")) {
 			ps.setLong(1, fileid);
 			ps.executeUpdate();
-		} finally {
-			ps.close();
 		}
-		ps=conn.prepareStatement("delete from symbol_defs where fileid=?");
-		try {
+		try (PreparedStatement ps=conn.prepareStatement("delete from symbol_defs where fileid=?")) {
 			ps.setLong(1, fileid);
 			ps.executeUpdate();
-		} finally {
-			ps.close();
 		}
 	}
 	
@@ -226,8 +187,7 @@ public class UsageDB {
 	
 	public void setModuleUsages(long fileid,Collection<ObjectUsage> usages) throws SQLException{
 		checkConnection();
-		PreparedStatement ps=conn.prepareStatement("insert into module_usages values(?,?,?,?)");
-		try {
+		try (PreparedStatement ps=conn.prepareStatement("insert into module_usages values(?,?,?,?)")) {
 			for (ObjectUsage usg:usages){
 				ps.setLong(1, usg.getObjectID());
 				ps.setLong(2, fileid);
@@ -236,15 +196,12 @@ public class UsageDB {
 				ps.addBatch();
 			}
 			ps.executeBatch();
-		} finally {
-			ps.close();
 		}
 	}
 	
 	public void setSymbolUsages(long fileid,Collection<ObjectUsage> usages) throws SQLException{
 		checkConnection();
-		PreparedStatement ps=conn.prepareStatement("insert into symbol_usages values(?,?,?,?)");
-		try {
+		try (PreparedStatement ps=conn.prepareStatement("insert into symbol_usages values(?,?,?,?)")) {
 			for (ObjectUsage usg:usages){
 				ps.setLong(1, usg.getObjectID());
 				ps.setLong(2, fileid);
@@ -253,15 +210,12 @@ public class UsageDB {
 				ps.addBatch();
 			}
 			ps.executeBatch();
-		} finally {
-			ps.close();
 		}
 	}
 	
 	public void setSymbolDefinitions(long fileid,Collection<ObjectUsage> usages) throws SQLException{
 		checkConnection();
-		PreparedStatement ps=conn.prepareStatement("insert into symbol_defs values(?,?,?,?)");
-		try {
+		try (PreparedStatement ps=conn.prepareStatement("insert into symbol_defs values(?,?,?,?)")) {
 			for (ObjectUsage usg:usages){
 				ps.setLong(1, usg.getObjectID());
 				ps.setLong(2, fileid);
@@ -270,33 +224,23 @@ public class UsageDB {
 				ps.addBatch();
 			}
 			ps.executeBatch();
-		} finally {
-			ps.close();
 		}
 	}
 	
 	public long getModuleID(String pkg,String module,Long fileID,String loc) throws SQLException {
 		checkConnection();
-		PreparedStatement ps=conn.prepareStatement("select moduleid from modules where package=? and module=?");
 		Long moduleID=null;
-		try {
+		try (PreparedStatement ps=conn.prepareStatement("select moduleid from modules where package=? and module=?")) {
 			ps.setString(1, pkg);
 			ps.setString(2, module);
-			ResultSet rs=ps.executeQuery();
-			try {
+			try (ResultSet rs=ps.executeQuery()) {
 				if (rs.next()){
 					moduleID=rs.getLong(1);
 				}
-			} finally {
-				rs.close();
 			}
-			
-		} finally {
-			ps.close();
 		}
 		if (moduleID==null){
-			 ps=conn.prepareStatement("insert into modules (package,module,fileid,location) values(?,?,?,?)");
-			 try {
+			 try (PreparedStatement ps=conn.prepareStatement("insert into modules (package,module,fileid,location) values(?,?,?,?)")) {
 				ps.setString(1, pkg);
 				ps.setString(2, module);
 				if (fileID!=null){
@@ -310,20 +254,13 @@ public class UsageDB {
 					ps.setNull(4, Types.VARCHAR);
 				}
 				ps.execute();
-				ResultSet rs=ps.getGeneratedKeys();
-				try {
+				try (ResultSet rs=ps.getGeneratedKeys()) {
 					rs.next();
 					moduleID=rs.getLong(1);
-				} finally {
-					rs.close();
 				}
-			 } finally {
-				ps.close();
-			}
+			 }
 		} else if (fileID!=null){
-			 ps=conn.prepareStatement("update modules set fileid=?,location=? where moduleid=?");
-			 try {
-				
+			try (PreparedStatement ps=conn.prepareStatement("update modules set fileid=?,location=? where moduleid=?")) {
 				ps.setLong(1, fileID);
 				if (loc!=null){
 					ps.setString(2, loc);
@@ -332,8 +269,6 @@ public class UsageDB {
 				}
 				ps.setLong(3, moduleID);
 				ps.execute();
-			} finally {
-				ps.close();
 			}
 		}
 		return moduleID;
@@ -342,41 +277,28 @@ public class UsageDB {
 	//,String section,String loc
 	public long getSymbolID(long moduleid,String symbol,int type) throws SQLException {
 		checkConnection();
-		PreparedStatement ps=conn.prepareStatement("select symbolid from symbols where moduleid=? and symbol=? and type=?");
 		Long symbolID=null;
-		try {
+		try (PreparedStatement ps=conn.prepareStatement("select symbolid from symbols where moduleid=? and symbol=? and type=?")) {
 			ps.setLong(1, moduleid);
 			ps.setString(2, symbol);
 			ps.setInt(3, type);
-			ResultSet rs=ps.executeQuery();
-			try {
+			try (ResultSet rs=ps.executeQuery()) {
 				if (rs.next()){
 					symbolID=rs.getLong(1);
 				}
-			} finally {
-				rs.close();
 			}
-			
-		} finally {
-			ps.close();
 		}
 		if (symbolID==null){
-			 ps=conn.prepareStatement("insert into symbols (symbol,type,moduleid) values(?,?,?)");
-			 try {
+			try (PreparedStatement ps=conn.prepareStatement("insert into symbols (symbol,type,moduleid) values(?,?,?)")) {
 				ps.setString(1, symbol);
 				ps.setInt(2, type);
 				ps.setLong(3, moduleid);
 				ps.execute();
-				ResultSet rs=ps.getGeneratedKeys();
-				try {
+				try (ResultSet rs=ps.getGeneratedKeys()) {
 					rs.next();
 					symbolID=rs.getLong(1);
-				} finally {
-					rs.close();
 				}
-			 } finally {
-				ps.close();
-			}
+			 }
 		} 
 		/*if (loc!=null){
 			 ps=conn.prepareStatement("insert into symbol_defs values(section=?,location=? where symbolid=?");
@@ -405,10 +327,8 @@ public class UsageDB {
 	public List<Module> listLocalModules() throws SQLException {
 		checkConnection();
 		List<Module> ret=new ArrayList<>();
-		PreparedStatement ps=conn.prepareStatement("select moduleid,package,module,fileid from modules where fileid is not null");
-		try {
-			ResultSet rs=ps.executeQuery();
-			try {
+		try (PreparedStatement ps=conn.prepareStatement("select moduleid,package,module,fileid from modules where fileid is not null")) {
+			try (ResultSet rs=ps.executeQuery()) {
 				while (rs.next()){
 					long moduleID=rs.getLong(1);
 					String packageName=rs.getString(2);
@@ -417,13 +337,8 @@ public class UsageDB {
 					Module mod=new Module(moduleID,packageName,moduleName,fileid);
 					ret.add(mod);
 				}
-			} finally {
-				rs.close();
 			}
-		} finally {
-			ps.close();
 		}
-		
 		return ret;
 	}
 	
@@ -432,11 +347,9 @@ public class UsageDB {
 			return null;
 		}
 		checkConnection();
-		PreparedStatement ps=conn.prepareStatement("select project,name from files where fileid =?");
-		try {
+		try (PreparedStatement ps=conn.prepareStatement("select project,name from files where fileid =?")) {
 			ps.setLong(1, fileid);
-			ResultSet rs=ps.executeQuery();
-			try {
+			try (ResultSet rs=ps.executeQuery()) {
 				if (rs.next()){
 					
 					String project=rs.getString(1);
@@ -446,30 +359,19 @@ public class UsageDB {
 						return p.getFile(name);
 					}
 				}
-			} finally {
-				rs.close();
 			}
-		} finally {
-			ps.close();
 		}
 		return null;
 	}
 	
 	public boolean knowsProject(String project) throws SQLException{
 		checkConnection();
-		PreparedStatement ps=conn.prepareStatement("select project from files where project=?");
-		try {
+		try (PreparedStatement ps=conn.prepareStatement("select project from files where project=?")) {
 			ps.setString(1, project);
-			ResultSet rs=ps.executeQuery();
-			try {
+			try (ResultSet rs=ps.executeQuery()) {
 				return rs.next();
-			}finally {
-				rs.close();
-			}	
-		} finally {
-			ps.close();
+			}
 		}
-		
 	}
 
 	public UsageResults getModuleDefinitions(String pkg,String module,IProject p,boolean exact) throws SQLException {
@@ -506,9 +408,8 @@ public class UsageDB {
 		if (p!=null){
 			sb.append(" and f.fileid=m.fileid and f.project=?");
 		}
-		PreparedStatement ps=conn.prepareStatement(sb.toString());
 		List<String> ret=new ArrayList<>();
-		try {
+		try (PreparedStatement ps=conn.prepareStatement(sb.toString())) {
 			int ix=1;
 			if (module!=null){
 				ps.setString(ix++, module);
@@ -520,16 +421,11 @@ public class UsageDB {
 				ps.setString(ix++, p.getName());
 			}
 
-			ResultSet rs=ps.executeQuery();
-			try {
+			try (ResultSet rs=ps.executeQuery()) {
 				while (rs.next()){
 					ret.add(rs.getString(1));
 				}
-			} finally {
-				rs.close();
 			}
-		} finally {
-			ps.close();
 		}
 		return ret;
 	}
@@ -591,9 +487,7 @@ public class UsageDB {
 	}
 	
 	private UsageResults getUsageResults(String pkg,String module,IProject p,String query) throws SQLException{
-		PreparedStatement ps=conn.prepareStatement(query);
-		
-		try {
+		try (PreparedStatement ps=conn.prepareStatement(query)) {
 			int ix=1;
 			if (module!=null){
 				ps.setString(ix++, module);
@@ -605,15 +499,11 @@ public class UsageDB {
 				ps.setString(ix++, p.getName());
 			}
 			return getUsageResults(ps,query);
-		} finally {
-			ps.close();
 		}
 	}
 	
 	private UsageResults getUsageResults(String pkg,String module,IProject p,String symbol,int type,String query) throws SQLException{
-		PreparedStatement ps=conn.prepareStatement(query);
-		
-		try {
+		try (PreparedStatement ps=conn.prepareStatement(query)) {
 			int ix=1;
 			if (module!=null){
 				ps.setString(ix++, module);
@@ -629,16 +519,13 @@ public class UsageDB {
 				ps.setInt(ix++, type);
 			}
 			return getUsageResults(ps,query);
-		} finally {
-			ps.close();
 		}
 	}
 		
 	private UsageResults getUsageResults(PreparedStatement ps,String query) throws SQLException{
 		Map<Long,Map<String,Collection<SearchResultLocation>>> m=new HashMap<>();
 	
-		ResultSet rs=ps.executeQuery();
-		try {
+		try (ResultSet rs=ps.executeQuery()) {
 			while (rs.next()){
 				long fileid=rs.getLong(1);
 				Map<String,Collection<SearchResultLocation>> sections=m.get(fileid);
@@ -667,9 +554,7 @@ public class UsageDB {
 					}
 				//}
 			}
-		}finally {
-			rs.close();
-		}	
+		}
 
 		UsageResults ret=new UsageResults();
 		for (Long fileid:m.keySet()){
@@ -695,12 +580,10 @@ public class UsageDB {
 		sb.append("and f.fileid=m.fileid ");
 		sb.append("and s.symbolid=sd.symbolid ");
 		sb.append("and sd.location is not null");
-		PreparedStatement ps=conn.prepareStatement(sb.toString());
 		List<SymbolDef> ret=new ArrayList<>();
-		try {
+		try (PreparedStatement ps=conn.prepareStatement(sb.toString())) {
 			ps.setString(1, p.getName());
-			ResultSet rs=ps.executeQuery();
-			try {
+			try (ResultSet rs=ps.executeQuery()) {
 				while (rs.next()){
 					String mod=rs.getString(1);
 					String sym=rs.getString(2);
@@ -708,11 +591,7 @@ public class UsageDB {
 					SymbolDef sd=new SymbolDef(mod,sym, type);
 					ret.add(sd);
 				}
-			} finally {
-				rs.close();
 			}
-		} finally {
-			ps.close();
 		}
 		return ret;
 	}
@@ -721,33 +600,21 @@ public class UsageDB {
 		checkConnection();
 		long fileid=getFileID(f);
 		Map<String,List<ReferenceLocation>> ret=new HashMap<>();
-		PreparedStatement ps=conn.prepareStatement("select mu.section,m.module,mu.location from module_usages mu,modules m where mu.fileid=? and mu.moduleid=m.moduleid");
-		try {
+		try (PreparedStatement ps=conn.prepareStatement("select mu.section,m.module,mu.location from module_usages mu,modules m where mu.fileid=? and mu.moduleid=m.moduleid")) {
 			ps.setLong(1, fileid);
-			ResultSet rs=ps.executeQuery();
-			try {
+			try (ResultSet rs=ps.executeQuery()) {
 				while(rs.next()){
 					addReference(f,ret, rs.getString(1), rs.getString(2), rs.getString(3),true);
 				}
-			} finally {
-				rs.close();
 			}
-		} finally {
-			ps.close();
 		}
-		ps=conn.prepareStatement("select su.section,m.module,s.symbol,su.location from symbol_usages su,modules m,symbols s where su.fileid=? and s.symbolid=su.symbolid and s.moduleid=m.moduleid");
-		try {
+		try (PreparedStatement ps=conn.prepareStatement("select su.section,m.module,s.symbol,su.location from symbol_usages su,modules m,symbols s where su.fileid=? and s.symbolid=su.symbolid and s.moduleid=m.moduleid")) {
 			ps.setLong(1, fileid);
-			ResultSet rs=ps.executeQuery();
-			try {
+			try (ResultSet rs=ps.executeQuery()) {
 				while(rs.next()){
 					addReference(f,ret, rs.getString(1), rs.getString(2)+"."+rs.getString(3), rs.getString(4),false);
 				}
-			} finally {
-				rs.close();
 			}
-		} finally {
-			ps.close();
 		}
 		return ret;
 	}

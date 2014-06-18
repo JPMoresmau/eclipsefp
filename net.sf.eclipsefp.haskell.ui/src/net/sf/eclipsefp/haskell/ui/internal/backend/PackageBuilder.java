@@ -69,9 +69,8 @@ public abstract class PackageBuilder {
        return retval;
      }
 
-     ZipInputStream zis = new ZipInputStream( is );
      ZipEntry ze = null;
-     try {
+     try ( ZipInputStream zis = new ZipInputStream( is )) {
        ze = zis.getNextEntry();
        while( ze != null ) {
          final int BUFFER_SIZE = 2048;
@@ -80,14 +79,13 @@ public abstract class PackageBuilder {
          if( !ze.isDirectory() ) {
            File f = new File( destdir, ze.getName() );
            f.getParentFile().mkdirs();
-           FileOutputStream fos = new FileOutputStream( f );
-           BufferedOutputStream dest = new BufferedOutputStream( fos, BUFFER_SIZE );
-           int count = 0;
-           while( ( count = zis.read( data, 0, BUFFER_SIZE ) ) != -1 ) {
-             dest.write( data, 0, count );
+           try (FileOutputStream fos = new FileOutputStream( f );
+               BufferedOutputStream dest = new BufferedOutputStream( fos, BUFFER_SIZE )) {
+             int count = 0;
+             while( ( count = zis.read( data, 0, BUFFER_SIZE ) ) != -1 ) {
+               dest.write( data, 0, count );
+             }
            }
-           dest.close();
-           fos.close();
          }
          ze = zis.getNextEntry();
        }
