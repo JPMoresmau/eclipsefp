@@ -29,9 +29,9 @@ public class LaunchUpdater implements CabalFileChangeListener {
 
            //IInteractiveLaunchOperationDelegate delegate=(IInteractiveLaunchOperationDelegate)cl.loadClass( delegateClass).newInstance();
 
-           List<?> fileNames=c.getAttribute( ILaunchAttributes.FILES, new ArrayList<Object>() );
+           List<?> fileNames=c.getAttribute( ILaunchAttributes.FILES, new ArrayList<>() );
            //IFile[] files=new IFile[fileNames.size()];
-           List<IFile> files=new ArrayList<IFile>(fileNames.size());
+           List<IFile> files=new ArrayList<>(fileNames.size());
            for(Object o:fileNames){
              IFile f=(IFile)cabalF.getProject().findMember( (String )o);
              //file may have been moved or deleted

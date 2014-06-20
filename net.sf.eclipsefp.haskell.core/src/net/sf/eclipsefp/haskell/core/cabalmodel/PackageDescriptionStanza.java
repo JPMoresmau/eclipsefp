@@ -48,18 +48,18 @@ public class PackageDescriptionStanza {
   /**
    * field names to values
    */
-  private final Map<String, String> properties=new CabalSyntaxMap<String>();
+  private final Map<String, String> properties=new CabalSyntaxMap<>();
   /**
    * field names to real names (case may be different)
    */
-  private final Map<String, String> realNames=new CabalSyntaxMap<String>();
+  private final Map<String, String> realNames=new CabalSyntaxMap<>();
   /**
    * field names to positions
    */
-  private final Map<String, ValuePosition> positions=new CabalSyntaxMap<ValuePosition>();
+  private final Map<String, ValuePosition> positions=new CabalSyntaxMap<>();
   private final CabalSyntax type;
 
-  private final List<PackageDescriptionStanza> stanzas=new LinkedList<PackageDescriptionStanza>();
+  private final List<PackageDescriptionStanza> stanzas=new LinkedList<>();
 
   /**
    * this field is kind of a hack, this is used to append properly to the end of a Cabal file
@@ -457,7 +457,7 @@ public class PackageDescriptionStanza {
   }
 
   public Collection<String> getDependentPackages(){
-    Collection<String> ret=new HashSet<String>();
+    Collection<String> ret=new HashSet<>();
     String val=getProperties().get( CabalSyntax.FIELD_BUILD_DEPENDS);
     if (val!=null && val.length()>0){
       List<String> ls=PackageDescriptionLoader.parseList( val,"," ); //$NON-NLS-1$
@@ -480,7 +480,7 @@ public class PackageDescriptionStanza {
   }
 
   public Collection<String> getSourceDirs(){
-    Collection<String> ret=new HashSet<String>();
+    Collection<String> ret=new HashSet<>();
     String val=getProperties().get( CabalSyntax.FIELD_HS_SOURCE_DIRS);
     if (val!=null && val.length()>0){
       ret.addAll(PackageDescriptionLoader.parseList( val));
@@ -502,7 +502,7 @@ public class PackageDescriptionStanza {
    }
 
   public Collection<String> getNonHaskellFiles(){
-    Collection<String> ret=new HashSet<String>();
+    Collection<String> ret=new HashSet<>();
     String val=getProperties().get( CabalSyntax.FIELD_INCLUDES);
     if (val!=null && val.length()>0){
       ret.addAll(PackageDescriptionLoader.parseList( val));
@@ -609,7 +609,7 @@ public class PackageDescriptionStanza {
   }
 
   public Set<String> listAllModules(){
-    Set<String> ret=new HashSet<String>();
+    Set<String> ret=new HashSet<>();
     String s=getProperties().get( CabalSyntax.FIELD_OTHER_MODULES );
     ret.addAll(PackageDescriptionLoader.parseList( s ));
     s=getProperties().get( CabalSyntax.FIELD_EXPOSED_MODULES );
@@ -625,7 +625,7 @@ public class PackageDescriptionStanza {
   }
 
   public Set<String> listExposedModules(){
-    Set<String> ret=new HashSet<String>();
+    Set<String> ret=new HashSet<>();
     String s=getProperties().get( CabalSyntax.FIELD_EXPOSED_MODULES );
     ret.addAll(PackageDescriptionLoader.parseList( s ));
     for (PackageDescriptionStanza pds:getStanzas()){

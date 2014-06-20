@@ -69,7 +69,7 @@ public class HoogleContentProvider implements ITreeContentProvider {
           initialResults = new HoogleResult[0];
         }
 
-        results = new LinkedHashMap<String, ArrayList<HoogleResult>>();
+        results = new LinkedHashMap<>();
         for( HoogleResult result: initialResults ) {
           if (!result.getType().equals( HoogleResultType.WARNING )){
             String key = result.getCompleteDefinition();
@@ -78,7 +78,7 @@ public class HoogleContentProvider implements ITreeContentProvider {
             // If we didn't find the key, add to list
             boolean found=false;
             if (entryList == null) {
-              entryList = new ArrayList<HoogleResult>();
+              entryList = new ArrayList<>();
               results.put(key, entryList );
             } else if (result.getType().equals(HoogleResultType.DECLARATION)){
               for (HoogleResult hr:entryList){
@@ -118,7 +118,7 @@ public class HoogleContentProvider implements ITreeContentProvider {
           }
 
         }
-        shownElements = new ArrayList<Object>();
+        shownElements = new ArrayList<>();
         for( Map.Entry<String, ArrayList<HoogleResult>> entry: results.entrySet() ) {
           if( entry.getValue().size() == 1 ) {
             // If only one element, we introduce just the result
@@ -160,7 +160,7 @@ public class HoogleContentProvider implements ITreeContentProvider {
     if (parentElement instanceof Map.Entry) {
       Map.Entry<String, Object> entry = (Map.Entry<String, Object>)parentElement;
       if (entry.getValue() instanceof ArrayList) {
-        ArrayList<Map.Entry<String, HoogleResult>> results = new ArrayList<Map.Entry<String,HoogleResult>>();
+        ArrayList<Map.Entry<String, HoogleResult>> results = new ArrayList<>();
         for (HoogleResult result : (ArrayList<HoogleResult>)entry.getValue()) {
 
             results.add( new SimpleEntry( entry.getKey(), result ) );

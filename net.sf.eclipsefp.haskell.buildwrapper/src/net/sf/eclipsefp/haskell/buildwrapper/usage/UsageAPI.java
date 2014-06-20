@@ -91,9 +91,9 @@ public class UsageAPI {
 							
 							//long moduleID=
 							db.getModuleID(pkg, module, fileID, loc);
-							List<ObjectUsage> modUsages=new ArrayList<ObjectUsage>();
-							List<ObjectUsage> objUsages=new ArrayList<ObjectUsage>();
-							List<ObjectUsage> objDefs=new ArrayList<ObjectUsage>();
+							List<ObjectUsage> modUsages=new ArrayList<>();
+							List<ObjectUsage> objUsages=new ArrayList<>();
+							List<ObjectUsage> objDefs=new ArrayList<>();
 							buildUsage(fileID,arr,modUsages,objDefs,objUsages);
 							db.setModuleUsages(fileID, modUsages);
 							db.setSymbolDefinitions(fileID, objDefs);
@@ -127,7 +127,7 @@ public class UsageAPI {
 		} catch (JSONException je){
 			BuildWrapperPlugin.logError(BWText.error_parsing_usage_file, je);
 		}
-		return new HashMap<String, List<ReferenceLocation>>();
+		return new HashMap<>();
 	}
 	
 	private void buildUsage(long fileID,JSONArray arr,List<ObjectUsage> modUsages,List<ObjectUsage> objDefs,List<ObjectUsage> objUsages){
@@ -225,7 +225,7 @@ public class UsageAPI {
 		} catch (SQLException sqle){
 			BuildWrapperPlugin.logError(BWText.error_db, sqle);
 		} 
-		return new ArrayList<Module>();
+		return new ArrayList<>();
 	}
 	
 	/**
@@ -450,7 +450,7 @@ public class UsageAPI {
 		} catch (SQLException sqle){
 			BuildWrapperPlugin.logError(BWText.error_db, sqle);
 		} 
-		return new ArrayList<SymbolDef>();
+		return new ArrayList<>();
 	}
 	
 	
@@ -460,18 +460,9 @@ public class UsageAPI {
 	 * @return
 	 */
 	private JSONArray parseUsageFile(IFile uf){
-		try {
-			InputStream is=uf.getContents();
-			try {
-				BufferedReader br = new BufferedReader(new InputStreamReader( is,uf.getCharset() ));
-				try {
-					return new JSONArray(new JSONTokener(br));
-				} finally {
-					br.close();
-				}
-			} finally {
-				is.close();
-			}
+		try (InputStream is=uf.getContents();
+		        BufferedReader br = new BufferedReader(new InputStreamReader( is,uf.getCharset() ))) {
+			return new JSONArray(new JSONTokener(br));
 		} catch (Exception e){
 			BuildWrapperPlugin.logError(BWText.error_parsing_usage_file, e);
 		}

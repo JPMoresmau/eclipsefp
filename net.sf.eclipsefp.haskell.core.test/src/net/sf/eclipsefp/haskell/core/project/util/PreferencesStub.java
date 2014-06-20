@@ -6,7 +6,7 @@ import org.osgi.service.prefs.Preferences;
 
 public class PreferencesStub implements Preferences {
 
-	private final HashMap<String, String> fTable = new HashMap<String, String>();
+	private final HashMap<String, String> fTable = new HashMap<>();
 
 	@Override
   public String absolutePath() {return "";}

@@ -134,7 +134,7 @@ public class InteractiveLaunchOperation extends LaunchOperation {
     //                 getArguments(delegate, project, files ) );
     setExtraArguments(wc);
     wc.setAttribute( ILaunchAttributes.DELEGATE, delegate.getClass().getName() );
-    List<String> fileNames=new ArrayList<String>(files.length);
+    List<String> fileNames=new ArrayList<>(files.length);
     for (IFile f:files){
       fileNames.add(f.getProjectRelativePath().toPortableString());
     }
@@ -156,7 +156,7 @@ public class InteractiveLaunchOperation extends LaunchOperation {
                                                           throws CoreException {
     List<ILaunchConfiguration> result = Collections.emptyList();
     ILaunchConfiguration[] configurations = LaunchOperation.getConfigurations(LaunchOperation.getConfigType( configType ));
-    result = new ArrayList<ILaunchConfiguration>( configurations.length );
+    result = new ArrayList<>( configurations.length );
     String cls=delegate.getClass().getName();
     String exePath = delegate.getExecutable();
     String projectName = resources[ 0 ].getProject().getName();

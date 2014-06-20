@@ -69,7 +69,7 @@ public class ReplaceTextResolution extends MarkerCompletion {
   }
 
   public static List<String> getSuggestionsFromGHCMessage(String msg,final String msgL){
-    List<String> suggestions=new ArrayList<String>();
+    List<String> suggestions=new ArrayList<>();
     int start=msgL.indexOf( GhcMessages.NOT_IN_SCOPE_SUGGESTION_MULTIPLE );
     if (start==-1){
       start=msgL.indexOf( GhcMessages.NOT_IN_SCOPE_SUGGESTION );

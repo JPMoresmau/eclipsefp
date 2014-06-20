@@ -14,8 +14,8 @@ import net.sf.eclipsefp.haskell.browser.items.HaskellPackage;
 import net.sf.eclipsefp.haskell.browser.items.PackageIdentifier;
 import net.sf.eclipsefp.haskell.core.cabal.CabalPackageRef;
 import net.sf.eclipsefp.haskell.ui.HaskellUIPlugin;
-import net.sf.eclipsefp.haskell.ui.internal.backend.CabalPackageHelper;
 import net.sf.eclipsefp.haskell.ui.internal.backend.BackendManager;
+import net.sf.eclipsefp.haskell.ui.internal.backend.CabalPackageHelper;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.Viewer;
 
@@ -32,11 +32,11 @@ public class DependenciesDialogContentProvider implements ITreeContentProvider {
     super();
 
     try {
-       Set<String> names=new HashSet<String>(alreadySelected);
+       Set<String> names=new HashSet<>(alreadySelected);
       //BrowserPlugin.getSharedInstance().setCurrentDatabase( DatabaseType.ALL,
        //   null );
 
-      ArrayList<HaskellPackage> pkgs = new ArrayList<HaskellPackage>();
+      ArrayList<HaskellPackage> pkgs = new ArrayList<>();
 
       for( HaskellPackage pkg: BrowserPlugin.getSharedInstance().getPackages(Database.ALL) ) {
         if(! names.contains( pkg.getIdentifier().getName() ) ) {

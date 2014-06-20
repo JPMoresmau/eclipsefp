@@ -63,7 +63,7 @@ public class TestResultView extends ViewPart {
   private Text tErrors;
   private Text tFailures;
 
-  private final List<TestSuite> history=new ArrayList<TestSuite>();
+  private final List<TestSuite> history=new ArrayList<>();
   private int historyIndex=-1;
 
 //  private final List<Resource> resources=new ArrayList<Resource>();

@@ -20,8 +20,8 @@ public class QueryItem {
 
 	public QueryItem(Declaration declaration) {
 		this.declaration = declaration;
-		this.packages = new ArrayList<PackageIdentifier>();
-		this.innerItems = new ArrayList<QueryItem>();
+		this.packages = new ArrayList<>();
+		this.innerItems = new ArrayList<>();
 	}
 
 	public QueryItem(Packaged<Declaration> pDecl) {
@@ -70,14 +70,14 @@ public class QueryItem {
 
 	public static ArrayList<QueryItem> convertToQueryItem(Packaged<Declaration>[] decls) {
 		// Remove duplication of items
-		ArrayList<QueryItem> items = new ArrayList<QueryItem>();
+		ArrayList<QueryItem> items = new ArrayList<>();
 		removeDuplicateQueryItems(decls, items);
 		
 		// Separate instances, classes, gadts and other things
-		ArrayList<QueryItem> instances = new ArrayList<QueryItem>();
-		ArrayList<QueryItem> classes = new ArrayList<QueryItem>();
-		ArrayList<QueryItem> gadts = new ArrayList<QueryItem>();
-		ArrayList<QueryItem> allOthers = new ArrayList<QueryItem>();
+		ArrayList<QueryItem> instances = new ArrayList<>();
+		ArrayList<QueryItem> classes = new ArrayList<>();
+		ArrayList<QueryItem> gadts = new ArrayList<>();
+		ArrayList<QueryItem> allOthers = new ArrayList<>();
 		
 		for (QueryItem item : items) {
 			switch(item.getType()) {
@@ -99,7 +99,7 @@ public class QueryItem {
 		}
 		
 		// Add instances to the corresponding item
-		ArrayList<QueryItem> noItemInstances = new ArrayList<QueryItem>();
+		ArrayList<QueryItem> noItemInstances = new ArrayList<>();
 		for (QueryItem item : instances) {
 			boolean added = false;
 			// Try to add to typeclasses

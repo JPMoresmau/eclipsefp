@@ -38,7 +38,7 @@ public class RemoveRedundantElementInImportResolution extends MarkerCompletion {
     ImportsManager mgr = new ImportsManager( (IFile)marker.getResource(), document );
     int line = marker.getAttribute( IMarker.LINE_NUMBER, -1 ) - 1;
     String[] ss=element.split( "," );
-    List<String> elements=new ArrayList<String>(ss.length);
+    List<String> elements=new ArrayList<>(ss.length);
     for (String s:ss){
       elements.add(s.trim());
     }

@@ -57,8 +57,8 @@ public class BrowserPlugin extends AbstractUIPlugin implements IDatabaseLoadedLi
 	public BrowserPlugin() {
 		this.server = new NullBrowserServer();
 		this.logStream = null;
-		this.dbLoadedListeners = new ArrayList<IDatabaseLoadedListener>();
-		this.hoogleLoadedListeners = new ArrayList<IHoogleLoadedListener>();
+		this.dbLoadedListeners = new ArrayList<>();
+		this.hoogleLoadedListeners = new ArrayList<>();
 	}
 
 	/*

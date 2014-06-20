@@ -20,9 +20,9 @@ import org.json.JSONObject;
  *
  */
 public class OutlineResult {
-	private List<OutlineDef> outlineDefs=new ArrayList<OutlineDef>();
-	private List<ExportDef> exportDefs=new ArrayList<ExportDef>();
-	private List<ImportDef> importDefs=new ArrayList<ImportDef>();
+	private List<OutlineDef> outlineDefs=new ArrayList<>();
+	private List<ExportDef> exportDefs=new ArrayList<>();
+	private List<ImportDef> importDefs=new ArrayList<>();
 
 	/**
 	 * notes for errors

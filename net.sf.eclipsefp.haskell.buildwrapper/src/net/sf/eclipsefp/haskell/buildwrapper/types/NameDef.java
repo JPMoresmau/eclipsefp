@@ -22,7 +22,7 @@ import org.json.JSONObject;
  *
  */
 public class NameDef {
-	private Set<OutlineDefType> types=new HashSet<OutlineDefType>();
+	private Set<OutlineDefType> types=new HashSet<>();
 	private String name;
 	
 	/**

@@ -47,7 +47,7 @@ public class UuagcRunner {
     UuagcFile file = mgr.getElement( resource.getProjectRelativePath()
         .toPortableString() );
     if( file != null ) {
-      ArrayList<String> r = new ArrayList<String>();
+      ArrayList<String> r = new ArrayList<>();
       r.add( "uuagc" ); //$NON-NLS-1$
       for( String option: file.getOptions() ) {
         if( option.indexOf( ' ' ) == -1 ) {
@@ -81,7 +81,7 @@ public class UuagcRunner {
       // Parse the output
       return OutputParser.errors( out.toString() );
     } catch( Throwable ex ) {
-      return new ArrayList<ProcessorError>();
+      return new ArrayList<>();
     }
   }
 }

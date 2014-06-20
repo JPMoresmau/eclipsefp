@@ -29,7 +29,7 @@ class SourceFolderCP implements ITreeContentProvider {
 
   @Override
   public Object[] getChildren( final Object parentElement ) {
-    List<IFolder> list = new ArrayList<IFolder>();
+    List<IFolder> list = new ArrayList<>();
     /*if( parentElement instanceof IHaskellProject ) {
       IHaskellProject hsProject = ( IHaskellProject )parentElement;
       Set<IPath> sourcePaths = hsProject.getSourcePaths();

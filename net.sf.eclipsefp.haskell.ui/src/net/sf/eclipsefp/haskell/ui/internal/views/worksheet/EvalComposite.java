@@ -368,11 +368,11 @@ public class EvalComposite extends Composite implements EvalHandler{
         // converts tree path to simple string paths
         TreePath[] exp=tcp.viewer.getExpandedTreePaths();
         if (exp!=null && exp.length>0){
-          names=new ArrayList<List<String>>(exp.length);
+          names=new ArrayList<>(exp.length);
           LabelProvider lp=new LabelProvider();
           for (TreePath tp:exp){
             if (tp.getSegmentCount()>0){
-              List<String> names1=new ArrayList<String>(tp.getSegmentCount());
+              List<String> names1=new ArrayList<>(tp.getSegmentCount());
               for (int a=0;a<tp.getSegmentCount();a++){
                 names1.add(lp.getText( tp.getSegment( a ) ));
               }
@@ -387,12 +387,12 @@ public class EvalComposite extends Composite implements EvalHandler{
       if (names!=null){
         LabelProvider lp=new LabelProvider();
         JSONContentProvider cp=(JSONContentProvider)tcp.viewer.getContentProvider();
-        List<TreePath> tps=new ArrayList<TreePath>();
+        List<TreePath> tps=new ArrayList<>();
         for (Object r:cp.getElements( root )){
           String rn=lp.getText( r );
           for (List<String> names1 :names){
             if (names1.size()>0 && names1.get( 0 ).equals(rn)){
-              List<Object> path=new ArrayList<Object>();
+              List<Object> path=new ArrayList<>();
               path.add( r );
               addToPath( path, r, names1.subList( 1, names1.size() ), lp, cp );
               tps.add( new TreePath( path.toArray() ) );

@@ -46,7 +46,7 @@ public class HaskellFoldingStructureProvider {
       IDocument document = docProvider.getDocument( editor.getEditorInput() );
 
       if (model!=null){
-        Set<Location> blocks=new HashSet<Location>();
+        Set<Location> blocks=new HashSet<>();
         for (OutlineDef def : outlineDefs){
           // only blocks that are more than one line long can be folded
           if (def.getLocation()!=null && def.getLocation().getEndLine()>def.getLocation().getStartLine()){
@@ -67,7 +67,7 @@ public class HaskellFoldingStructureProvider {
           }
 
         }
-        Set<Position> regions=new HashSet<Position>();
+        Set<Position> regions=new HashSet<>();
         for (Location l:blocks){
           Position p=createPosition( document, l.getStartLine(), l.getEndLine() );
           if (p!=null){
@@ -106,7 +106,7 @@ public class HaskellFoldingStructureProvider {
     Annotation[] deletions = computeDifferences( model, currentRegions );
 
     Map<ProjectionAnnotation, Position> additionsMap
-      = new HashMap<ProjectionAnnotation, Position>();
+      = new HashMap<>();
     Iterator<Position> it = currentRegions.iterator();
     while( it.hasNext() ) {
       additionsMap.put( new ProjectionAnnotation(), it.next() );
@@ -119,7 +119,7 @@ public class HaskellFoldingStructureProvider {
 
   private Annotation[] computeDifferences( final ProjectionAnnotationModel mdl,
                                            final Set<Position> current ) {
-    List<ProjectionAnnotation> deletions= new ArrayList<ProjectionAnnotation>();
+    List<ProjectionAnnotation> deletions= new ArrayList<>();
     Iterator iter = mdl.getAnnotationIterator();
     while( iter.hasNext() ) {
       Object annotation = iter.next();

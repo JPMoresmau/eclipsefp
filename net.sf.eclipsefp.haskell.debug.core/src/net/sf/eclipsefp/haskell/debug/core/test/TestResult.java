@@ -53,7 +53,7 @@ public class TestResult implements Serializable {
   /**
    * the children
    */
-  private final Map<String,TestResult> children=new LinkedHashMap<String,TestResult>();
+  private final Map<String,TestResult> children=new LinkedHashMap<>();
 
   public TestResult( final String name ) {
     super();

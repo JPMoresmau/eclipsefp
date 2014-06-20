@@ -76,7 +76,7 @@ public class CabalBuilder_PDETest extends TestCaseWithProject {
 
   private List<IMarker> getAllMarkers( final int severity ) throws CoreException {
     IMarker[] markers = getAllMarkers();
-    List<IMarker> result = new ArrayList<IMarker>();
+    List<IMarker> result = new ArrayList<>();
     for( IMarker marker: markers ) {
       Object sev = marker.getAttribute( IMarker.SEVERITY );
       if( sev instanceof Integer ) {

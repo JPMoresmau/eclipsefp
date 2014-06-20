@@ -52,7 +52,7 @@ public class HaskellToggleBreakpointTargetFactory implements
 
   @Override
   public Set<String> getToggleTargets( final IWorkbenchPart part, final ISelection selection ) {
-    Set<String> ret=new HashSet<String>();
+    Set<String> ret=new HashSet<>();
     if (HaskellLineBreakpointAdapter.getEditor( part )!=null){
       ret.add(HaskellDebugCore.ID_HASKELL_DEBUG_MODEL);
     }

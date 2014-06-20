@@ -28,7 +28,7 @@ import org.eclipse.swt.widgets.Composite;
  *
  */
 public class StringListComposite  extends Composite {
-  protected List<String> paths=new ArrayList<String>();
+  protected List<String> paths=new ArrayList<>();
 
   protected ListViewer viewer;
 
@@ -112,7 +112,7 @@ public class StringListComposite  extends Composite {
    * @param paths the paths to set
    */
   public void setPaths( final List<String> paths ) {
-    this.paths =new ArrayList<String>(paths);
+    this.paths =new ArrayList<>(paths);
     if (viewer!=null){
       viewer.setInput( this.paths );
     }

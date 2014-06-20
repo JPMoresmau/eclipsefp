@@ -50,7 +50,7 @@ public class CabalCompletionProcessor implements IContentAssistProcessor {
   public ICompletionProposal[] computeCompletionProposals( final ITextViewer tv,
                                                            final int offset ) {
     //ICompletionProposal[] result = new ICompletionProposal[ 0 ];
-    List<ICompletionProposal> icps=new LinkedList<ICompletionProposal>();
+    List<ICompletionProposal> icps=new LinkedList<>();
     ISelection selection = tv.getSelectionProvider().getSelection();
     if( selection instanceof ITextSelection ) {
       ITextSelection tsel = ( ITextSelection )selection;
@@ -132,7 +132,7 @@ public class CabalCompletionProcessor implements IContentAssistProcessor {
         context.setVariable( "selection", textSel.getText() );  //$NON-NLS-1$
 
         Template[] templates = getTemplates( context );
-        List<ICompletionProposal> matches = new ArrayList<ICompletionProposal>();
+        List<ICompletionProposal> matches = new ArrayList<>();
         for( int i= 0; i < templates.length; i++ ) {
           Template template= templates[ i ];
           try {

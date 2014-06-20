@@ -39,7 +39,7 @@ import org.eclipse.ui.IWorkbenchPart;
  *
  */
 public class AddHaskellNatureAction implements IObjectActionDelegate {
-  private final Set<IProject> projects=new LinkedHashSet<IProject>();
+  private final Set<IProject> projects=new LinkedHashSet<>();
 
   @Override
   public void run( final IAction action ) {
@@ -83,7 +83,7 @@ public class AddHaskellNatureAction implements IObjectActionDelegate {
     List<String> ls=Arrays.asList( nids );
     if (!ls.contains( nature )){
       // asList gives unmodified
-      ls=new ArrayList<String>(ls);
+      ls=new ArrayList<>(ls);
       ls.add( nature );
       desc.setNatureIds( ls.toArray( new String[ls.size()] ) );
       project.setDescription( desc, new SubProgressMonitor( mon, 1 ) );
@@ -103,7 +103,7 @@ public class AddHaskellNatureAction implements IObjectActionDelegate {
    * @return
    */
   public Collection<IProject> getProjects(final ISelection arg1 ){
-    Set<IProject> projects=new LinkedHashSet<IProject>();
+    Set<IProject> projects=new LinkedHashSet<>();
     if (arg1 instanceof IStructuredSelection){
       for (Iterator<?> it=((IStructuredSelection)arg1).iterator();it.hasNext();){
         IResource res = ResourceUtil.findResource( it.next() );

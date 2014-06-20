@@ -43,7 +43,7 @@ public class SHConfiguration implements Cloneable {
 	/**
 	 * the extensions needed to parse the file correctly
 	 */
-	private Set<String> languageExtensions = new HashSet<String>();
+	private Set<String> languageExtensions = new HashSet<>();
 	
 	public SHUnicode getUnicode() {
 		return unicode;
@@ -204,39 +204,39 @@ public class SHConfiguration implements Cloneable {
 	}
 	
 	public Map<String,Object> toYAML(){
-		List<Object> steps=new ArrayList<Object>();
+		List<Object> steps=new ArrayList<>();
 		if (unicode!=null){
-			Map<String,Object> m=new HashMap<String, Object>();
+			Map<String,Object> m=new HashMap<>();
 			m.put("unicode_syntax", unicode.toYAML());
 			steps.add(m);
 		}
 		if (imports!=null){
-			Map<String,Object> m=new HashMap<String, Object>();
+			Map<String,Object> m=new HashMap<>();
 			m.put("imports", imports.toYAML());
 			steps.add(m);
 		}
 		if (pragmas!=null){
-			Map<String,Object> m=new HashMap<String, Object>();
+			Map<String,Object> m=new HashMap<>();
 			m.put("language_pragmas", pragmas.toYAML());
 			steps.add(m);
 		}
 		if (records!=null){
-			Map<String,Object> m=new HashMap<String, Object>();
+			Map<String,Object> m=new HashMap<>();
 			m.put("records", records.toYAML());
 			steps.add(m);
 		}
 		if (tabs!=null){
-			Map<String,Object> m=new HashMap<String, Object>();
+			Map<String,Object> m=new HashMap<>();
 			m.put("tabs", tabs.toYAML());
 			steps.add(m);
 		}
 		if (trailingWhitespace!=null){
-			Map<String,Object> m=new HashMap<String, Object>();
+			Map<String,Object> m=new HashMap<>();
 			m.put("trailing_whitespace", trailingWhitespace.toYAML());
 			steps.add(m);
 		}
 		
-		Map<String,Object> ret=new HashMap<String, Object>();
+		Map<String,Object> ret=new HashMap<>();
 		ret.put("steps", steps);
 		
 		

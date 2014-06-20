@@ -123,7 +123,7 @@ public class OpenModuleAction extends Action implements
     /**
      * table items that have the selection focus (show package name)
      */
-    private final Map<Integer,TableItem> lastTis=new HashMap<Integer,TableItem>();
+    private final Map<Integer,TableItem> lastTis=new HashMap<>();
 
     public ModuleListSelectionDialog( final Shell parent ) {
       super( parent, new ModuleLabelProvider() );
@@ -160,7 +160,7 @@ public class OpenModuleAction extends Action implements
             /**
              * new focused table items
              */
-            Map<Integer,TableItem> newTis=new HashMap<Integer, TableItem>();
+            Map<Integer,TableItem> newTis=new HashMap<>();
             for (int a=0;a<sels.length;a++){
               int idx=sels[a];
               Module mod=(Module)obj[a];

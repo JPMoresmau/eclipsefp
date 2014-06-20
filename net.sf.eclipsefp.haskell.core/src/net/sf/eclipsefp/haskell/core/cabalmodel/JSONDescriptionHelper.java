@@ -24,7 +24,7 @@ public class JSONDescriptionHelper {
   public static final String JUST="Just"; //$NON-NLS-1$
 
   public static Set<String> getNames(final Collection<JSONArray> components) {
-    Set<String> ret=new HashSet<String>();
+    Set<String> ret=new HashSet<>();
     for (JSONArray arr:components){
       try {
              ret.add(arr.getString( 0 ));
@@ -37,7 +37,7 @@ public class JSONDescriptionHelper {
 
   public static List<JSONArray> getExecutables(final JSONObject description) {
      Object o=description.opt(  COND_EXECUTABLES);
-     List<JSONArray> ret=new ArrayList<JSONArray>();
+     List<JSONArray> ret=new ArrayList<>();
      if (o instanceof JSONArray){
        JSONArray arr=(JSONArray)o;
        for (int a=0;a<arr.length();a++){
@@ -63,7 +63,7 @@ public class JSONDescriptionHelper {
   }
 
   public static List<JSONArray> getDependencies(final JSONObject description){
-    List<JSONArray> ret=new ArrayList<JSONArray>();
+    List<JSONArray> ret=new ArrayList<>();
     if (description!=null){
 
      for (JSONArray arr:getExecutables(description)){

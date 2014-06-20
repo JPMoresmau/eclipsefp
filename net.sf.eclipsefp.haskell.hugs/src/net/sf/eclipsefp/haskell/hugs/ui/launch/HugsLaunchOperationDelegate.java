@@ -23,7 +23,7 @@ public class HugsLaunchOperationDelegate
   @Override
   public String[] createArguments( final IProject hsProject,
                                    final IFile[] selectedFiles,final String mode ) {
-    List<String> cmdLine = new ArrayList<String>();
+    List<String> cmdLine = new ArrayList<>();
 
     String libPath = Util.constructLibPath( selectedFiles );
     if( !libPath.equals( "" ) ) {

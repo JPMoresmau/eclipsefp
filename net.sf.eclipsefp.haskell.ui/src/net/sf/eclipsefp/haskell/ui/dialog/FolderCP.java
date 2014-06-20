@@ -3,29 +3,29 @@ package net.sf.eclipsefp.haskell.ui.dialog;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import org.eclipse.core.resources.*;
+import net.sf.eclipsefp.haskell.ui.HaskellUIPlugin;
+import org.eclipse.core.resources.IContainer;
+import org.eclipse.core.resources.IFolder;
+import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.Viewer;
 
-import net.sf.eclipsefp.haskell.ui.HaskellUIPlugin;
-
 
 /** content provider for a dialog that shows only subfolders of a specified
   * folder.
-  * 
+  *
   * @author Leif Frenzel
   */
 class FolderCP implements ITreeContentProvider {
 
   // interface methods of ITreeContentProvider
   ////////////////////////////////////////////
-  
+
   @Override
   public Object[] getChildren( final Object parentElement ) {
     IResource[] members = getMembers( parentElement );
-    List<IResource> list = new ArrayList<IResource>();
+    List<IResource> list = new ArrayList<>();
     for( int i = 0; i < members.length; i++ ) {
       IResource member = members[ i ];
       if( member.exists() && member instanceof IFolder ) {
@@ -56,16 +56,16 @@ class FolderCP implements ITreeContentProvider {
   }
 
   @Override
-  public void inputChanged( final Viewer viewer, 
-                            final Object oldInput, 
+  public void inputChanged( final Viewer viewer,
+                            final Object oldInput,
                             final Object newInput ) {
     // unused
   }
-  
-  
+
+
   // helping methods
   //////////////////
-  
+
   private IResource[] getMembers( final Object parentElement ) {
     IContainer container = ( IContainer )parentElement;
     IResource[] members = new IResource[ 0 ];

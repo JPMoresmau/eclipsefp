@@ -28,10 +28,10 @@ import org.json.JSONException;
 public abstract class BrowserServer {
 
 	protected Writer logStream = null;
-	protected ArrayList<IDatabaseLoadedListener> dbLoadedListeners = new ArrayList<IDatabaseLoadedListener>();
-	protected ArrayList<IHoogleLoadedListener> hoogleLoadedListeners = new ArrayList<IHoogleLoadedListener>();
+	protected ArrayList<IDatabaseLoadedListener> dbLoadedListeners = new ArrayList<>();
+	protected ArrayList<IHoogleLoadedListener> hoogleLoadedListeners = new ArrayList<>();
 	
-	protected HashMap<String, Module> moduleDocs = new HashMap<String, Module>();
+	protected HashMap<String, Module> moduleDocs = new HashMap<>();
 
 	/**
 	 * Sets the stream where log messages will be sent

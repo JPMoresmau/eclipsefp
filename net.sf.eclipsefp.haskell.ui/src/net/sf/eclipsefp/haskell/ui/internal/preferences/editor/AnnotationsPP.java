@@ -206,7 +206,7 @@ public class AnnotationsPP extends AbstractEditorPP {
 
   private String[][] createAnnotationTypeListModel() {
     MarkerAnnotationPreferences preferences = new MarkerAnnotationPreferences();
-    ArrayList<String[]> listModelItems = new ArrayList<String[]>();
+    ArrayList<String[]> listModelItems = new ArrayList<>();
     Iterator i = preferences.getAnnotationPreferences().iterator();
     while( i.hasNext() ) {
       AnnotationPreference info = ( AnnotationPreference )i.next();

@@ -71,7 +71,7 @@ public class HsTypeNameTemplateVariable extends TemplateVariableResolver {
 //        }
         ImportsManager mgr = new ImportsManager( file, doc );
         Map<String, Documented> decls = mgr.getDeclarations();
-        List<String> keys = new ArrayList<String>();
+        List<String> keys = new ArrayList<>();
         for ( String s : decls.keySet() ) {
           Documented d = decls.get( s );
           if (d instanceof Declaration){

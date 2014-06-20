@@ -69,9 +69,8 @@ public abstract class PackageBuilder {
        return retval;
      }
 
-     ZipInputStream zis = new ZipInputStream( is );
      ZipEntry ze = null;
-     try {
+     try ( ZipInputStream zis = new ZipInputStream( is )) {
        ze = zis.getNextEntry();
        while( ze != null ) {
          final int BUFFER_SIZE = 2048;
@@ -80,14 +79,13 @@ public abstract class PackageBuilder {
          if( !ze.isDirectory() ) {
            File f = new File( destdir, ze.getName() );
            f.getParentFile().mkdirs();
-           FileOutputStream fos = new FileOutputStream( f );
-           BufferedOutputStream dest = new BufferedOutputStream( fos, BUFFER_SIZE );
-           int count = 0;
-           while( ( count = zis.read( data, 0, BUFFER_SIZE ) ) != -1 ) {
-             dest.write( data, 0, count );
+           try (FileOutputStream fos = new FileOutputStream( f );
+               BufferedOutputStream dest = new BufferedOutputStream( fos, BUFFER_SIZE )) {
+             int count = 0;
+             while( ( count = zis.read( data, 0, BUFFER_SIZE ) ) != -1 ) {
+               dest.write( data, 0, count );
+             }
            }
-           dest.close();
-           fos.close();
          }
          ze = zis.getNextEntry();
        }
@@ -115,7 +113,7 @@ public abstract class PackageBuilder {
      retval.buildFailed( UITexts.cabalUpdateJob_title, UITexts.zerolenCabalExecutable_message );
      return retval;
    }
-   ArrayList<String> commands = new ArrayList<String>();
+   ArrayList<String> commands = new ArrayList<>();
    commands.add( cabalExecutable );
    commands.add( "update" );
    commands.add( "-v" );
@@ -158,7 +156,7 @@ public abstract class PackageBuilder {
   * @param conout The IOConsole output stream to which the build process' output is sent.
   */
  public ScionBuildStatus build( final CabalImplementation cabalImpl, final File destDir, final IOConsoleOutputStream conout ) {
-   ArrayList<String> commands = new ArrayList<String>();
+   ArrayList<String> commands = new ArrayList<>();
    ScionBuildStatus retval = new ScionBuildStatus();
 
    final String cabalExecutable = cabalImpl.getCabalExecutableName().toOSString();
@@ -238,7 +236,7 @@ public abstract class PackageBuilder {
 
    public OutputWriter(final String name, final OutputStream outStream) {
      super(name);
-     messages = new LinkedList<String>();
+     messages = new LinkedList<>();
      terminateFlag = false;
      this.outStream = null;
      try {

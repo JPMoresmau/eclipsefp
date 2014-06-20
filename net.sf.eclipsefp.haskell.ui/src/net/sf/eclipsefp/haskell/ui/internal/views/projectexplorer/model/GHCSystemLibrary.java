@@ -33,7 +33,7 @@ public class GHCSystemLibrary implements ITreeElement {
 
   @Override
   public List<GHCPackageConf> getChildren() {
-    List<GHCPackageConf> result = new ArrayList<GHCPackageConf>();
+    List<GHCPackageConf> result = new ArrayList<>();
     /*ICompilerManager man = CompilerManager.getInstance();
     if( man.getCurrentHsImplementation() != null ) {
       IPath binDir = new Path( man.getCurrentHsImplementation().getBinDir() );

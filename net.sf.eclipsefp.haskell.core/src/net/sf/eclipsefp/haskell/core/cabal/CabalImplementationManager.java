@@ -58,7 +58,7 @@ public class CabalImplementationManager {
   /** The default constructor, private to ensure that it remains a singleton instance. */
   private CabalImplementationManager() {
     // Load the implementations from the preference store:
-    impls = new ArrayList<CabalImplementation>();
+    impls = new ArrayList<>();
     defaultImpl = null;
     deserializePrefs();
 
@@ -188,7 +188,7 @@ public class CabalImplementationManager {
             } else {
               String diagnostic = "Invalid cabal implementation (".concat( String.valueOf(i) ).concat( "), missing items: "); //$NON-NLS-1$ //$NON-NLS-2$
               int diagLen = diagnostic.length();
-              ArrayList<String> diags = new ArrayList<String>();
+              ArrayList<String> diags = new ArrayList<>();
               if (ident == null) {
                 diags.add("identifier"); //$NON-NLS-1$
               }
@@ -233,8 +233,8 @@ public class CabalImplementationManager {
 
   public static List<CabalImplementation> autoDetectCabalImpls() {
     ArrayList<File> candidateLocs = FileUtil.getCandidateLocations();
-    List<CabalImplementation> impls=new ArrayList<CabalImplementation>();
-    Set<String> paths=new HashSet<String>();
+    List<CabalImplementation> impls=new ArrayList<>();
+    Set<String> paths=new HashSet<>();
     for (File loc : candidateLocs) {
       File[] files = loc.listFiles( new FilenameFilter() {
         @Override

@@ -18,7 +18,7 @@ public abstract class Choice<T> {
   public abstract String toCabalString( T o );
 
   public String[] getAllCabalStrings() {
-    ArrayList<String> strings = new ArrayList<String>();
+    ArrayList<String> strings = new ArrayList<>();
     for (T value : getValues()) {
       strings.add( toCabalString(value) );
     }
@@ -30,7 +30,7 @@ public abstract class Choice<T> {
   public abstract String toShownString( T o );
 
   public String[] getAllShownStrings() {
-    ArrayList<String> strings = new ArrayList<String>();
+    ArrayList<String> strings = new ArrayList<>();
     for (T value : getValues()) {
       strings.add( toShownString(value) );
     }

@@ -79,7 +79,7 @@ public class FormEntryFile extends FormEntry implements ICheckStateListener {
 
     ignoreModify = true;
     String[] elements = newValue.split( "," );
-    Set<String> ss=new HashSet<String>();
+    Set<String> ss=new HashSet<>();
 
     for (String element : elements) {
       ss.add(element.trim());
@@ -95,7 +95,7 @@ public class FormEntryFile extends FormEntry implements ICheckStateListener {
 
   protected void setValues(final Set<String> files){
     LimitedWorkbenchContentProvider provider = (LimitedWorkbenchContentProvider)treeField.getContentProvider();
-    Set<IResource> parents=new HashSet<IResource>();
+    Set<IResource> parents=new HashSet<>();
     seeChecked(provider, provider.getElements( treeField.getInput() ), files,parents);
     for (IResource parent:parents){
       manageParentState( parent );

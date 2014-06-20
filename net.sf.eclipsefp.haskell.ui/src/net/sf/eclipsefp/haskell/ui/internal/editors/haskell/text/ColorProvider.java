@@ -56,8 +56,8 @@ public class ColorProvider implements IEditorPreferenceNames {
   /** <p>constructs the singleton instance of ColorProvider. Private in order
    * to ensure the singleton pattern.</p> */
   private ColorProvider() {
-    colors = new HashMap<RGB, Color>( 10 );
-    rgbs = new HashMap<String, RGB>( 10 );
+    colors = new HashMap<>( 10 );
+    rgbs = new HashMap<>( 10 );
     initializeRgbs();
   }
 
@@ -67,8 +67,8 @@ public class ColorProvider implements IEditorPreferenceNames {
 
   public ColorProvider(final IPreferenceStore store){
     prefStore=store;
-    colors = new HashMap<RGB, Color>( 10 );
-    rgbs = new HashMap<String, RGB>( 10 );
+    colors = new HashMap<>( 10 );
+    rgbs = new HashMap<>( 10 );
     initializeRgbs();
   }
 

@@ -46,14 +46,14 @@ public class ScannerManager implements IEditorPreferenceNames {
   private TextAttribute commentAttribute;
   private TextAttribute literateCommentAttribute;
 
-  private final Map<String, IToken> tokens = new Hashtable<String, IToken>();
+  private final Map<String, IToken> tokens = new Hashtable<>();
 
   private IPreferenceStore prefStore;
   private ColorProvider colorProvider;
 
   private ScannerManager() {
     // prevent instantiation
-    propertyChangeHandlers = new HashMap<String, PropertyChangeHandler>();
+    propertyChangeHandlers = new HashMap<>();
     initializePropertyListener();
   }
 
@@ -72,7 +72,7 @@ public class ScannerManager implements IEditorPreferenceNames {
 
   public ScannerManager(final IPreferenceStore prefStore){
     this.prefStore=prefStore;
-    propertyChangeHandlers = new HashMap<String, PropertyChangeHandler>();
+    propertyChangeHandlers = new HashMap<>();
     initializePropertyListener();
   }
 

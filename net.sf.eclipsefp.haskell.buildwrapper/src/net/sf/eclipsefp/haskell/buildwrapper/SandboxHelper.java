@@ -51,14 +51,14 @@ public class SandboxHelper {
 				case CABAL_DEV:
 				{
 					if (!f.getCabalImplDetails().isUniqueSandbox()){
-						Set<IProject> processed=new HashSet<IProject>();
+						Set<IProject> processed=new HashSet<>();
 						processed.add(p);
 						for (IProject pR:p.getReferencedProjects()){
 							installDeps(f,pR,processed);
 						}
 					}
 					
-					LinkedList<String> args=new LinkedList<String>();
+					LinkedList<String> args=new LinkedList<>();
 					args.add("install-deps");
 					// enable tests
 					args.add("--enable-tests");
@@ -75,19 +75,19 @@ public class SandboxHelper {
 				{
 					// init unique sandbox
 					if (f.getCabalImplDetails().isUniqueSandbox()){
-						LinkedList<String> args=new LinkedList<String>();
+						LinkedList<String> args=new LinkedList<>();
 						args.add("sandbox");
 						args.add("init");
 						f.runCabal(args,"",f.getSandboxPath());
 					}
-					LinkedList<String> args=new LinkedList<String>();
+					LinkedList<String> args=new LinkedList<>();
 					args.add("sandbox");
 					args.add("init");
 					args.addAll(f.getCabalImplDetails().getInitOptions());
 					f.runCabal(args,"",null);
 					
 					//if (!f.getCabalImplDetails().isUniqueSandbox()){
-						Set<IProject> processed=new HashSet<IProject>();
+						Set<IProject> processed=new HashSet<>();
 						processed.add(p);
 						for (IProject pR:p.getReferencedProjects()){
 							addSource(f,pR,processed);
@@ -95,7 +95,7 @@ public class SandboxHelper {
 					//}
 
 					
-					args=new LinkedList<String>();
+					args=new LinkedList<>();
 					args.add("install");
 					args.add("--only-dependencies");
 					// enable tests
@@ -132,7 +132,7 @@ public class SandboxHelper {
 			if (sandboxFacade.isCanceled()){
 				return;
 			}
-			LinkedList<String> args=new LinkedList<String>();
+			LinkedList<String> args=new LinkedList<>();
 			args.add("install");
 			args.add(p.getLocation().toOSString());
 			args.add("--force-reinstalls");
@@ -161,7 +161,7 @@ public class SandboxHelper {
 			if (sandboxFacade.isCanceled()){
 				return;
 			}
-			LinkedList<String> args=new LinkedList<String>();
+			LinkedList<String> args=new LinkedList<>();
 			args.add("sandbox");
 			args.add("add-source");
 			args.add(p.getLocation().toOSString());
@@ -178,7 +178,7 @@ public class SandboxHelper {
 	public static void updateUsing(BWFacade f) throws CoreException{
 		if (f!=null){
 			SandboxType st=f.getCabalImplDetails().getType();
-			Set<IProject> processed=new HashSet<IProject>();
+			Set<IProject> processed=new HashSet<>();
 			switch (st){
 			case CABAL_DEV:
 				if (!f.getCabalImplDetails().isUniqueSandbox()){
@@ -225,7 +225,7 @@ public class SandboxHelper {
 				if (f.isCanceled()){
 					return false;
 				}
-				LinkedList<String> args=new LinkedList<String>();
+				LinkedList<String> args=new LinkedList<>();
 				args.add("install");
 				args.add(changedProject.getLocation().toOSString());
 				args.add("--force-reinstalls");

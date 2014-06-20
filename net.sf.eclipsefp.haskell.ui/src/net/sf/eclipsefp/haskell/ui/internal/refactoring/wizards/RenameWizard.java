@@ -22,7 +22,7 @@ public class RenameWizard extends RefactoringWizard {
   private final RenameDelegate delegate;
 
   public RenameWizard( final RenameDelegate delegate ) {
-   super( new Ref(new RefProcessor<RenameDelegate>(delegate , UITexts.renameProcessor_name )), DIALOG_BASED_USER_INTERFACE );
+   super( new Ref(new RefProcessor<>(delegate , UITexts.renameProcessor_name )), DIALOG_BASED_USER_INTERFACE );
    this.delegate=delegate;
 
   }

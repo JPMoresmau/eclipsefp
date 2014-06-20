@@ -19,7 +19,7 @@ import org.eclipse.ui.forms.widgets.FormToolkit;
 public abstract class FormEntry {
 
   private CabalSyntax property;
-  private final ArrayList<IFormEntryListener> listeners = new ArrayList<IFormEntryListener>();
+  private final ArrayList<IFormEntryListener> listeners = new ArrayList<>();
 
   public abstract void init( final IProject project,
       final Composite parent, final FormToolkit toolkit, final int style );

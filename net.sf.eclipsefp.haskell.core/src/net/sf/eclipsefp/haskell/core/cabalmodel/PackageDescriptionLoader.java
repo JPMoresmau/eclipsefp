@@ -30,19 +30,12 @@ public class PackageDescriptionLoader {
       if (!file.getWorkspace().isTreeLocked()){
         file.refreshLocal( 0, new NullProgressMonitor() );
     }
-      InputStream is=file.getContents();
-      try {
-        BufferedReader br = new BufferedReader(new InputStreamReader( is,file.getCharset() ));
+      try (InputStream is=file.getContents();
+          BufferedReader br = new BufferedReader(new InputStreamReader( is,file.getCharset() ))) {
         new CabalParser(result).parse(br);
       }  catch( final IOException ioex ) {
         // very unlikely
         HaskellCorePlugin.log( "Loading cabal file", ioex ); //$NON-NLS-1$
-      } finally {
-        try {
-          is.close();
-        } catch ( final IOException ignore ) {
-          //NOOP
-        }
       }
     }
     return result;
@@ -72,7 +65,7 @@ public class PackageDescriptionLoader {
   }
 
   public static List<String> parseList(final String value,final String seps){
-    List<String> ret=new LinkedList<String>();
+    List<String> ret=new LinkedList<>();
 
     if (value!=null && value.length()>0){
       StringTokenizer st=new StringTokenizer( value,seps );
@@ -119,7 +112,7 @@ public class PackageDescriptionLoader {
 
 
     private PackageDescriptionStanza lastStanza=null;
-    private final LinkedList<PackageDescriptionStanza> stanzaStack=new LinkedList<PackageDescriptionStanza>();
+    private final LinkedList<PackageDescriptionStanza> stanzaStack=new LinkedList<>();
 
     private int currentIndent=0;
 

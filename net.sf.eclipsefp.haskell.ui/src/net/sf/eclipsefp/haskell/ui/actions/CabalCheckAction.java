@@ -34,7 +34,7 @@ import org.eclipse.ui.IWorkbenchPart;
  *
  */
 public class CabalCheckAction implements IObjectActionDelegate {
-  private final Set<IProject> projects=new LinkedHashSet<IProject>();
+  private final Set<IProject> projects=new LinkedHashSet<>();
   private Shell currentShell;
 
 
@@ -50,13 +50,13 @@ public class CabalCheckAction implements IObjectActionDelegate {
 
     final String cabalExecutable=CabalImplementationManager.getCabalExecutable();
     if (cabalExecutable!=null){
-      final List<String> commands = new ArrayList<String>();
+      final List<String> commands = new ArrayList<>();
       commands.add( cabalExecutable );
       commands.add("check");
 
       for (final IProject p:projects){
         try {
-          List<String> prjCommands = new ArrayList<String>(commands);
+          List<String> prjCommands = new ArrayList<>(commands);
           /*BWFacade bf=BuildWrapperPlugin.getFacade( p );
           // need to provide user supplied info
           if(bf!=null){

@@ -17,7 +17,7 @@ public class CabalContributorManager {
     public static Collection<ICabalContributor> getContributors(){
       if (contribs==null){
         IConfigurationElement[] elts=HaskellCorePlugin.getDefault().getExtensions( HaskellCorePlugin.ID_EXT_POINT_CABAL_CONTRIBUTORS );
-        contribs=new ArrayList<ICabalContributor>(elts.length);
+        contribs=new ArrayList<>(elts.length);
         for (IConfigurationElement elem:elts){
           try {
             Object o = elem.createExecutableExtension(HaskellCorePlugin.ATT_CLASS);

@@ -13,7 +13,7 @@ public class CodeFolding implements ICodeFolding {
   @Override
   public List<ICodeFoldingRegion> performCodeFolding(
       final IContainer srcRoot, final IFile file ) {
-    List<ICodeFoldingRegion> result = new ArrayList<ICodeFoldingRegion>();
+    List<ICodeFoldingRegion> result = new ArrayList<>();
     // TODO TtC replace by something not Cohatoe-based
     /*
     String libDir = getGHCLibDir();

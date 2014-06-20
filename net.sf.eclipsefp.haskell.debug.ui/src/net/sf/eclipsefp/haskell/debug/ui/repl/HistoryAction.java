@@ -38,7 +38,7 @@ import org.eclipse.ui.plugin.AbstractUIPlugin;
  */
 public class HistoryAction extends Action  {
   private final StringBuilder current=new StringBuilder();
-  private final LinkedList<String> commands=new LinkedList<String>();
+  private final LinkedList<String> commands=new LinkedList<>();
 
   private int maxHistory=20;
 

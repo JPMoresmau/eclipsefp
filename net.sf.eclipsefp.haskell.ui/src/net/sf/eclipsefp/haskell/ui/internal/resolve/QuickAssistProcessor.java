@@ -50,7 +50,7 @@ public class QuickAssistProcessor implements IQuickAssistProcessor {
   @Override
   public ICompletionProposal[] computeQuickAssistProposals(
       final IQuickAssistInvocationContext invocationContext ) {
-    List<ICompletionProposal> res=new ArrayList<ICompletionProposal>();
+    List<ICompletionProposal> res=new ArrayList<>();
     for (Iterator<?> it=invocationContext.getSourceViewer().getAnnotationModel().getAnnotationIterator();it.hasNext();){
       Annotation ann=(Annotation)it.next();
       if (ann instanceof MarkerAnnotation){

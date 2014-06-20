@@ -149,7 +149,7 @@ public class JSONObject {
      * Construct an empty JSONObject.
      */
     public JSONObject() {
-        this.map = new HashMap<String, Object>();
+        this.map = new HashMap<>();
     }
 
 
@@ -250,7 +250,7 @@ public class JSONObject {
      * @param includeSuperClass - Tell whether to include the super class properties.
      */
     public JSONObject(Map<String, Object> map, boolean includeSuperClass) {
-        this.map = new HashMap<String, Object>();
+        this.map = new HashMap<>();
         if (map != null) {
             Iterator<Map.Entry<String, Object>> i = map.entrySet().iterator();
             while (i.hasNext()) {
@@ -1203,7 +1203,7 @@ public class JSONObject {
      * @return An iterator of the keys.
      */
     public Iterator<String> sortedKeys() {
-      return new TreeSet<String>(this.map.keySet()).iterator();
+      return new TreeSet<>(this.map.keySet()).iterator();
     }
 
     /**

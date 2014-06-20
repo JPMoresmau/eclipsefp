@@ -32,9 +32,9 @@ import org.eclipse.swt.widgets.Text;
 public abstract class Tab implements IPropertyChangeListener{
 
   private final IPreferenceStore preferenceStore;
-  private final Map<Button, String> checkBoxes = new HashMap<Button, String>();
-  private final Map<Control, Control> labels = new HashMap<Control, Control>();
-  private final Map<Text, String> textFields = new HashMap<Text, String>();
+  private final Map<Button, String> checkBoxes = new HashMap<>();
+  private final Map<Control, Control> labels = new HashMap<>();
+  private final Map<Text, String> textFields = new HashMap<>();
 
   private final SelectionListener fCheckBoxListener = new SelectionAdapter() {
     @Override

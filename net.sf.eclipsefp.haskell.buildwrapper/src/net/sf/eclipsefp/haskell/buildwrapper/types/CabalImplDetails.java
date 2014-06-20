@@ -19,9 +19,9 @@ public class CabalImplDetails {
 	}
 
 	private String executable;
-	private final List<String> options = new ArrayList<String>();
-	private final List<String> installOptions = new ArrayList<String>();
-	private final List<String> initOptions = new ArrayList<String>();
+	private final List<String> options = new ArrayList<>();
+	private final List<String> installOptions = new ArrayList<>();
+	private final List<String> initOptions = new ArrayList<>();
 	
 	private SandboxType type = SandboxType.NONE;
 

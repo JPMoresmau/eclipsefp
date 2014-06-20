@@ -42,7 +42,7 @@ public class ProjectExplorerOutlineDef {
    */
   public List<ProjectExplorerOutlineDef> getChildren(){
     List<OutlineDef> def=outlineDef.getChildren();
-    List<ProjectExplorerOutlineDef> ret=new ArrayList<ProjectExplorerOutlineDef>( def.size() );
+    List<ProjectExplorerOutlineDef> ret=new ArrayList<>( def.size() );
     for (Object o:def){
       ret.add(new ProjectExplorerOutlineDef( getOwner(), (OutlineDef)o ));
     }

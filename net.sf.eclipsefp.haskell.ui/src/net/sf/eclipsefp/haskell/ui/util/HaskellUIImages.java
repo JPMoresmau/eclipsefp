@@ -156,7 +156,7 @@ public class HaskellUIImages implements IImageNames {
 
   public static ImageRegistry initializeImageRegistry() {
     imageRegistry = new ImageRegistry( HaskellUIPlugin.getStandardDisplay() );
-    imageDescriptors = new HashMap<String, ImageDescriptor>( 30 );
+    imageDescriptors = new HashMap<>( 30 );
     declareImages();
     return imageRegistry;
   }

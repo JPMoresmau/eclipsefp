@@ -60,7 +60,7 @@ class ImplementationsBlock implements ISelectionProvider {
   private static final String KEY_SORT_COLUMN = ".sortColumn"; //$NON-NLS-1$
   private static final int DEFAULT_WIDTH = 100;
 
-  private final List<IHsImplementation> installations = new ArrayList<IHsImplementation>();
+  private final List<IHsImplementation> installations = new ArrayList<>();
 
   private CheckboxTableViewer viewer;
   private Table table;

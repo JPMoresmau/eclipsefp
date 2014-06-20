@@ -62,10 +62,10 @@ public class StreamBrowserServer extends BrowserServer {
 	/**
 	 * cache packages by database
 	 */
-	private Map<Database,HaskellPackage[]> packageCache=new HashMap<Database,HaskellPackage[]>();
+	private Map<Database,HaskellPackage[]> packageCache=new HashMap<>();
 	
 	//private DatabaseType currentDatabase;
-	private HashMap<String, Packaged<Declaration>[]> declCache = new HashMap<String, Packaged<Declaration>[]>();
+	private HashMap<String, Packaged<Declaration>[]> declCache = new HashMap<>();
 
 	private boolean logError;
 	
@@ -93,6 +93,7 @@ public class StreamBrowserServer extends BrowserServer {
 	@Override
 	public void setLogError(boolean logError) {
 		if (logError!=this.logError && allErrWs!=null){
+			@SuppressWarnings("resource")
 			Writer logStream=getLogStream();
 			if (logStream!=null){
 				if (logError){

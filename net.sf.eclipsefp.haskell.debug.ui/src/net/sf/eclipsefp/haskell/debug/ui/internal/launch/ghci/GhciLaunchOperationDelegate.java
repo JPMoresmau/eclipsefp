@@ -32,7 +32,7 @@ public class GhciLaunchOperationDelegate
   @Override
   public String[] createArguments( final IProject hsProject,
                                    final IFile[] selectedFiles,final String mode ) {
-    List<String> cmdLine = new ArrayList<String>();
+    List<String> cmdLine = new ArrayList<>();
 
     cmdLine.add( "--interactive" ); //$NON-NLS-1$
 

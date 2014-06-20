@@ -82,7 +82,7 @@ public class SHPragmas {
 	}
 	
 	public Map<String,Object> toYAML(){
-		Map<String,Object> m=new HashMap<String, Object>();
+		Map<String,Object> m=new HashMap<>();
 		m.put("style", style.name().toLowerCase());
 		m.put("remove_redundant", removeRedundant);
 		return m;

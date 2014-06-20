@@ -37,10 +37,10 @@ public class InstallExecutableRunnable implements Runnable {
   //private boolean buildWrapper=true;
   //private boolean scionBrowser=true;
   private boolean global=false;
-  private final List<Package> packages=new ArrayList<Package>();
+  private final List<Package> packages=new ArrayList<>();
   private Runnable nextRunnable;
-  private final List<String> errors=new ArrayList<String>();
-  private final Map<String,File> files=new HashMap<String, File>();
+  private final List<String> errors=new ArrayList<>();
+  private final Map<String,File> files=new HashMap<>();
 
   public InstallExecutableRunnable( ) {
     super( );
@@ -69,7 +69,7 @@ public class InstallExecutableRunnable implements Runnable {
       return;
     }
     File folder=new File(cabalExecutable).getParentFile();
-    final LinkedList<Command> commands=new LinkedList<Command>();
+    final LinkedList<Command> commands=new LinkedList<>();
 
     File binDir=new File(CompilerManager.getCurrentHsImplementation().getBinDir());
     if (cabalUpdate){
@@ -118,7 +118,7 @@ public class InstallExecutableRunnable implements Runnable {
       commands.add(new Command(UITexts.scionBrowserInstallProgress,"scion-browser",IPreferenceConstants.SCION_BROWSER_SERVER_EXECUTABLE,Arrays.asList( cabalExecutable , "install","scion-browser", global?"--global": "--user" )));
     }*/
     for (Package p:packages){
-      List<String> args=new ArrayList<String>(Arrays.asList( cabalExecutable , "install",p.getPkgName() ));
+      List<String> args=new ArrayList<>(Arrays.asList( cabalExecutable , "install",p.getPkgName() ));
       if (!CabalImplementationManager.getInstance().getDefaultCabalImplementation().allowsSandbox()){
         args.add(global?"--global": "--user");
       }

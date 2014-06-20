@@ -43,7 +43,7 @@ public class HLintRunner {
 			    workingDir.toFile(), out, err, exe,"--encoding="+encoding, file.getLocation().toOSString());
 
 			String s=out.toString();
-			List<Suggestion> sugs=new ArrayList<Suggestion>();
+			List<Suggestion> sugs=new ArrayList<>();
 			if (s.length()>0){
 				OutputParser parser = new OutputParser(new StringReader(s));
 				sugs= parser.suggestions();
@@ -59,6 +59,6 @@ public class HLintRunner {
 			String msg=err.toString().length()>0?err.toString():out.toString();
 			HLintPlugin.logError(NLS.bind(HLintText.error_run,msg), ex);
 		}
-		return new ArrayList<Suggestion>();
+		return new ArrayList<>();
 	}
 }

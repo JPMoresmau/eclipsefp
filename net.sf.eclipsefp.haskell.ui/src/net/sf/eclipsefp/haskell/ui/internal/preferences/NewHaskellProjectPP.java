@@ -81,13 +81,13 @@ public class NewHaskellProjectPP extends PreferencePage
   private Button btnProjectAsSourceFolder;
   private Button btnFoldersAsSourceFolder;
 
-  private final Map<String,TemplateDef[]> templateDefs=new HashMap<String,TemplateDef[]>();
+  private final Map<String,TemplateDef[]> templateDefs=new HashMap<>();
 
   public NewHaskellProjectPP() {
     super( UITexts.preferences_project_title );
     setDescription(  UITexts.preferences_project_description );
-    alRadioButtons = new ArrayList<Button>();
-    alTextControls = new ArrayList<Text>();
+    alRadioButtons = new ArrayList<>();
+    alTextControls = new ArrayList<>();
 
     selectionListener = new SelectionListener() {
       @Override
@@ -272,7 +272,7 @@ public class NewHaskellProjectPP extends PreferencePage
     sv.getDocument().set( "" );
     sv.getTextWidget().setEditable( false );
 
-    final List<SyntaxPreviewer> svs=new ArrayList<SyntaxPreviewer>();
+    final List<SyntaxPreviewer> svs=new ArrayList<>();
     svs.add(sv);
 
     tv.addSelectionChangedListener( new ISelectionChangedListener() {

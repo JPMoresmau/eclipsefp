@@ -36,7 +36,7 @@ import org.eclipse.core.runtime.jobs.ISchedulingRule;
  */
 public class MockFile implements IFile {
 
-	private final List<MockInputStream> fOpenStreams = new Vector<MockInputStream>();
+	private final List<MockInputStream> fOpenStreams = new Vector<>();
 	private final String fContents;
 	private final String fFileName;
 	private IProject fProject;

@@ -35,7 +35,7 @@ public class LimitedWorkbenchContentProvider extends WorkbenchContentProvider {
 
   @Override
   public Object[] getChildren( final Object element ) {
-    ArrayList<Object> objs = new ArrayList<Object>();
+    ArrayList<Object> objs = new ArrayList<>();
     for ( Object inner : super.getChildren( element )) {
       boolean include = true;
       if( !showHidden && ( ( IResource )inner ).getName().startsWith( "." ) ) {

@@ -39,7 +39,7 @@ import org.eclipse.ui.editors.text.TextFileDocumentProvider;
 public class Util {
 
   public static Set<IPath> getPaths( final IProject project ) {
-    HashSet<IPath> paths = new HashSet<IPath>();
+    HashSet<IPath> paths = new HashSet<>();
 
     try {
       IFile cabalF = BuildWrapperPlugin.getCabalFile( project );
@@ -57,7 +57,7 @@ public class Util {
         }
       }
     } catch (Exception e) {
-      return new HashSet<IPath>();
+      return new HashSet<>();
     }
 
     return paths;
@@ -213,7 +213,7 @@ public class Util {
   public static List<Integer> getImportModuleOffsets( final IResource resource,
       final String moduleName ) {
     TextFileDocumentProvider provider = new TextFileDocumentProvider();
-    ArrayList<Integer> offsets = new ArrayList<Integer>();
+    ArrayList<Integer> offsets = new ArrayList<>();
 
     try {
       provider.connect( resource );

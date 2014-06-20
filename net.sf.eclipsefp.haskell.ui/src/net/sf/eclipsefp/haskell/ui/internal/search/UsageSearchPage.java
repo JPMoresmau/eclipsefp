@@ -153,7 +153,7 @@ public class UsageSearchPage extends AbstractTextSearchViewPage implements IAdap
       ISelection selection = selectionProvider.getSelection();
       if( selection instanceof IStructuredSelection ) {
         IStructuredSelection structuredSelection = ( IStructuredSelection )selection;
-        final Set<Object> newSelection = new HashSet<Object>(
+        final Set<Object> newSelection = new HashSet<>(
             structuredSelection.size() );
 
         Iterator iter = structuredSelection.iterator();
@@ -174,7 +174,7 @@ public class UsageSearchPage extends AbstractTextSearchViewPage implements IAdap
             @Override
             public ShowInContext getShowInContext() {
               return new ShowInContext( null, new StructuredSelection(
-                  new ArrayList<Object>( newSelection ) ) );
+                  new ArrayList<>( newSelection ) ) );
             }
           };
 

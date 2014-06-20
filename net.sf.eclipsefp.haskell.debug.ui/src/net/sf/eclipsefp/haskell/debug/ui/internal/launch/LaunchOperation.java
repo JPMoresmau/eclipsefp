@@ -49,7 +49,7 @@ public abstract class LaunchOperation {
   public static List<ILaunchConfiguration> getConfigurationsForProject(final ILaunchConfigurationType type,final String projectName) throws CoreException {
     ILaunchConfigurationType configType = type;
     ILaunchConfiguration[] configs=getLaunchManager().getLaunchConfigurations( configType );
-    List<ILaunchConfiguration> ret=new ArrayList<ILaunchConfiguration>();
+    List<ILaunchConfiguration> ret=new ArrayList<>();
     for (ILaunchConfiguration config:configs){
       if (projectName.equals(HaskellDebugCore.getProjectName(config))){
         ret.add(config);

@@ -39,7 +39,7 @@ import org.eclipse.ui.IWorkbenchPart;
   * @author JP Moresmau
  */
 public class CabalInstallAction implements IObjectActionDelegate {
-  private final Set<IProject> projects=new LinkedHashSet<IProject>();
+  private final Set<IProject> projects=new LinkedHashSet<>();
   private Shell currentShell;
 
   /**
@@ -71,7 +71,7 @@ public class CabalInstallAction implements IObjectActionDelegate {
     String cabalDev = preferenceStore.getString( IPreferenceConstants.CABALDEV_EXECUTABLE );
     if (cabalExecutable!=null){
 
-      final List<String> commands = new ArrayList<String>();
+      final List<String> commands = new ArrayList<>();
       commands.add( cabalDev );
       commands.add( getCabalDevCommand());
 
@@ -86,7 +86,7 @@ public class CabalInstallAction implements IObjectActionDelegate {
       addExtraParameters(commands);
       for (final IProject p:projects){
         try {
-          List<String> prjCommands = new ArrayList<String>(commands);
+          List<String> prjCommands = new ArrayList<>(commands);
           BWFacade bf=BuildWrapperPlugin.getFacade( p );
           // need to provide user supplied info
           if(bf!=null){
@@ -125,7 +125,7 @@ public class CabalInstallAction implements IObjectActionDelegate {
       // as far as I can tell, add-source doesn't support the --sandbox flag
       // so we need to init the sandbox to make sure we have a proper config file in place
       // then we can add add-source
-      final List<String> icommands = new ArrayList<String>();
+      final List<String> icommands = new ArrayList<>();
       icommands.add( cabalExecutable );
       icommands.add( "sandbox" );
       icommands.add( "init" );
@@ -142,7 +142,7 @@ public class CabalInstallAction implements IObjectActionDelegate {
 
         @Override
         public void run() {
-          final List<String> commands = new ArrayList<String>();
+          final List<String> commands = new ArrayList<>();
           commands.add( cabalExecutable );
           commands.add( "sandbox" );
           commands.add( "add-source" );
@@ -150,7 +150,7 @@ public class CabalInstallAction implements IObjectActionDelegate {
 
           for (final IProject p:projects){
             try {
-              List<String> prjCommands = new ArrayList<String>(commands);
+              List<String> prjCommands = new ArrayList<>(commands);
               prjCommands.add( p.getLocation().toOSString() );
 //              BWFacade bf=BuildWrapperPlugin.getFacade( p );
 //              // need to provide user supplied info
@@ -243,7 +243,7 @@ public class CabalInstallAction implements IObjectActionDelegate {
    //wd.open();
     final String cabalExecutable=CabalImplementationManager.getCabalExecutable();
     if (cabalExecutable!=null){
-      final List<String> commands = new ArrayList<String>();
+      final List<String> commands = new ArrayList<>();
       commands.add( cabalExecutable );
       commands.add("install");
       BackendManager.addCabalInstallOptions( commands );
@@ -253,7 +253,7 @@ public class CabalInstallAction implements IObjectActionDelegate {
       addExtraParameters(commands);
       for (final IProject p:projects){
         try {
-          List<String> prjCommands = new ArrayList<String>(commands);
+          List<String> prjCommands = new ArrayList<>(commands);
           BWFacade bf=BuildWrapperPlugin.getFacade( p );
           // need to provide user supplied info
           if(bf!=null){

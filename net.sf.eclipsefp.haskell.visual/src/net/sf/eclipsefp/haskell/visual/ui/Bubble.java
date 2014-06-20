@@ -35,7 +35,7 @@ public class Bubble extends Composite {
 	
 	private StyledText st;
 	
-	private List<Resource> resources=new ArrayList<Resource>();
+	private List<Resource> resources=new ArrayList<>();
 	
 	private boolean isSizing=false;
 	private boolean isMoving=false;

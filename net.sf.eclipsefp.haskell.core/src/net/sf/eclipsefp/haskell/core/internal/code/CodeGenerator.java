@@ -49,7 +49,7 @@ public class CodeGenerator {
       src.append(folderNames[ i ]);
     }
     module.append(name);
-    Map<String,String> vars=new HashMap<String, String>();
+    Map<String,String> vars=new HashMap<>();
     vars.put( TemplateVariables.MODULE_NAME, module.toString() );
     vars.put( TemplateVariables.PROJECT_NAME, projectName );
     vars.put( TemplateVariables.SRC, src.toString() );

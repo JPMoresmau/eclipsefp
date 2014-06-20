@@ -56,7 +56,7 @@ public class RunActionDelegate implements IObjectActionDelegate {
       try {
         final IFile cabalFile = BuildWrapperPlugin.getCabalFile( project );
         // Run the command
-        final List<String> commands = new ArrayList<String>();
+        final List<String> commands = new ArrayList<>();
         commands.add( BackendManager.getExecutablePath( IPreferenceConstants.SOURCEGRAPH_EXECUTABLE,SOURCEGRAPH, false ) );
         commands.add(cabalFile.getRawLocation().toOSString());
 

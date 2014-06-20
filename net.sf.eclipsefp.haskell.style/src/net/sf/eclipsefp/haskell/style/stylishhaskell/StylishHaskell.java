@@ -51,7 +51,7 @@ public class StylishHaskell {
 	 * @throws Exception
 	 */
 	public static void runStylishHaskell(String exe, IProject project, File filePath,String charset,Set<String> extensions) throws Exception{
-		List<String> cmd=new ArrayList<String>();
+		List<String> cmd=new ArrayList<>();
 		cmd.add(exe);
 		cmd.add("-i"); // in place
 		String cf=getConfigFile(project);
@@ -74,15 +74,15 @@ public class StylishHaskell {
 			String contents=FileUtil.getContents(filePath, charset);
 	
 			// capture errors
-			StringWriter swErr=new StringWriter();
-			StringWriter swOut=new StringWriter();
-			
-			int code=new ProcessRunner().executeBlocking(filePath.getParentFile(), swOut, swErr,cmd.toArray(new String[cmd.size()]));
-			String err=swErr.toString();
-			if (code!=0 || err.length()>0){
-				// we restore the file contents if we failed
-				FileUtil.writeSharedFile(filePath, contents, 1);
-				throw new IOException(err);
+			try (StringWriter swErr=new StringWriter();
+					StringWriter swOut=new StringWriter()) {
+				int code=new ProcessRunner().executeBlocking(filePath.getParentFile(), swOut, swErr,cmd.toArray(new String[cmd.size()]));
+				String err=swErr.toString();
+				if (code!=0 || err.length()>0){
+					// we restore the file contents if we failed
+					FileUtil.writeSharedFile(filePath, contents, 1);
+					throw new IOException(err);
+				}
 			}
 		} finally {
 			if (tempFile!=null){
@@ -147,16 +147,13 @@ public class StylishHaskell {
 		if (conf!=null){
 			
 			try {
-				ByteArrayOutputStream os=new ByteArrayOutputStream();
-				try {
+				try (ByteArrayOutputStream os=new ByteArrayOutputStream()) {
 					save(conf, os);
-				} finally {
-					os.close();
-				}
-				if (!f.exists()){
-					f.create(new ByteArrayInputStream(os.toByteArray()), true,  new NullProgressMonitor());
-				} else {
-					f.setContents(new ByteArrayInputStream(os.toByteArray()), true, true,  new NullProgressMonitor());
+	                if (!f.exists()){
+	                    f.create(new ByteArrayInputStream(os.toByteArray()), true,  new NullProgressMonitor());
+	                } else {
+	                    f.setContents(new ByteArrayInputStream(os.toByteArray()), true, true,  new NullProgressMonitor());
+	                }
 				}
 			} catch (IOException ioe){
 				StylePlugin.logError(ioe);
@@ -200,13 +197,8 @@ public class StylishHaskell {
 		File jf=pluginp.toFile();
 		jf.getParentFile().mkdirs();
 		
-		try {
-			OutputStream os=new BufferedOutputStream(new FileOutputStream(jf));
-			try {
-				save(conf, os);
-			} finally {
-				os.close();
-			}
+		try (OutputStream os=new BufferedOutputStream(new FileOutputStream(jf))) {
+			save(conf, os);
 		} catch (IOException ioe){
 			StylePlugin.logError(ioe);
 			throw ioe;
@@ -222,12 +214,9 @@ public class StylishHaskell {
 	 */
 	public static SHConfiguration load(String fileLocation) throws IOException{
 		File f=new File(fileLocation);
-		InputStream is=new BufferedInputStream(new FileInputStream(f));
-		try {
+		try (InputStream is=new BufferedInputStream(new FileInputStream(f))) {
 			SHConfiguration config=load(is);
 			return config;
-		} finally {
-			is.close();
 		}
 	}
 	
@@ -271,13 +260,8 @@ public class StylishHaskell {
 		if (f.getParentFile()!=null){
 			f.getParentFile().mkdirs();
 		}
-		
-		OutputStream os=new BufferedOutputStream(new FileOutputStream(f));
-		try {
+		try (OutputStream os=new BufferedOutputStream(new FileOutputStream(f))) {
 			save(config, os);
-		} finally {
-			os.close();
 		}
-		
 	}
 }

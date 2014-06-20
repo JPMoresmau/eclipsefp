@@ -13,6 +13,7 @@ import net.sf.eclipsefp.haskell.buildwrapper.util.BWText;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.DefaultLineTracker;
 import org.eclipse.jface.text.IDocument;
@@ -183,28 +184,16 @@ public class Location {
 		 */
 		private static ILineTracker getLineTracker(String filePath) {
 			ILineTracker lineTracker;
-	    InputStream input = null;
-	    
-	    try {
+	    try (InputStream input = new FileInputStream( filePath ) ){
 	      lineTracker = new DefaultLineTracker();
-	      input = new FileInputStream( filePath );
-	             
+
 	      byte[] contents = new byte[input.available()];
 	      input.read(contents);
 	      String stringContents = new String(contents);
 	      lineTracker.set(stringContents);
 	    }
-	    catch(Exception e) { // CoreException or IOException
+	    catch(IOException e) {
 	      lineTracker = null;
-	    }
-	    finally {
-	      if (input != null)
-	        try {
-	          input.close();
-	        }
-	        catch (IOException e) {
-	         lineTracker = null; 
-	        }
 	    }
 	    return lineTracker;
 	  }
@@ -295,7 +284,7 @@ public class Location {
 
 	public Map<Object,Object> getMarkerProperties(IDocument d){
 		int line= Math.min(getStartLine(),d.getNumberOfLines());
-		final Map<Object,Object> attributes=new HashMap<Object,Object>();
+		final Map<Object,Object> attributes=new HashMap<>();
 		//MarkerUtilities.setLineNumber(attributes, line);
 		//if (getStartLine()==getEndLine()){
 		MarkerUtilities.setLineNumber(attributes, line);
@@ -320,7 +309,7 @@ public class Location {
 	
 	public Map<Object,Object> getMarkerProperties(int maxLines){
 		int line= Math.min(getStartLine(),maxLines);
-		final Map<Object,Object> attributes=new HashMap<Object,Object>();
+		final Map<Object,Object> attributes=new HashMap<>();
 		MarkerUtilities.setLineNumber(attributes, line);
 //		if (getStartLine()==getEndLine()){
 //			int start=getStartColumn();

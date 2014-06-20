@@ -50,7 +50,7 @@ public class DependenciesFormEntry extends FormEntry implements ICellModifier {
   public void init( final IProject project, final Composite parent,
       final FormToolkit toolkit, final int style ) {
 
-    items = new Vector<DependencyItem>();
+    items = new Vector<>();
 
     Table table = toolkit.createTable( parent, SWT.MULTI );
     GridData listGD = new GridData( GridData.FILL_BOTH );
@@ -82,7 +82,7 @@ public class DependenciesFormEntry extends FormEntry implements ICellModifier {
 
       @Override
       public void run() {
-        List<String> alreadySelected = new ArrayList<String>();
+        List<String> alreadySelected = new ArrayList<>();
         for( DependencyItem item: items ) {
           alreadySelected.add( item.getPackage() );
         }
@@ -149,7 +149,7 @@ public class DependenciesFormEntry extends FormEntry implements ICellModifier {
 
     isCellEditing = true;
     String[] elements = newValue.split( "," );
-    items = new ArrayList<DependencyItem>(elements.length);
+    items = new ArrayList<>(elements.length);
     for( String element: elements ) {
       items.add( DependencyItem.fromString( element ) );
     }

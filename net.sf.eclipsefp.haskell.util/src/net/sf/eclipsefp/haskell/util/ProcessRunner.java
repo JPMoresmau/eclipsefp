@@ -157,7 +157,7 @@ public class ProcessRunner implements IProcessRunner {
 		  } catch (InterruptedException ignore){
 			  // noop
 		  }
-		  List<String> ret=new ArrayList<String>();
+		  List<String> ret=new ArrayList<>();
 		  // now we should have the proper result
 		  BufferedReader br=new BufferedReader(new StringReader(sw.toString().trim()));
 		  String line=br.readLine();

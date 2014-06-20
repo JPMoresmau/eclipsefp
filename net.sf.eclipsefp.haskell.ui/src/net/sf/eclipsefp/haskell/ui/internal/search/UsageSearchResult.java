@@ -48,7 +48,7 @@ public class UsageSearchResult extends AbstractTextSearchResult {
   /**
    * all matches by file
    */
-  private final Map<IFile,Match[]> matchByFile=new HashMap<IFile, Match[]>();
+  private final Map<IFile,Match[]> matchByFile=new HashMap<>();
 
   /**
    * search string
@@ -109,12 +109,12 @@ public class UsageSearchResult extends AbstractTextSearchResult {
   public void setResults( final UsageResults results ) {
     this.results = results;
     matchByFile.clear();
-    final List<Match> matches=new ArrayList<Match>();
+    final List<Match> matches=new ArrayList<>();
     if (this.results!=null){
       for (IProject p:this.results.listProjects()){
         Map<IFile,Map<String,Collection<SearchResultLocation>>> m=this.results.getUsageInProject( p );
         for (IFile f:m.keySet()){
-          List<Match> myMatches=new ArrayList<Match>();
+          List<Match> myMatches=new ArrayList<>();
           Map<String,Collection<SearchResultLocation>> uls=m.get( f );
           for (String sec:uls.keySet()){
 

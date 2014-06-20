@@ -16,7 +16,7 @@ import java.util.LinkedList;
  */
 public class CappedStringWriter extends Writer {
 	private int maxSize;
-	private LinkedList<String> ls=new LinkedList<String>();
+	private LinkedList<String> ls=new LinkedList<>();
 	private int size;
 	
 	public CappedStringWriter(int max){

@@ -67,11 +67,11 @@ public class OutlineDef {
 		}
 	};
 	
-	private Set<OutlineDefType> types=new HashSet<OutlineDefType>();
+	private Set<OutlineDefType> types=new HashSet<>();
 	private String name;
 	private Location loc;
 	
-	private List<OutlineDef> children=new ArrayList<OutlineDef>();
+	private List<OutlineDef> children=new ArrayList<>();
 	
 	/**
 	 * the type signature or "?" if not known

@@ -379,16 +379,16 @@ public class HaskellContentAssistProcessor implements IContentAssistProcessor {
     ImportsManager mgr =editor!=null?editor.getImportsManager():null;
         //new ImportsManager( theFile, doc );
     //long t0=System.currentTimeMillis();
-    Map<String, Documented> decls = new HashMap<String, Documented>();
+    Map<String, Documented> decls = new HashMap<>();
     //long t1=System.currentTimeMillis();
     //HaskellUIPlugin.log( "getDeclarations:"+(t1-t0), IStatus.INFO );
-    ArrayList<String> elts = new ArrayList<String>();
-    ArrayList<String> typeElts = new ArrayList<String>();
+    ArrayList<String> elts = new ArrayList<>();
+    ArrayList<String> typeElts = new ArrayList<>();
 
     // declaration key to package
-    Map<String,String> packages=new HashMap<String, String>();
+    Map<String,String> packages=new HashMap<>();
     // constructor key to declaration name (if we use a constructor from a new module, we need to import to data type, not the constructor)
-    Map<String,String> constructors=new HashMap<String, String>();
+    Map<String,String> constructors=new HashMap<>();
 
     //ProposalScope ps=ProposalScope.valueOf( HaskellUIPlugin.getDefault().getPreferenceStore().getString( IEditorPreferenceNames.CA_PROPOSALS_SCOPE ) );
 
@@ -447,7 +447,7 @@ public class HaskellContentAssistProcessor implements IContentAssistProcessor {
             PackageDescription pd=PackageDescriptionLoader.load(cf);
             Map<String,List<PackageDescriptionStanza>> pds=pd.getStanzasBySourceDir();
             // retrieve all possible source containers for the library
-            Set<IContainer> srcs=new HashSet<IContainer>();
+            Set<IContainer> srcs=new HashSet<>();
             PackageDescriptionStanza pdLibrary=null;
             for (String src:pds.keySet()){
               for (PackageDescriptionStanza pd1:pds.get( src )){
@@ -459,7 +459,7 @@ public class HaskellContentAssistProcessor implements IContentAssistProcessor {
               }
             }
             if (pdLibrary!=null){
-                Collection<IFile> fs=new ArrayList<IFile>();
+                Collection<IFile> fs=new ArrayList<>();
                 // find the file for all exposed modules
                 String ps=pdLibrary.getProperties().get( CabalSyntax.FIELD_EXPOSED_MODULES );
                 List<String> ls=PackageDescriptionLoader.parseList( ps );
@@ -719,7 +719,7 @@ public class HaskellContentAssistProcessor implements IContentAssistProcessor {
 	  AnImport imp = new AnImport( new ImportDef(moduleName, null, false, false, null ),false);
 	  Map<String, FileDocumented> decls = imp.getDeclarations( theFile.getProject(), theFile, doc );
 
-	  ArrayList<String> names = new ArrayList<String>();
+	  ArrayList<String> names = new ArrayList<>();
 	  for (Map.Entry<String, FileDocumented> decl : decls.entrySet()) {
 	    String s = decl.getKey();
 	    if (s.indexOf( '.' ) == -1 && s.startsWith( prefix )) {
@@ -760,11 +760,11 @@ public class HaskellContentAssistProcessor implements IContentAssistProcessor {
 //	}
 
 	private ICompletionProposal[] moduleNamesContext(final IFile file, final int offset) {
-	  moduleGraphNames = new ArrayList<String>();
+	  moduleGraphNames = new ArrayList<>();
 	  for (PackageDescriptionStanza pds: ResourceUtil.getApplicableStanzas( new IFile[]{file} )){
 	    moduleGraphNames.addAll(pds.listAllModules());
 	  }
-	  exposedModules = new ArrayList<String>();
+	  exposedModules = new ArrayList<>();
 
 	  if (BackendManager.getCabalImplDetails().isSandboxed()){
 	    try {
@@ -796,7 +796,7 @@ public class HaskellContentAssistProcessor implements IContentAssistProcessor {
     // List<String> modules = new ArrayList<String>();
     final String normalizedPrefix = prefix.toLowerCase(Locale.ENGLISH);
 
-    Set<String> modules = new HashSet<String>();
+    Set<String> modules = new HashSet<>();
 
     for (String m : BrowserPlugin.getSharedInstance().getCachedModuleNames()) {
       if (prefix.length() == 0 || m.toLowerCase().startsWith( normalizedPrefix )) {
@@ -849,7 +849,7 @@ public class HaskellContentAssistProcessor implements IContentAssistProcessor {
 	  }
 	  List<String> extensions=CompilerManager.getExtensions();
 	  if (extensions!=null){
-	    List<String> ext = new ArrayList<String>();
+	    List<String> ext = new ArrayList<>();
 	    for (String e:extensions){
 	      if (normalizedPrefix.equals("") || e.toUpperCase( Locale.ENGLISH ).startsWith( normalizedPrefix )){
 	        ext.add(e);

@@ -14,7 +14,7 @@ import org.eclipse.swt.graphics.Image;
   * @author JP Moresmau
  */
 public class OutlineLabelProvider extends LabelProvider {
-  private static Map<OutlineDef.OutlineDefType,String> imageKeysByType=new HashMap<OutlineDef.OutlineDefType, String>();
+  private static Map<OutlineDef.OutlineDefType,String> imageKeysByType=new HashMap<>();
 
   static {
     imageKeysByType.put(OutlineDef.OutlineDefType.CLASS,IImageNames.CLASS_DECL);

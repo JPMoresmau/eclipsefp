@@ -53,7 +53,7 @@ import org.json.JSONObject;
  *
  */
 public class TaskTagsPP extends AbstractEditorPP {
-  private final Set<TaskTag> tags=new HashSet<TaskTag>();
+  private final Set<TaskTag> tags=new HashSet<>();
   private TableViewer tableViewer;
   private Table tTags;
 
@@ -205,7 +205,7 @@ public class TaskTagsPP extends AbstractEditorPP {
   }
 
   private void setInput(){
-    List<TaskTag> lTags=new ArrayList<TaskTag>(tags);
+    List<TaskTag> lTags=new ArrayList<>(tags);
     Collections.sort( lTags,new Comparator<TaskTag>() {
       /* (non-Javadoc)
        * @see java.util.Comparator#compare(java.lang.Object, java.lang.Object)

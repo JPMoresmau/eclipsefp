@@ -23,7 +23,7 @@ import org.eclipse.ui.console.IOConsoleOutputStream;
  */
 public class HaskellConsole extends IOConsole {
 
-  public List<IOConsoleOutputStream> streams=new LinkedList<IOConsoleOutputStream>();
+  public List<IOConsoleOutputStream> streams=new LinkedList<>();
   /**
    * Construct and register the console with the console manager.
    */

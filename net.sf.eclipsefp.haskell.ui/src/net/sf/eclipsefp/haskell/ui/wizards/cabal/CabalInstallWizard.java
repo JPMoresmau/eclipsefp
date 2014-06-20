@@ -45,7 +45,7 @@ public class CabalInstallWizard extends Wizard {
   public boolean performFinish() {
     final String cabalExecutable=CabalImplementationManager.getCabalExecutable();
     if (cabalExecutable!=null){
-      final List<String> commands = new ArrayList<String>();
+      final List<String> commands = new ArrayList<>();
       commands.add( cabalExecutable );
       commands.add("install");
    // options
@@ -60,7 +60,7 @@ public class CabalInstallWizard extends Wizard {
       commands.add( "--reinstall" );
       for (final IProject p:projects){
         try {
-          List<String> prjCommands = new ArrayList<String>(commands);
+          List<String> prjCommands = new ArrayList<>(commands);
           BWFacade bf=BuildWrapperPlugin.getFacade( p );
           // need to provide user supplied info
           if(bf!=null){

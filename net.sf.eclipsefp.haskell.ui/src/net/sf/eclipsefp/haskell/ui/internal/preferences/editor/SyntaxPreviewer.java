@@ -132,8 +132,7 @@ public class SyntaxPreviewer extends SourceViewer implements IEditorPreferenceNa
 
   private static String loadTextFromResource( final String name ) {
     String result = ""; //$NON-NLS-1$
-    try {
-      InputStream stream = SyntaxPreviewer.class.getResourceAsStream( name );
+    try (InputStream stream = SyntaxPreviewer.class.getResourceAsStream( name )) {
       result = ResourceUtil.readStream( stream );
     } catch( Exception ex ) {
       HaskellUIPlugin.log( "Could not read preview file.", ex ); //$NON-NLS-1$

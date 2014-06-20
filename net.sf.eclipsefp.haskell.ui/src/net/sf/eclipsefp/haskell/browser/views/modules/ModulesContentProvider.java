@@ -85,8 +85,8 @@ public class ModulesContentProvider implements ITreeContentProvider {
 		// Do nothing
 
 		if (newInput == null) {
-			linearCache = new ArrayList<ModulesItem>();
-			hierarchicalCache = new ArrayList<ModulesItem>();
+			linearCache = new ArrayList<>();
+			hierarchicalCache = new ArrayList<>();
 		} else {
 			try {
 			  Database db=Database.ALL;
@@ -102,8 +102,8 @@ public class ModulesContentProvider implements ITreeContentProvider {
         }
 
 
-				linearCache = new ArrayList<ModulesItem>();
-				hierarchicalCache = new ArrayList<ModulesItem>();
+				linearCache = new ArrayList<>();
+				hierarchicalCache = new ArrayList<>();
 				Module[] modules = BrowserPlugin.getSharedInstance().getAllModules(db);
 				for (Module module : modules) {
 					linearCache.add(new ModulesItem(newInput, module.getName(), module));
@@ -111,8 +111,8 @@ public class ModulesContentProvider implements ITreeContentProvider {
 				}
 
 			} catch (Throwable ex) {
-				linearCache = new ArrayList<ModulesItem>();
-				hierarchicalCache = new ArrayList<ModulesItem>();
+				linearCache = new ArrayList<>();
+				hierarchicalCache = new ArrayList<>();
 			}
 		}
 	}

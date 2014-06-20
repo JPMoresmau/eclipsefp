@@ -157,7 +157,7 @@ public class HaskellEditor extends TextEditor implements IEditorPreferenceNames,
   /**
    * the names in scope as given by GHC
    */
-  private final Collection<NameDef> names=new ArrayList<NameDef>();
+  private final Collection<NameDef> names=new ArrayList<>();
 
   /**
    * The scion-server supporting this editor.
@@ -183,7 +183,7 @@ public class HaskellEditor extends TextEditor implements IEditorPreferenceNames,
         }
       } else if (!or.isBuildOK() && or.getNotes()!=null && or.getNotes().size()>0 &&
            (lastOutlineResult==null || lastOutlineResult.isEmpty())){
-        List<OutlineDef> errorsOutline=new ArrayList<OutlineDef>();
+        List<OutlineDef> errorsOutline=new ArrayList<>();
         for (Note n:or.getNotes()){
           if (n.getKind().equals( Note.Kind.ERROR )){
             OutlineDef def=new OutlineDef(n.getMessage(),OutlineDefType.ERROR,n.getLocation()) ;
@@ -271,7 +271,7 @@ public class HaskellEditor extends TextEditor implements IEditorPreferenceNames,
 
   @Override
   protected String[] collectContextMenuPreferencePages() {
-    List<String> ls=new ArrayList<String>(Arrays.asList( super.collectContextMenuPreferencePages()));
+    List<String> ls=new ArrayList<>(Arrays.asList( super.collectContextMenuPreferencePages()));
     ls.add( "net.sf.eclipsefp.haskell.ui.internal.preferences.editor.AppearancePP" );
     //ls.add("net.sf.eclipsefp.haskell.ui.internal.preferences.editor.AnnotationsPP");
     ls.add( "net.sf.eclipsefp.haskell.ui.internal.preferences.editor.SyntaxPP");
@@ -282,7 +282,7 @@ public class HaskellEditor extends TextEditor implements IEditorPreferenceNames,
 
   @Override
   protected String[] collectOverviewRulerMenuPreferencePages() {
-    List<String> ls=new ArrayList<String>(Arrays.asList( super.collectOverviewRulerMenuPreferencePages()));
+    List<String> ls=new ArrayList<>(Arrays.asList( super.collectOverviewRulerMenuPreferencePages()));
     ls.add( "net.sf.eclipsefp.haskell.ui.internal.preferences.editor.AppearancePP" );
     //ls.add("net.sf.eclipsefp.haskell.ui.internal.preferences.editor.AnnotationsPP");
     return ls.toArray( new String[ls.size()] );
@@ -814,7 +814,7 @@ public class HaskellEditor extends TextEditor implements IEditorPreferenceNames,
 //  }
 
   public List<String> getLocalNames(){
-    List<String> ls=new ArrayList<String>();
+    List<String> ls=new ArrayList<>();
     if (outlinePage!=null && outlinePage.getInput()!=null){
       for (OutlineDef od:outlinePage.getInput()){
         ls.add(od.getName());
@@ -826,7 +826,7 @@ public class HaskellEditor extends TextEditor implements IEditorPreferenceNames,
   private void buildDefByName(){
     if (outlinePage!=null && outlinePage.getInput()!=null){
 
-      defByName=new HashMap<String, List<OutlineDef>>();
+      defByName=new HashMap<>();
       for (OutlineDef od:outlinePage.getInput()){
         buildDefByName(od);
       }
@@ -836,7 +836,7 @@ public class HaskellEditor extends TextEditor implements IEditorPreferenceNames,
   private void buildDefByName(final OutlineDef od){
     List<OutlineDef> l=defByName.get( od.getName());
     if(l==null){
-      l=new ArrayList<OutlineDef>();
+      l=new ArrayList<>();
       defByName.put( od.getName(), l );
     }
     l.add( od );

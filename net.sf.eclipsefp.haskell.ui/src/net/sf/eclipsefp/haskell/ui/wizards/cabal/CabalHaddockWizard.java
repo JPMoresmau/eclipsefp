@@ -39,7 +39,7 @@ import org.eclipse.ui.PlatformUI;
  *
  */
 public class CabalHaddockWizard extends Wizard implements IExportWizard {
-  private final Set<IProject> projects=new LinkedHashSet<IProject>();
+  private final Set<IProject> projects=new LinkedHashSet<>();
   private CabalHaddockOptionsPage optionsPage;
 
   /**
@@ -76,7 +76,7 @@ public class CabalHaddockWizard extends Wizard implements IExportWizard {
   public boolean performFinish() {
     final String cabalExecutable=CabalImplementationManager.getCabalExecutable();
     if (cabalExecutable!=null){
-      final List<String> commands = new ArrayList<String>();
+      final List<String> commands = new ArrayList<>();
       commands.add( cabalExecutable );
       commands.add("haddock");
       // options

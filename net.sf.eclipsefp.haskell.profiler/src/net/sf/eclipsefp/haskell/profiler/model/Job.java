@@ -37,7 +37,7 @@ public class Job {
 		this.date = date;
 		this.sampleUnit = sampleUnit;
 		this.valueUnit = valueUnit;
-		this.samples = new LinkedHashMap<Float, Sample>();
+		this.samples = new LinkedHashMap<>();
 	}
 
 	public String getName() {
@@ -86,7 +86,7 @@ public class Job {
 	}
 	
 	public Map<String, BigInteger> getTotalByEntry() {
-		LinkedHashMap<String, BigInteger> result = new LinkedHashMap<String, BigInteger>();
+		LinkedHashMap<String, BigInteger> result = new LinkedHashMap<>();
 		for (Sample s : getSamples()) {
 			for (Map.Entry<String, Long> e : s.getEntries()) {
 				if (!result.containsKey(e.getKey())) {
@@ -101,7 +101,7 @@ public class Job {
 	
 	public List<Map.Entry<String, BigInteger>> sortEntriesByTotal() {
 		ArrayList<Map.Entry<String, BigInteger>> totals =
-				new ArrayList<Map.Entry<String, BigInteger>>(
+				new ArrayList<>(
 						getTotalByEntry().entrySet());
 		Collections.sort(totals, new Comparator<Map.Entry<String, BigInteger>>() {
 			@Override

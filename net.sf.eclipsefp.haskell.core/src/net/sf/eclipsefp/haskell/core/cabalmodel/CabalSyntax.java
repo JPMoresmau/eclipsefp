@@ -128,7 +128,7 @@ public enum CabalSyntax {
     return cabalName;
   }
 
-  public static final Map<String,CabalSyntax> sections=new HashMap<String, CabalSyntax>();
+  public static final Map<String,CabalSyntax> sections=new HashMap<>();
   static {
     for (CabalSyntax cs:CabalSyntax.values() ){
       if (cs.isSectionHeader()){

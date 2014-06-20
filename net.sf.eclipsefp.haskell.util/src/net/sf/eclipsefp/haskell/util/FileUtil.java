@@ -60,10 +60,10 @@ public class FileUtil {
   public static final String UTF8="UTF8"; //$NON-NLS-1$
   
   /** Candidate locations to search for files on a path */
-  static final ArrayList<File> candidateLocations = new ArrayList<File>(32);
+  static final ArrayList<File> candidateLocations = new ArrayList<>(32);
 
   
-  public static Set<String> haskellExtensions=new HashSet<String>();
+  public static Set<String> haskellExtensions=new HashSet<>();
   
   static {
     // Initialize the candidate file locations list, since this doesn't
@@ -81,7 +81,7 @@ public class FileUtil {
     }
 
     // add common bin directories from the user's home directory
-    ArrayList<String> homes = new ArrayList<String>();
+    ArrayList<String> homes = new ArrayList<>();
     final String envHome = System.getenv("HOME"); //$NON-NLS-1$
 
     homes.add(envHome);
@@ -192,7 +192,7 @@ public class FileUtil {
 
   public static File findInPath(final String shortFileName, final FileFilter ff) {
     // Shallow copy is sufficient in this case
-    ArrayList<File> candidates = new ArrayList<File>(candidateLocations);
+    ArrayList<File> candidates = new ArrayList<>(candidateLocations);
 
     // Add the current working directory, since it might change.
     String pwd = System.getProperty("user.dir"); //$NON-NLS-1$
@@ -294,14 +294,14 @@ public class FileUtil {
 	  String ret="";
 	  if (f.exists()){
 		  ByteArrayOutputStream baos=new ByteArrayOutputStream();
-		  InputStream is=f.getContents(true);
-		  byte[] buf=new byte[4096];
-		  int r=is.read(buf);
-		  while (r>-1){
-			  baos.write(buf,0,r);
-			  r=is.read(buf);
+		  try (InputStream is=f.getContents(true)) {
+		      byte[] buf=new byte[4096];
+		      int r=is.read(buf);
+		      while (r>-1){
+		          baos.write(buf,0,r);
+		          r=is.read(buf);
+		      }
 		  }
-		  is.close();
 		  ret=new String(baos.toByteArray(),f.getCharset());
 	  }
 	  return ret;
@@ -317,26 +317,24 @@ public class FileUtil {
   public static String getContents(File f,String charSet) throws IOException{
 	  String ret="";
 	  if (f.exists()){
-		  ByteArrayOutputStream baos=new ByteArrayOutputStream();
-		  InputStream is=new BufferedInputStream(new FileInputStream(f));
-		  byte[] buf=new byte[4096];
-		  int r=is.read(buf);
-		  while (r>-1){
-			  baos.write(buf,0,r);
-			  r=is.read(buf);
-		  }
-		  is.close();
-		  ret=new String(baos.toByteArray(),charSet);
+			try (ByteArrayOutputStream baos=new ByteArrayOutputStream();
+					InputStream is=new BufferedInputStream(new FileInputStream(f))) {
+				byte[] buf=new byte[4096];
+				int r=is.read(buf);
+				while (r>-1){
+					baos.write(buf,0,r);
+					r=is.read(buf);
+			}
+			ret=new String(baos.toByteArray(),charSet);
+		}
 	  }
 	  return ret;
   }
   
   
   public static void writeSharedFile(File tgt,String contents,int tries) throws IOException{
-	  try {
-			Writer w=new OutputStreamWriter(new BufferedOutputStream(new FileOutputStream(tgt)),UTF8);
+	  try (Writer w=new OutputStreamWriter(new BufferedOutputStream(new FileOutputStream(tgt)),UTF8)) {
 			w.write(contents);
-			w.close();
 	  } catch (FileNotFoundException e){
 		  if (tries>1 && e.getMessage().toLowerCase(Locale.ENGLISH).contains("another process")){
 			  try {
@@ -348,8 +346,6 @@ public class FileUtil {
 			  return;
 		  }
 		  throw e;
-		} catch (IOException e){
-			throw e;
 		}
   }
 }

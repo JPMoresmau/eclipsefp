@@ -36,14 +36,12 @@ public class CabalModelTest extends TestCase {
   }
 
   public static String getContent(final String fileName){
-    try {
-      InputStream is=CabalModelTest.class.getResourceAsStream( fileName);
-      ByteArrayOutputStream baos=new ByteArrayOutputStream();
+    try (InputStream is=CabalModelTest.class.getResourceAsStream( fileName);
+        ByteArrayOutputStream baos=new ByteArrayOutputStream()) {
       int c=-1;
       while ((c=is.read())!=-1){
         baos.write(c);
       }
-      is.close();
       return new String(baos.toByteArray(),FileUtil.UTF8);
     } catch (Exception e){
       e.printStackTrace();
@@ -571,7 +569,7 @@ public class CabalModelTest extends TestCase {
     PackageDescriptionStanza pds=pd.getStanzas().get( 3 );
     assertEquals(CabalSyntax.SECTION_LIBRARY,pds.getType());
     Collection<String> ss=pds.getDependentPackages();
-    Set<String> expected=new HashSet<String>();
+    Set<String> expected=new HashSet<>();
     expected.addAll( Arrays.asList( "base"  ,
         "Cabal",
         "containers",

@@ -63,7 +63,7 @@ public class HsModuleTemplateVariable extends TemplateVariableResolver {
         //final ScionInstance si = getScionInstance( file );
         //Assert.isNotNull( si );
 
-        List<String> result = new ArrayList<String>();
+        List<String> result = new ArrayList<>();
 
         result.addAll( BrowserPlugin.getSharedInstance().getCachedModuleNames() );
 //        for (String s : si.moduleGraph()) {

@@ -19,7 +19,7 @@ public class CompilerParams implements IGhcPreferenceNames{
   }
 
   public List<String> construct(final String version) {
-    List<String> result = new ArrayList<String>();
+    List<String> result = new ArrayList<>();
     addOptimizationLevel( result );
    /* addLanguageParams( result );
     addOptimizationParams( result );

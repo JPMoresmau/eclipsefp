@@ -1,6 +1,7 @@
 package net.sf.eclipsefp.haskell.core.uuagc;
 
 import java.io.ByteArrayInputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -37,11 +38,11 @@ public class UuagcProjectManager {
   public void initFromProject() {
     IPath path = new Path( UUAGC_OPTIONS_FILENAME );
     if( project.exists( path ) ) {
-      try {
-        InputStream stream = project.getFile( path ).getContents();
-        String contents = new Scanner( stream ).useDelimiter( "\\Z" ).next(); //$NON-NLS-1$
+      try (InputStream stream = project.getFile( path ).getContents();
+          Scanner scanner = new Scanner( stream )) {
+        String contents = scanner.useDelimiter( "\\Z" ).next(); //$NON-NLS-1$
         initFromContents( contents );
-      } catch( CoreException e ) {
+      } catch( CoreException | IOException e ) {
         initFromContents( "" ); //$NON-NLS-1$
       }
     } else {
@@ -51,7 +52,7 @@ public class UuagcProjectManager {
 
   public void initFromContents( final String contents ) {
     // Initialize the files
-    files = new ArrayList<UuagcFile>();
+    files = new ArrayList<>();
     // Parse the file
     String[] lines = contents.split( "[\r\n]+" ); //$NON-NLS-1$
     for (int i = 0; i < lines.length; i++) {
@@ -68,7 +69,7 @@ public class UuagcProjectManager {
           if (line.startsWith( OPTIONS_INIT )) {
             colonPos = line.indexOf( ':' );
             String options = line.substring( colonPos + 1 ).trim();
-            ArrayList<String> optionsList = new ArrayList<String>(  );
+            ArrayList<String> optionsList = new ArrayList<>(  );
             for (String option : options.split( "[ ]*,[ ]*" )) { //$NON-NLS-1$
               optionsList.add( option );
             }
