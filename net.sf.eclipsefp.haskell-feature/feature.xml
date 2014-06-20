@@ -88,7 +88,7 @@ available at http://www.eclipse.org/legal/epl-v10.html.
          id="net.sf.eclipsefp.haskell.doc.user"
          download-size="0"
          install-size="0"
-         version="2.6.0.qualifier"
+         version="2.6.1.qualifier"
          unpack="false"/>
 
    <plugin
@@ -102,35 +102,35 @@ available at http://www.eclipse.org/legal/epl-v10.html.
          id="net.sf.eclipsefp.haskell.hugs"
          download-size="0"
          install-size="0"
-         version="2.5.5.qualifier"
+         version="2.6.1.qualifier"
          unpack="false"/>
 
    <plugin
          id="net.sf.eclipsefp.haskell.ghccompiler"
          download-size="0"
          install-size="0"
-         version="2.5.6.qualifier"
+         version="2.6.1.qualifier"
          unpack="false"/>
 
    <plugin
          id="net.sf.eclipsefp.haskell.debug.ui"
          download-size="0"
          install-size="0"
-         version="2.6.0.qualifier"
+         version="2.6.1.qualifier"
          unpack="false"/>
 
    <plugin
          id="net.sf.eclipsefp.haskell.debug.core"
          download-size="0"
          install-size="0"
-         version="2.6.0.qualifier"
+         version="2.6.1.qualifier"
          unpack="false"/>
 
    <plugin
          id="net.sf.eclipsefp.haskell.compat"
          download-size="0"
          install-size="0"
-         version="2.2.4"
+         version="2.6.1.qualifier"
          unpack="false"/>
 
    <plugin
@@ -144,14 +144,14 @@ available at http://www.eclipse.org/legal/epl-v10.html.
          id="net.sf.eclipsefp.haskell.browser"
          download-size="0"
          install-size="0"
-         version="2.6.0.qualifier"
+         version="2.6.1.qualifier"
          unpack="false"/>
 
    <plugin
          id="net.sf.eclipsefp.haskell.hlint"
          download-size="0"
          install-size="0"
-         version="2.5.5.qualifier"
+         version="2.6.1.qualifier"
          unpack="false"/>
 
    <plugin
@@ -172,7 +172,7 @@ available at http://www.eclipse.org/legal/epl-v10.html.
          id="net.sf.eclipsefp.haskell.profiler"
          download-size="0"
          install-size="0"
-         version="2.6.0.qualifier"
+         version="2.6.1.qualifier"
          unpack="false"/>
 
 </feature>
