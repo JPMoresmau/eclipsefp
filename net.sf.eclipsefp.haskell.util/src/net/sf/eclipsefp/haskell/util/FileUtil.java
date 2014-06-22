@@ -15,6 +15,8 @@ import java.io.Writer;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Locale;
+import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 
 import org.eclipse.core.resources.IFile;
@@ -65,11 +67,57 @@ public class FileUtil {
   
   public static Set<String> haskellExtensions=new HashSet<>();
   
+  /**
+   * PATH is case insensitive on windows
+   * @return the current value of the path
+   */
+  public static String getPath(){
+	  return getPath(System.getenv());
+  }
+  
+  
+  /**
+   * PATH is case insensitive on windows
+   * @return the proper name of the PATH env variable
+   */
+  public static String getPathVariable(){
+	  return getPathVariable(System.getenv());
+  }
+  
+  /**
+   * PATH is case insensitive on windows
+   * @param env the environment map
+   * @return the current value of the path
+   */
+  public static String getPath(Map<String,String> env){
+	  for (Entry<String, String> e:env.entrySet()){
+		  if ("PATH".equalsIgnoreCase(e.getKey())){
+			  return e.getValue();
+		  }
+	  }
+	  return "";
+  }
+  
+  
+  /**
+   * PATH is case insensitive on windows
+   * @param env the environment map
+   * @return the proper name of the PATH env variable
+   */
+  public static String getPathVariable(Map<String,String> env){
+	  for (String k:env.keySet()){
+		  if ("PATH".equalsIgnoreCase(k)){
+			  return k;
+		  }
+	  }
+	  return "PATH";
+  }
+  
   static {
     // Initialize the candidate file locations list, since this doesn't
     // change during runtime.
     // add all directories from the PATH environment variable
-    String path = System.getenv("PATH"); //$NON-NLS-1$
+    String path = getPath(); //$NON-NLS-1$
     for (String dir : path.split(File.pathSeparator)) {
       File f=new File(dir);
       candidateLocations.add(f);

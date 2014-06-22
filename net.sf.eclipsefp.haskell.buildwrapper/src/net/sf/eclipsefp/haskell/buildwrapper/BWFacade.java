@@ -1319,14 +1319,14 @@ public class BWFacade {
 			String path=new File(bwPath).getParent();
 			if (path!=null){
 				Map<String,String> env=pb.environment();
-				String pathValue=env.get("PATH");
+				String pathValue=FileUtil.getPath(env);
 				if (Boolean.TRUE.equals(needPath) || pathValue==null || pathValue.length()==0 || !pathValue.contains(path)){
 					if (pathValue==null || pathValue.length()==0){
 						pathValue=path;
 					} else {
 						pathValue+=File.pathSeparator+path;
 					}
-					env.put("PATH",pathValue);
+					env.put(FileUtil.getPathVariable(env),pathValue);
 					needPath=true;
 				} 
 			}

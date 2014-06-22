@@ -38,8 +38,6 @@ public class GHCSyntax {
   /** <p>The name of the <code>package.conf</code> file.</p> */
   public static final String FILE_PACKAGE_CONF = "package.conf"; //$NON-NLS-1$
 
-  /** <p>The environment variable <code>PATH</code>.</p> */
-  public static final String ENV_PATH = "PATH";  //$NON-NLS-1$
   /** <p>The environment variable <code>GHC_PACKAGE_PATH</code>.</p> */
   public static final String ENV_GHC_PACKAGE_PATH = "GHC_PACKAGE_PATH";  //$NON-NLS-1$
 

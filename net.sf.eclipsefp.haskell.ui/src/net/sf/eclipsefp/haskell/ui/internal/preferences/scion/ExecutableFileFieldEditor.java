@@ -206,7 +206,7 @@ public class ExecutableFileFieldEditor extends StringButtonFieldEditor {
     }
 		File file = new File(fileName);
 		if (!file.exists() && !file.isAbsolute() && !enforceAbsolute){
-		  String path = System.getenv("PATH"); //$NON-NLS-1$
+		  String path = FileUtil.getPath();
 	    for (String dir : path.split(File.pathSeparator)) {
 	      file=new File(dir,fileName);
 	      if (file.exists()){
