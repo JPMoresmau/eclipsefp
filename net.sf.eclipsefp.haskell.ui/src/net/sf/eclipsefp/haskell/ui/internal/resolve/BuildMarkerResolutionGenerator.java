@@ -473,7 +473,7 @@ public class BuildMarkerResolutionGenerator implements
           String flag=msg.substring( start).trim();
           ret=addPragma(res,flag);
         }
-         // return if we foind something, otherwise look for another string
+         // return if we find something, otherwise look for another string
          if (ret){
            return true;
          }
@@ -489,9 +489,14 @@ public class BuildMarkerResolutionGenerator implements
    * @return true if the pragma was valid, false otherwise
    */
   private boolean addPragma(final List<IMarkerResolution> res,final String flag){
-    if (flag!=null && flag.length()>2 && flag.startsWith( "-X" )){ //$NON-NLS-1$
-      res.add( new AddLanguagePragmaResolution( flag.substring( 2 ) ) );
-      return true;
+    if (flag!=null){
+      if (flag.length()>2 && flag.startsWith( "-X" )){ //$NON-NLS-1$
+        res.add( new AddLanguagePragmaResolution( flag.substring( 2 ) ) );
+        return true;
+      } else if (flag.length()>0 && Character.isUpperCase( flag.charAt( 0 ))){
+        res.add( new AddLanguagePragmaResolution( flag ) );
+        return true;
+      }
     }
     return false;
   }
