@@ -1,4 +1,4 @@
-EclipseFP Haskell 2.6.0
+EclipseFP Haskell 2.6.1
 
 Release Notes
 

@@ -49,7 +49,7 @@ public enum CabalSyntax {
   FIELD_OTHER_MODULES("other-modules"),//$NON-NLS-1$
   FIELD_HS_SOURCE_DIRS("hs-source-dirs"),//$NON-NLS-1$
   FIELD_EXTENSIONS("extensions"),//$NON-NLS-1$
-  FIELD_DEFAULT_EXTENSIONS("default-extension"),//$NON-NLS-1$
+  FIELD_DEFAULT_EXTENSIONS("default-extensions"),//$NON-NLS-1$
   FIELD_OTHER_EXTENSIONS("other-extensions"),//$NON-NLS-1$
   FIELD_DEFAULT_LANGUAGE("default-language"),//$NON-NLS-1$
   FIELD_OTHER_LANGUAGES("other-languages"),//$NON-NLS-1$
