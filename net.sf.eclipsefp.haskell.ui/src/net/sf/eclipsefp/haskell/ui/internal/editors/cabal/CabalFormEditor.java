@@ -177,7 +177,8 @@ public class CabalFormEditor extends FormEditor implements ITextEditorExtension{
   //////////////////////////////////
 
   @Override
-  public Object getAdapter( final Class adapter ) {
+  public Object getAdapter(
+      @SuppressWarnings("rawtypes") final Class adapter ) {
     Object result = super.getAdapter( adapter );
     if( result == null && cabalSourceEditor != null ) {
       result = cabalSourceEditor.getAdapter( adapter );

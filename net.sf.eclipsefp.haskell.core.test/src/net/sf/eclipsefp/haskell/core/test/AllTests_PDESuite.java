@@ -1,6 +1,5 @@
 package net.sf.eclipsefp.haskell.core.test;
 
-import junit.framework.Assert;
 import junit.framework.Test;
 import junit.framework.TestSuite;
 import net.sf.eclipsefp.haskell.core.code.SourceFileGenerator_PDETest;
@@ -12,6 +11,7 @@ import net.sf.eclipsefp.haskell.core.internal.project.ProjectCreationOperation_P
 import net.sf.eclipsefp.haskell.core.internal.util.ResourceUtil_PDETest;
 import net.sf.eclipsefp.haskell.core.project.HaskellProjectCreationOperation_PDETest;
 import net.sf.eclipsefp.haskell.core.project.HaskellResource_PDETest;
+import org.junit.Assert;
 
 public class AllTests_PDESuite {
 

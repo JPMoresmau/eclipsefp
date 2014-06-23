@@ -196,7 +196,8 @@ public class CabalEditor extends TextEditor {
   //////////////////////////////////
 
   @Override
-  public Object getAdapter( final Class adapterType ) {
+  public Object getAdapter(
+      @SuppressWarnings("rawtypes") final Class adapterType ) {
     Object result = null;
     if( IContentOutlinePage.class.equals( adapterType ) ) {
       if( outlinePage == null ) {

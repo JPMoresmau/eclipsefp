@@ -14,7 +14,6 @@ public class OutputParser implements OutputParserConstants {
       label_1:
       while (true) {
         if (jj_2_1(3)) {
-          ;
         } else {
           break label_1;
         }
@@ -74,7 +73,6 @@ public class OutputParser implements OutputParserConstants {
   final public Suggestion suggestion() throws ParseException {
   StringBuilder filename;
   Integer line;
-  ;
   Severity sev;
   StringBuilder message;
   CodeModification pre;
@@ -88,7 +86,6 @@ public class OutputParser implements OutputParserConstants {
       jj_consume_token(11);
       string_until_eol();
     } else {
-      ;
     }
     jj_consume_token(EOL);
     Suggestion s = new Suggestion();
@@ -130,7 +127,6 @@ public class OutputParser implements OutputParserConstants {
     label_2:
     while (true) {
       if (jj_2_10(3)) {
-        ;
       } else {
         break label_2;
       }
@@ -189,7 +185,6 @@ public class OutputParser implements OutputParserConstants {
     label_3:
     while (true) {
       if (jj_2_15(3)) {
-        ;
       } else {
         break label_3;
       }
@@ -278,7 +273,6 @@ public class OutputParser implements OutputParserConstants {
     if (jj_2_21(3)) {
       s = source_code();
     } else {
-      ;
     }
     if (s != null)
       {if (true) return new CodeModificationText(s.toString());}
@@ -303,7 +297,6 @@ public class OutputParser implements OutputParserConstants {
     label_4:
     while (true) {
       if (jj_2_22(3)) {
-        ;
       } else {
         break label_4;
       }

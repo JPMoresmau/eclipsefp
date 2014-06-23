@@ -431,10 +431,11 @@ class ImplementationsBlock implements ISelectionProvider {
     IStructuredSelection ssel = ( IStructuredSelection )viewer.getSelection();
     IHsImplementation[] insts
       = new IHsImplementation[ ssel.size() ];
-    Iterator iter = ssel.iterator();
+    @SuppressWarnings("unchecked")
+    Iterator<IHsImplementation> iter = ssel.iterator();
     int i = 0;
     while( iter.hasNext() ) {
-      insts[ i ] = ( IHsImplementation )iter.next();
+      insts[ i ] = iter.next();
       i++;
     }
     removeHsImplementations( insts );

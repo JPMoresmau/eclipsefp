@@ -51,10 +51,11 @@ class CabalReconcilingStrategy extends SpellingReconcileStrategy {
     } else {
      //partial reconciliation
      //preserve spelling annotations first
-     Iterator iter = model.getAnnotationIterator();
+     @SuppressWarnings("unchecked")
+     Iterator<Annotation> iter = model.getAnnotationIterator();
      Map<Annotation,Position> spellingErrors = new HashMap<>();
      while (iter.hasNext()) {
-      Annotation annotation = (Annotation) iter.next();
+      Annotation annotation = iter.next();
       if (annotation instanceof SpellingAnnotation) {
        SpellingAnnotation spellingAnnotation = (SpellingAnnotation) annotation;
        Position position = model.getPosition(spellingAnnotation);
@@ -70,7 +71,7 @@ class CabalReconcilingStrategy extends SpellingReconcileStrategy {
      model = getAnnotationModel();
      iter = spellingErrors.keySet().iterator();
      while (iter.hasNext()) {
-      Annotation annotation = (Annotation) iter.next();
+      Annotation annotation = iter.next();
       model.addAnnotation(annotation, spellingErrors.get(annotation));
      }
     }

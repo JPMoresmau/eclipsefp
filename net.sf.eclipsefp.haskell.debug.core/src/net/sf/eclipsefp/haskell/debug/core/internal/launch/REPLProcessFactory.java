@@ -24,7 +24,7 @@ public class REPLProcessFactory implements IProcessFactory {
    */
   @Override
   public IProcess newProcess( final ILaunch launch, final Process process,
-      final String name, final Map attributes ) {
+      final String name, @SuppressWarnings("rawtypes") final Map attributes ) {
     return new REPLProcess( launch, process, name, attributes );
   }
 
@@ -34,7 +34,7 @@ public class REPLProcessFactory implements IProcessFactory {
 
 
     public REPLProcess( final ILaunch launch, final Process process, final String name,
-        final Map attributes ) {
+        @SuppressWarnings("rawtypes") final Map attributes ) {
       super( launch, process, name, attributes );
     }
 

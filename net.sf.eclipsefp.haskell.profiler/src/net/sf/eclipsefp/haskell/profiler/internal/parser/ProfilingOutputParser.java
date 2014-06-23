@@ -27,7 +27,6 @@ public class ProfilingOutputParser implements ProfilingOutputParserConstants {
       j.addSample(s);
       switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
       case BEGIN_SAMPLE:
-        ;
         break;
       default:
         jj_la1[0] = jj_gen;
@@ -50,7 +49,6 @@ public class ProfilingOutputParser implements ProfilingOutputParserConstants {
     while (true) {
       switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
       case IDENTIFIER:
-        ;
         break;
       default:
         jj_la1[1] = jj_gen;

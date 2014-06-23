@@ -32,7 +32,8 @@ public class HappyBuilder extends IncrementalProjectBuilder {
   }
 
   @Override
-  protected IProject[] build( final int kind, final Map args,
+  protected IProject[] build( final int kind,
+      @SuppressWarnings("rawtypes") final Map args,
       final IProgressMonitor monitor ) throws CoreException {
     if( kind == INCREMENTAL_BUILD || kind == AUTO_BUILD ) {
       // Get delta

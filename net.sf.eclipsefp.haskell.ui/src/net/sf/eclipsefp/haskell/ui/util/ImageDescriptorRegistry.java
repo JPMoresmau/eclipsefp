@@ -50,9 +50,9 @@ class ImageDescriptorRegistry {
   }
 
   public void dispose() {
-    Iterator iter = registry.values().iterator();
+    Iterator<Image> iter = registry.values().iterator();
     while( iter.hasNext() ) {
-      ( ( Image )iter.next() ).dispose();
+      iter.next().dispose();
     }
     registry.clear();
   }

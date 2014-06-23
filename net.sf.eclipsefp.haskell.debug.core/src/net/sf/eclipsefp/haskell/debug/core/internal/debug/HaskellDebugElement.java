@@ -41,7 +41,8 @@ public abstract class HaskellDebugElement implements IDebugElement {
   }
 
   @Override
-  public Object getAdapter( final Class adapter ) {
+  public Object getAdapter(
+      @SuppressWarnings("rawtypes") final Class adapter ) {
     if (adapter.isAssignableFrom(this.getClass() )){
       return this;
     }

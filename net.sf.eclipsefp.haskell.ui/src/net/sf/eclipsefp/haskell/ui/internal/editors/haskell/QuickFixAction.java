@@ -95,11 +95,12 @@ public class QuickFixAction extends SelectMarkerRulerAction {
       return;
     }
 
-    Iterator iter = model.getAnnotationIterator();
+    @SuppressWarnings("unchecked")
+    Iterator<Annotation> iter = model.getAnnotationIterator();
     int layer = Integer.MIN_VALUE;
 
     while( iter.hasNext() ) {
-      Annotation annotation = ( Annotation )iter.next();
+      Annotation annotation = iter.next();
       if( annotation.isMarkedDeleted() ) {
         continue;
       }

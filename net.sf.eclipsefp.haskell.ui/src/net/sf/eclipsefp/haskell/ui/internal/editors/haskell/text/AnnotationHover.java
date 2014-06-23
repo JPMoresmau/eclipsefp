@@ -176,7 +176,7 @@ public class AnnotationHover implements IAnnotationHover,IAnnotationHoverExtensi
       result = new ArrayList<>();
       IDocument document = viewer.getDocument();
 
-      Iterator it = model.getAnnotationIterator();
+      Iterator<?> it = model.getAnnotationIterator();
       Map<Position, Set<String>> msgs = new HashMap<>();
       while( it.hasNext() ) {
         Object obj = it.next();

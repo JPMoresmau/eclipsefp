@@ -120,7 +120,7 @@ public class HaskellFoldingStructureProvider {
   private Annotation[] computeDifferences( final ProjectionAnnotationModel mdl,
                                            final Set<Position> current ) {
     List<ProjectionAnnotation> deletions= new ArrayList<>();
-    Iterator iter = mdl.getAnnotationIterator();
+    Iterator<?> iter = mdl.getAnnotationIterator();
     while( iter.hasNext() ) {
       Object annotation = iter.next();
       if( annotation instanceof ProjectionAnnotation ) {

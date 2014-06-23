@@ -48,7 +48,8 @@ public class HaskellPropertyTester extends PropertyTester
 	}
 
 	@Override
-  public Object getAdapter(final Object adaptable, final Class adapter) {
+  public Object getAdapter(final Object adaptable,
+      @SuppressWarnings("rawtypes") final Class adapter) {
 		if ( adaptable instanceof IResource &&
 		     adapter.equals(HaskellResource.class))	{
 			return new HaskellResource((IResource) adaptable);
@@ -56,7 +57,7 @@ public class HaskellPropertyTester extends PropertyTester
 		return null;
 	}
 
-	@Override
+	@Override @SuppressWarnings("rawtypes")
   public Class[] getAdapterList() {
 		return new Class[] {HaskellResource.class};
 	}

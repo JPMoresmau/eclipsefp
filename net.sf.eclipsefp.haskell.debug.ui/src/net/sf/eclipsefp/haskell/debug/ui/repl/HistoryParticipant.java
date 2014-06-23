@@ -28,7 +28,7 @@ public class HistoryParticipant implements IConsolePageParticipant {
    * @see org.eclipse.core.runtime.IAdaptable#getAdapter(java.lang.Class)
    */
   @Override
-  public Object getAdapter( final Class arg0 ) {
+  public Object getAdapter( @SuppressWarnings("rawtypes") final Class arg0 ) {
     return null;
   }
 

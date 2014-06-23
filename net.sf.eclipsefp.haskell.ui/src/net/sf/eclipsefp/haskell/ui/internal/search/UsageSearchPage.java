@@ -141,7 +141,7 @@ public class UsageSearchPage extends AbstractTextSearchViewPage implements IAdap
    * @see org.eclipse.core.runtime.IAdaptable#getAdapter(java.lang.Class)
    */
   @Override
-  public Object getAdapter( final Class arg0 ) {
+  public Object getAdapter( @SuppressWarnings("rawtypes") final Class arg0 ) {
     if( arg0.equals( IShowInTarget.class ) ) {
       return SHOW_IN_TARGET_LIST;
     }
@@ -156,7 +156,7 @@ public class UsageSearchPage extends AbstractTextSearchViewPage implements IAdap
         final Set<Object> newSelection = new HashSet<>(
             structuredSelection.size() );
 
-        Iterator iter = structuredSelection.iterator();
+        Iterator<?> iter = structuredSelection.iterator();
 
         while( iter.hasNext() ) {
 
