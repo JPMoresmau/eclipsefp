@@ -11,3 +11,4 @@ CompilationThroughScion_files
 /cabal-dev
 ast.txt
 .metadata
+target/
