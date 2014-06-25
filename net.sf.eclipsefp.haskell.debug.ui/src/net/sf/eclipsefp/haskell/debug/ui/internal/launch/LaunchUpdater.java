@@ -29,7 +29,7 @@ public class LaunchUpdater implements CabalFileChangeListener {
 
            //IInteractiveLaunchOperationDelegate delegate=(IInteractiveLaunchOperationDelegate)cl.loadClass( delegateClass).newInstance();
 
-           List<?> fileNames=c.getAttribute( ILaunchAttributes.FILES, new ArrayList<>() );
+           List<?> fileNames=c.getAttribute( ILaunchAttributes.FILES, new ArrayList<String>() );
            //IFile[] files=new IFile[fileNames.size()];
            List<IFile> files=new ArrayList<>(fileNames.size());
            for(Object o:fileNames){
