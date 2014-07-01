@@ -90,7 +90,7 @@ public class BuildMarkerResolutionGenerator implements
               int start=msgL.indexOf( GhcMessages.WARNING_IMPORT_USELESS_CONTAINS_START );
               if (start>-1){
                 String redundantElement=msg.substring( start+GhcMessages.WARNING_IMPORT_USELESS_CONTAINS_START.length(), ixe2 ).trim();
-                if (redundantElement.startsWith( "`" )){
+                if (redundantElement.startsWith( "`" ) || redundantElement.startsWith( "‘" )){
                   redundantElement=redundantElement.substring( 1,redundantElement.length()-1);
                 }
                 //int backQuote1 = msg.indexOf( '`' );
