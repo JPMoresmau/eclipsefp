@@ -63,6 +63,8 @@ public interface GhcMessages {
   
   public static String CAST_FROM_CHAR="with actual type `[char]'";
   public static String CAST_FROM_CHAR_SHORT="with `[char]'";
+  public static String CAST_FROM_CHAR_7_8="with actual type ‘[char]’";
+  public static String CAST_FROM_CHAR_SHORT_7_8="with ‘[char]’";
   
   public static String NAKED="naked expression at top level";
   public static String INPUT_CASE="parse error on input `case'";

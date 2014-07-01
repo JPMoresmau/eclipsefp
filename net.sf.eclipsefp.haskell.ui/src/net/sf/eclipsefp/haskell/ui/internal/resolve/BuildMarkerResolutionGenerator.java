@@ -151,6 +151,10 @@ public class BuildMarkerResolutionGenerator implements
             addPragma( res, "-XOverloadedStrings" );
           } else if ((ix=msgL.indexOf( GhcMessages.CAST_FROM_CHAR_SHORT ))>1){
             addPragma( res, "-XOverloadedStrings" );
+          } else if ((ix=msgL.indexOf( GhcMessages.CAST_FROM_CHAR_7_8 ))>1){
+            addPragma( res, "-XOverloadedStrings" );
+          } else if ((ix=msgL.indexOf( GhcMessages.CAST_FROM_CHAR_SHORT_7_8 ))>1){
+            addPragma( res, "-XOverloadedStrings" );
           }
           // Import a package
           else if (msgL.indexOf(GhcMessages.MISSING_MODULE)>-1){
