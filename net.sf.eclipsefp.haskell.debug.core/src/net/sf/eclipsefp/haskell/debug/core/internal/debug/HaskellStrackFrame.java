@@ -91,9 +91,20 @@ public class HaskellStrackFrame extends HaskellDebugElement implements IStackFra
         unprocessedFileName=m.group( 1 );
         tmpCharStart=Integer.parseInt(m.group(3));
         tmpCharEnd=Integer.parseInt(m.group(5));
+
       } else {
-        // It means there was an error
-        endLineNumber = -1;
+        m=GHCiSyntax.BREAKPOINT_LOCATION_NOEND_PATTERN.matcher( location );
+        if (m.matches()){
+          //name= m.group(1) ;
+          endLineNumber=lineNumber=Integer.parseInt( m.group(2)) ;
+          unprocessedFileName=m.group( 1 );
+
+          tmpCharStart=Integer.parseInt(m.group(3));
+          tmpCharEnd=tmpCharStart;
+        } else {
+          // It means there was an error
+          endLineNumber = -1;
+        }
       }
     }
     // Compute real character positions

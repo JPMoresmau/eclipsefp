@@ -16,6 +16,7 @@ Fixes:
 	- Stylish haskell number of spaces correctly showing in UI (https://github.com/JPMoresmau/eclipsefp/issues/187)	
 	- Better capture of GHCI history (supports moving caret left and right) (https://github.com/JPMoresmau/eclipsefp/issues/189)
 	- Support case-insensitive PATH environment variable name (https://github.com/JPMoresmau/eclipsefp/issues/202) 
+	- Support one location breakpoints (https://github.com/JPMoresmau/eclipsefp/issues/211)
 
 Features:
 	- Pass GHC implementation chosen in preference to cabal via --with-ghc
