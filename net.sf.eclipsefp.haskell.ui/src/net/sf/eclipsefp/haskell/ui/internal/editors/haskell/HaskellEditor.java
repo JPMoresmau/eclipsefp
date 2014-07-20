@@ -77,6 +77,7 @@ import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.IEditorInput;
@@ -579,6 +580,8 @@ public class HaskellEditor extends TextEditor implements IEditorPreferenceNames,
     IEditorInput input = getEditorInput();
     if( input instanceof IFileEditorInput ) {
       return ( ( IFileEditorInput ) input ).getFile();
+    } else {
+      HaskellUIPlugin.log( NLS.bind( UITexts.unsupported_input, this.getClass().getName(),input.getClass().getName() ), IStatus.WARNING );
     }
 
     return null;

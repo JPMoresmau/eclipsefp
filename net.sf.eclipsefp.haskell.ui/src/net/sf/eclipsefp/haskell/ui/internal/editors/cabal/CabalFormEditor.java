@@ -16,8 +16,10 @@ import net.sf.eclipsefp.haskell.ui.internal.util.UITexts;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.jface.action.IMenuListener;
 import org.eclipse.jface.text.IDocument;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorSite;
 import org.eclipse.ui.IFileEditorInput;
@@ -99,19 +101,21 @@ public class CabalFormEditor extends FormEditor implements ITextEditorExtension{
   protected void addPages() {
     try {
       IProject project = fileInput.getFile().getProject();
-      overview = new OverviewPage( this, project );
-      addPage(overview);
-      library = new LibraryPage( this, project );
-      addPage(library);
-      executables = new ExecutablesPage( this, project );
-      addPage(executables);
-      testSuites = new TestSuitesPage( this, project );
-      addPage(testSuites);
-      benchmarks = new BenchmarksPage( this, project );
-      addPage(benchmarks);
+      if (project!=null){
+        overview = new OverviewPage( this, project );
+        addPage(overview);
+        library = new LibraryPage( this, project );
+        addPage(library);
+        executables = new ExecutablesPage( this, project );
+        addPage(executables);
+        testSuites = new TestSuitesPage( this, project );
+        addPage(testSuites);
+        benchmarks = new BenchmarksPage( this, project );
+        addPage(benchmarks);
+      }
       cabalSourceEditor = new CabalEditor(this);
       addPage( cabalSourceEditor, getEditorInput() );
-      setPageText( 5, UITexts.cabalFormEditor_tabSource );
+      setPageText(project!=null? 5 : 0, UITexts.cabalFormEditor_tabSource );
     } catch( final CoreException cex ) {
       HaskellUIPlugin.log( "Unable to create form pages.", cex ); //$NON-NLS-1$
     }
@@ -148,6 +152,8 @@ public class CabalFormEditor extends FormEditor implements ITextEditorExtension{
     if( input instanceof IFileEditorInput ) {
       fileInput = ( IFileEditorInput )input;
       setPartName( fileInput.getFile().getName() );
+    } else {
+      HaskellUIPlugin.log( NLS.bind( UITexts.unsupported_input, this.getClass().getName(),input.getClass().getName() ), IStatus.WARNING );
     }
   }
 
