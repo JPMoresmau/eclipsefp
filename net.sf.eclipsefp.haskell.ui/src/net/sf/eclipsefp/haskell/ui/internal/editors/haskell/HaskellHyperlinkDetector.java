@@ -27,7 +27,13 @@ public class HaskellHyperlinkDetector implements IHyperlinkDetector {
   @Override
   public IHyperlink[] detectHyperlinks( final ITextViewer textViewer,
       final IRegion region, final boolean canShowMultipleHyperlinks ) {
+    if (editor==null){
+      return null;
+    }
     IFile file = editor.findFile();
+    if (file==null){
+      return null;
+    }
     Location location;
     try {
       location = new Location( file.getLocation().toOSString(),
