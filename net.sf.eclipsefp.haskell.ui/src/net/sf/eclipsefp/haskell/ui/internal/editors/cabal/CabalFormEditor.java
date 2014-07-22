@@ -25,6 +25,7 @@ import org.eclipse.ui.IEditorSite;
 import org.eclipse.ui.IFileEditorInput;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.forms.editor.FormEditor;
+import org.eclipse.ui.ide.FileStoreEditorInput;
 import org.eclipse.ui.texteditor.IStatusField;
 import org.eclipse.ui.texteditor.ITextEditorExtension;
 
@@ -53,11 +54,13 @@ public class CabalFormEditor extends FormEditor implements ITextEditorExtension{
   public void setPackageDescription( final PackageDescription packageDescription ) {
     this.packageDescription = packageDescription;
     cabalSourceEditor.setPackageDescription( packageDescription );
-    overview.setPackageDescription( packageDescription );
-    library.setPackageDescription( packageDescription );
-    executables.setPackageDescription( packageDescription );
-    testSuites.setPackageDescription( packageDescription );
-    benchmarks.setPackageDescription( packageDescription );
+    if (overview!=null){
+      overview.setPackageDescription( packageDescription );
+      library.setPackageDescription( packageDescription );
+      executables.setPackageDescription( packageDescription );
+      testSuites.setPackageDescription( packageDescription );
+      benchmarks.setPackageDescription( packageDescription );
+    }
   }
 
   public IDocument getModel() {
@@ -100,18 +103,21 @@ public class CabalFormEditor extends FormEditor implements ITextEditorExtension{
   @Override
   protected void addPages() {
     try {
-      IProject project = fileInput.getFile().getProject();
-      if (project!=null){
-        overview = new OverviewPage( this, project );
-        addPage(overview);
-        library = new LibraryPage( this, project );
-        addPage(library);
-        executables = new ExecutablesPage( this, project );
-        addPage(executables);
-        testSuites = new TestSuitesPage( this, project );
-        addPage(testSuites);
-        benchmarks = new BenchmarksPage( this, project );
-        addPage(benchmarks);
+      IProject project = null;
+      if (fileInput!=null){
+        project = fileInput.getFile().getProject();
+        if (project!=null){
+          overview = new OverviewPage( this, project );
+          addPage(overview);
+          library = new LibraryPage( this, project );
+          addPage(library);
+          executables = new ExecutablesPage( this, project );
+          addPage(executables);
+          testSuites = new TestSuitesPage( this, project );
+          addPage(testSuites);
+          benchmarks = new BenchmarksPage( this, project );
+          addPage(benchmarks);
+        }
       }
       cabalSourceEditor = new CabalEditor(this);
       addPage( cabalSourceEditor, getEditorInput() );
@@ -152,6 +158,9 @@ public class CabalFormEditor extends FormEditor implements ITextEditorExtension{
     if( input instanceof IFileEditorInput ) {
       fileInput = ( IFileEditorInput )input;
       setPartName( fileInput.getFile().getName() );
+    } else if (input instanceof FileStoreEditorInput){
+      // minimal support
+      setPartName( input.getName() );
     } else {
       HaskellUIPlugin.log( NLS.bind( UITexts.unsupported_input, this.getClass().getName(),input.getClass().getName() ), IStatus.WARNING );
     }
