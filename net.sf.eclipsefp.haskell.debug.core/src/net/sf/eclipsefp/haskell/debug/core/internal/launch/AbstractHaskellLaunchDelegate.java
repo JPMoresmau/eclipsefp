@@ -193,6 +193,10 @@ public abstract class AbstractHaskellLaunchDelegate extends LaunchConfigurationD
       NetworkUtil.addHTTP_PROXY_env( pb,NetworkUtil.HACKAGE_URL  );
     }
     try {
+      Map<String,String> env=configuration.getAttribute( ILaunchManager.ATTR_ENVIRONMENT_VARIABLES,new HashMap<String,String>() );
+      if (env!=null && !env.isEmpty()){
+        pb.environment().putAll( env );
+      }
       preProcessDefinitionCreation( configuration, mode, launch );
 
       Map<String, String> processAttrs = new HashMap<>();
