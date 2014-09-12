@@ -11,6 +11,7 @@ Necessary Haskell packages:
 
 Fixes:
 	- Fix auto indent on cabal file edition
+	- Do not create .HTF history folder in project folder
 
 Features:
 	- Environment tab on Haskell run configurations, passed to process

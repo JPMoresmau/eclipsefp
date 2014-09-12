@@ -48,6 +48,11 @@ public class HTFLaunchDelegate extends ExecutableOrTestSuiteHaskellLaunchDelegat
     return filename;
   }
 
+  private String getHistoryFilename() {
+    return HaskellDebugCore.getDefault().getStateLocation()
+          .append( "htf.history.json" ).toOSString(); //$NON-NLS-1$
+  }
+
   /* (non-Javadoc)
    * @see net.sf.eclipsefp.haskell.debug.core.internal.launch.AbstractHaskellLaunchDelegate#createProcess(org.eclipse.debug.core.ILaunchConfiguration, java.lang.String, org.eclipse.debug.core.ILaunch, org.eclipse.core.runtime.IPath, java.lang.String[], java.io.File)
    */
@@ -60,7 +65,7 @@ public class HTFLaunchDelegate extends ExecutableOrTestSuiteHaskellLaunchDelegat
      */
 
     String [] cmd2=new String[cmdLine.length];
-    System.arraycopy( cmdLine, 0, cmd2, 0, cmd2.length-1 ); /** remove --split **/
+    System.arraycopy( cmdLine, 0, cmd2, 0, cmd2.length ); /** remove --split **/
     cmd2[cmd2.length-1]="--list"; //$NON-NLS-1$
     final String fname = getFilename();
     final File file = new File( fname );
@@ -267,7 +272,7 @@ public class HTFLaunchDelegate extends ExecutableOrTestSuiteHaskellLaunchDelegat
    */
   @Override
   protected String getExtraArguments() {
-    return "--json --output-file=\""+getFilename()+"\" --colors=NO --split"; //$NON-NLS-1$ //$NON-NLS-2$
+    return "--json --output-file=\""+getFilename()+"\" --colors=NO --history=\""+getHistoryFilename()+"\" --split"; //$NON-NLS-1$ //$NON-NLS-2$  //$NON-NLS-3$
   }
 
 }
