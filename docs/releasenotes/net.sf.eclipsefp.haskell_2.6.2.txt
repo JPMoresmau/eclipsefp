@@ -10,7 +10,7 @@ Necessary Haskell packages:
  
 
 Fixes:
-
+	- Fix auto indent on cabal file edition
 
 Features:
 	- Environment tab on Haskell run configurations, passed to process

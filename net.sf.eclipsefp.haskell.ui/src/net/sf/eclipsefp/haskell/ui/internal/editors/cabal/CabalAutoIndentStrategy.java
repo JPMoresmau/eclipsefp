@@ -1,9 +1,15 @@
+/**
+ *  Copyright (c) 2009 by JP Moresmau
+ * This code is made available under the terms of the Eclipse Public License,
+ * version 1.0 (EPL). See http://www.eclipse.org/legal/epl-v10.html
+ */
 package net.sf.eclipsefp.haskell.ui.internal.editors.cabal;
 
 import java.util.Arrays;
 import net.sf.eclipsefp.haskell.core.cabalmodel.CabalSyntax;
 import net.sf.eclipsefp.haskell.ui.HaskellUIPlugin;
 import net.sf.eclipsefp.haskell.ui.internal.preferences.editor.IEditorPreferenceNames;
+import net.sf.eclipsefp.haskell.util.LangUtil;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.DefaultIndentLineAutoEditStrategy;
@@ -21,26 +27,31 @@ public class CabalAutoIndentStrategy extends DefaultIndentLineAutoEditStrategy {
 
   @Override
   public void customizeDocumentCommand( final IDocument d, final DocumentCommand c ) {
-    if (TextUtilities.endsWith(d.getLegalLineDelimiters(), c.text) != -1){
-      // Start autoindentation after a cabal section (e.g., global, executable, library)
+
+    // end of line
+    if (c.length == 0 && c.text != null && TextUtilities.endsWith(d.getLegalLineDelimiters(), c.text) != -1){
+      // add indent level after a cabal section (e.g., global, executable, library)
       try {
         IRegion r = d.getLineInformation( d.getLineOfOffset( c.offset ));
-        String s = d.get( r.getOffset(), r.getLength() ).toLowerCase();
+        String s =LangUtil.ltrim(d.get( r.getOffset(), r.getLength() ).toLowerCase());
+
+        // Superclass takes care of autoindentation
+        super.customizeDocumentCommand( d, c );
 
         for (String section:CabalSyntax.sections.keySet()){
           if (s.equals( section ) || s.startsWith( section + " " )){ //$NON-NLS-1$
             char[] ch = new char[getTabWidth()];
             Arrays.fill( ch, ' ' );
             c.text = c.text + new String(ch);
+            return;
           }
         }
       } catch (BadLocationException ble) {
         // ignore
       }
-    } else {
-      // Superclass takes care of autoindentation
-      super.customizeDocumentCommand( d, c );
     }
+
+
   }
 
   private int getTabWidth() {
