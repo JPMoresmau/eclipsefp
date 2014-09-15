@@ -1498,9 +1498,10 @@ public class BWFacade {
 		if (isCanceled()){
 			return;
 		}
+		String action=args.get(0);
 		args.addFirst(cabalImplDetails.getExecutable());
 		// we should need flags and extra options ONLY on configure calls...
-		if (args.get(0).equals("configure")){
+		if (action.equals("configure")){
 			if (explicitFlags!=null && explicitFlags.length()>0){
 				args.add("--flags="+explicitFlags);
 			}
@@ -1509,7 +1510,11 @@ public class BWFacade {
 			}
 		}
 		for (String s:cabalImplDetails.getOptions()){
-			if (s.startsWith("--with-ghc") && !args.get(0).equals("configure") && !args.get(0).equals("install")){
+			// https://github.com/haskell/cabal/issues/1511
+			// sandbox init needs GHC but doesn't accept --with-ghc flag
+			// && !action.equals("sandbox")
+			 
+			if (s.startsWith("--with-ghc") && !action.equals("configure") && !action.equals("install") ){
 				continue;
 			}
 			args.add(s);

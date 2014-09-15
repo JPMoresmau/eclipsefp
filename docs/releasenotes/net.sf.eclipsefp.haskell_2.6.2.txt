@@ -12,6 +12,7 @@ Necessary Haskell packages:
 Fixes:
 	- Fix auto indent on cabal file edition
 	- Do not create .HTF history folder in project folder
+	- Fix --with-ghc flag not passed properly to some operations (install dependencies, etc). Not that due to a Cabal limitation (https://github.com/haskell/cabal/issues/1511) GHC needs to be in your path for successful sandbox init.
 
 Features:
 	- Environment tab on Haskell run configurations, passed to process
