@@ -74,17 +74,21 @@ public class SandboxHelper {
 				case CABAL:
 				{
 					// init unique sandbox
-					if (f.getCabalImplDetails().isUniqueSandbox()){
+					if (f.getCabalImplDetails().isUniqueSandbox() && !f.getSandboxPath().exists()){
 						LinkedList<String> args=new LinkedList<>();
 						args.add("sandbox");
 						args.add("init");
+						args.add("--sandbox="+ f.getSandboxPath());
 						f.runCabal(args,"",f.getSandboxPath());
+						
 					}
-					LinkedList<String> args=new LinkedList<>();
-					args.add("sandbox");
-					args.add("init");
-					args.addAll(f.getCabalImplDetails().getInitOptions());
-					f.runCabal(args,"",null);
+					if (!p.getFile("cabal.sandbox.config").exists()){
+						LinkedList<String> args=new LinkedList<>();
+						args.add("sandbox");
+						args.add("init");
+						args.addAll(f.getCabalImplDetails().getInitOptions());
+						f.runCabal(args,"",null);
+					}
 					
 					//if (!f.getCabalImplDetails().isUniqueSandbox()){
 						Set<IProject> processed=new HashSet<>();
@@ -95,7 +99,7 @@ public class SandboxHelper {
 					//}
 
 					
-					args=new LinkedList<>();
+					LinkedList<String> args=new LinkedList<>();
 					args.add("install");
 					args.add("--only-dependencies");
 					// enable tests
@@ -161,12 +165,30 @@ public class SandboxHelper {
 			if (sandboxFacade.isCanceled()){
 				return;
 			}
-			LinkedList<String> args=new LinkedList<>();
-			args.add("sandbox");
-			args.add("add-source");
-			args.add(p.getLocation().toOSString());
-			
-			sandboxFacade.runCabal(args,null);
+			//is it really needed to redo an add-source everytime?
+			Long lastAdd=sandboxFacade.getLastAddSource().get(p);
+			BWFacade pf=BuildWrapperPlugin.getFacade(p);
+			// we add if we have a facade and not added
+			boolean add=pf!=null && lastAdd==null;
+			// we have build info
+			if (pf!=null){
+				Long lastBuild=pf.getLastBuild();
+				// we have added but not build, or built but before adding, we don't add
+				if ((lastBuild==null && lastAdd!=null) || (lastBuild!=null && lastAdd!=null && lastBuild<lastAdd)){
+					add=false;
+				} else if (lastBuild!=null && lastAdd!=null && lastBuild>lastAdd){
+					add=true;
+				}
+			}
+			if (add){
+				LinkedList<String> args=new LinkedList<>();
+				args.add("sandbox");
+				args.add("add-source");
+				args.add(p.getLocation().toOSString());
+				
+				sandboxFacade.runCabal(args,null);
+				sandboxFacade.getLastAddSource().put(p,System.currentTimeMillis());
+			}
 		}
 	}
 	

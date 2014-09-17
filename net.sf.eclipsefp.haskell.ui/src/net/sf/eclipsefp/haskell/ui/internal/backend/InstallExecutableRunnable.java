@@ -79,8 +79,8 @@ public class InstallExecutableRunnable implements Runnable {
     if (CabalImplementationManager.getInstance().getDefaultCabalImplementation().allowsSandbox()){
       folder=new File(HaskellUIPlugin.getDefault().getStateLocation().append( "sandbox" ).toOSString());
       folder.mkdirs();
-      commands.add(new Command(UITexts.cabalInitProgress,Arrays.asList( cabalExecutable , "sandbox","init" )));
-      binDir=new File(new File(folder,".cabal-sandbox"),"bin");
+      commands.add(new Command(UITexts.cabalInitProgress,Arrays.asList( cabalExecutable , "sandbox","init","--sandbox="+ folder )));
+      binDir=new File(folder,"bin");
 
     } else {
       if (!global){

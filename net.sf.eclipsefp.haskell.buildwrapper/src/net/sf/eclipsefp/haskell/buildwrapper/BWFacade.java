@@ -105,8 +105,11 @@ public class BWFacade {
 	
 	private boolean hasCabalChanged = false;
 	
+	private Long lastBuild = null;
+	private Map<IProject,Long> lastAddSource = new HashMap<>();
+	
 	/**
-	 * use a long running buidlwrapper process?
+	 * use a long running buildwrapper process?
 	 */
 	public static boolean longRunning=true;
 	
@@ -236,6 +239,7 @@ public class BWFacade {
 		command.add("build");
 		command.add("--output="+buildOptions.isOutput());
 		command.add("--cabaltarget="+buildOptions.getTarget().toString());
+		lastBuild=System.currentTimeMillis();
 		JSONArray arr=run(command,ARRAY,false);
 		refreshDist(true);
 		if (arr!=null && arrC!=null){
@@ -2034,5 +2038,19 @@ public class BWFacade {
 			BuildWrapperPlugin.logInfo("eval:"+(t1-t0)+"ms ("+ers.size()+")");
 		}
 		return ers;
+	}
+	
+	/**
+	 * @return the lastBuild
+	 */
+	public Long getLastBuild() {
+		return lastBuild;
+	}
+	
+	/**
+	 * @return the lastAddSource
+	 */
+	public Map<IProject, Long> getLastAddSource() {
+		return lastAddSource;
 	}
 }

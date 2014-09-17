@@ -131,9 +131,9 @@ public class CabalInstallAction implements IObjectActionDelegate {
       icommands.add( "init" );
 
       File f=new File(sandbox);
-      if (f.getName().equals(".cabal-sandbox")){
+      /*if (f.getName().equals(".cabal-sandbox")){
         f=f.getParentFile();
-      }
+      }*/
       final File sandboxF=f;
       icommands.add("--sandbox="+ sandboxF.getAbsolutePath());
       final Display d=Display.getCurrent();
