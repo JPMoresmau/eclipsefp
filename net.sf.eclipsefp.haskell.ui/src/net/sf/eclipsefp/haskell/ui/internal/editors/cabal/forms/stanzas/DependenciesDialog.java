@@ -156,15 +156,16 @@ public class DependenciesDialog extends Dialog implements
     versionMajor=new Button(versionGroup,SWT.RADIO);
     versionMajor.setText( UITexts.cabalEditor_dependencyVersionMajor );
     versionMajor.addSelectionListener( sa );
+    versionMajor.setSelection( true );
 
     versionCurrent=new Button(versionGroup,SWT.RADIO);
     versionCurrent.setText( UITexts.cabalEditor_dependencyVersionCurrent);
     versionCurrent.addSelectionListener( sa );
-    versionCurrent.setSelection( true );
 
     versionMinor=new Button(versionGroup,SWT.RADIO);
     versionMinor.setText( UITexts.cabalEditor_dependencyVersionMinor);
     versionMinor.addSelectionListener( sa );
+
 
     return composite;
   }

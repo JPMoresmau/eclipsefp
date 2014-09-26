@@ -66,7 +66,7 @@ public class AddPackageDependencyProposal implements ICompletionProposal {
       String fullVersion=getValue();
       String v=CabalPackageHelper.getInstance().getLastInstalledVersion( getValue());
       if (v!=null){
-        fullVersion=getValue()+ " "+ CabalPackageVersion.getMajorRangeFromMinor( v );
+        fullVersion=getValue()+ " "+ CabalPackageVersion.getMajorRange( v );
       }
 
       // find applicable stanzas if any, to not modify all of the cabal stanzas
