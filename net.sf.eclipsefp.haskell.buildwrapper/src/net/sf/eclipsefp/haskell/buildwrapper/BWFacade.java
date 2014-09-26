@@ -1318,7 +1318,7 @@ public class BWFacade {
      * @param pb
      */
 	private synchronized void addBuildWrapperPath(ProcessBuilder pb){
-		if (needPath==null || needPath.booleanValue() && bwPath!=null){
+		if ((needPath==null || needPath.booleanValue()) && bwPath!=null){
 			needPath=false;
 			String path=new File(bwPath).getParent();
 			if (path!=null){
