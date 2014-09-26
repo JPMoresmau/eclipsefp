@@ -167,20 +167,21 @@ public class SandboxHelper {
 			}
 			//is it really needed to redo an add-source everytime?
 			Long lastAdd=sandboxFacade.getLastAddSource().get(p);
-			BWFacade pf=BuildWrapperPlugin.getFacade(p);
-			// we add if we have a facade and not added
-			boolean add=pf!=null && lastAdd==null;
-			// we have build info
-			if (pf!=null){
-				Long lastBuild=pf.getLastBuild();
-				// we have added but not build, or built but before adding, we don't add
-				if ((lastBuild==null && lastAdd!=null) || (lastBuild!=null && lastAdd!=null && lastBuild<lastAdd)){
-					add=false;
-				} else if (lastBuild!=null && lastAdd!=null && lastBuild>lastAdd){
-					add=true;
-				}
-			}
-			if (add){
+//			BWFacade pf=BuildWrapperPlugin.getFacade(p);
+//			// we add if we have a facade and not added
+//			boolean add=pf!=null && lastAdd==null;
+//			// we have build info
+//			if (pf!=null){
+//				Long lastBuild=pf.getLastBuild();
+//				// we have added but not build, or built but before adding, we don't add
+//				if ((lastBuild==null && lastAdd!=null) || (lastBuild!=null && lastAdd!=null && lastBuild<lastAdd)){
+//					add=false;
+//				} else if (lastBuild!=null && lastAdd!=null && lastBuild>lastAdd){
+//					add=true;
+//				}
+//			}
+			// add-source keeps track of modifications, so we only add once in the session to be sure
+			if (lastAdd==null){
 				LinkedList<String> args=new LinkedList<>();
 				args.add("sandbox");
 				args.add("add-source");
