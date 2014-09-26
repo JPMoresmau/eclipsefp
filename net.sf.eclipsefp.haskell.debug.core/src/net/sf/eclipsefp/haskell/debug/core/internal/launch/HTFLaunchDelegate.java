@@ -58,7 +58,7 @@ public class HTFLaunchDelegate extends ExecutableOrTestSuiteHaskellLaunchDelegat
    */
   @Override
   protected IProcess createProcess( final ILaunchConfiguration configuration,
-      final String mode, final ILaunch launch, final IPath location, final String[] cmdLine,
+      final String mode, final ILaunch launch, final IPath location, String[] cmdLine,
       final File workingDir ) throws CoreException {
     /**
      * launch the same process, but with the list parameter, to get the list of tests without running them
@@ -72,7 +72,23 @@ public class HTFLaunchDelegate extends ExecutableOrTestSuiteHaskellLaunchDelegat
     final IProject p=getProject( configuration );
 
     try (StringWriter sw=new StringWriter()) {
-      new ProcessRunner().executeBlocking( workingDir, sw, null, cmd2 );
+      // older versions of HTF do not like the new --history flags
+      int code=new ProcessRunner().executeBlocking( workingDir, sw, null, cmd2 );
+      if (code!=0){
+        // remove history
+        cmd2=new String[cmdLine.length-1];
+        System.arraycopy( cmdLine, 0, cmd2, 0, cmd2.length ); /** remove --split **/
+        cmd2[cmd2.length-1]="--list"; //$NON-NLS-1$
+        try (StringWriter sw2=new StringWriter()) {
+          code=new ProcessRunner().executeBlocking( workingDir, sw2, null, cmd2 );
+          if (code==0){
+            cmd2=new String[cmdLine.length-1];
+            System.arraycopy( cmdLine, 0, cmd2, 0, cmd2.length-1 );
+            cmd2[cmd2.length-1]="--split"; //$NON-NLS-1$
+            cmdLine=cmd2;
+          }
+        }
+      }
 
       root=new TestResult( configuration.getName() );
       /** parse list **/
