@@ -41,6 +41,8 @@ public class MissingTypeWarningResolution extends MarkerCompletion {
     int ix=msg.toLowerCase().indexOf(  prefix);
     if (ix>-1){
       String type=msg.substring(ix+prefix.length()).trim();
+      // replace [Char] by String
+      type=type.replace("[Char]","String");
 
       int ixStartType=type.indexOf( "::" );
       if (ixStartType>-1){
