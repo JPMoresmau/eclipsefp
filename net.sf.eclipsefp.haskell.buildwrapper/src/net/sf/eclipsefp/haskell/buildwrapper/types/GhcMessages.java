@@ -59,7 +59,7 @@ public interface GhcMessages {
   public static String YOU_NEED="you need -x";
   public static String TRY="try -x";
   public static String DID_YOU_MEAN="did you mean -x";
-  
+  public static String DID_YOU_MEAN_NO_X="you meant to use";  
   
   public static String CAST_FROM_CHAR="with actual type `[char]'";
   public static String CAST_FROM_CHAR_SHORT="with `[char]'";
