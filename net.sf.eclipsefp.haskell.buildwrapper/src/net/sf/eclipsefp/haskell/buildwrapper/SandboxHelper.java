@@ -108,6 +108,7 @@ public class SandboxHelper {
 					args.add("--enable-benchmarks");
 					// force reinstalls since we won't break anything outside of the sandbox
 					args.add("--force-reinstalls");
+					args.addAll(f.getCabalImplDetails().getInstallOptions());
 					
 					f.runCabal(args,null);
 					break;
@@ -140,9 +141,10 @@ public class SandboxHelper {
 			args.add("install");
 			args.add(p.getLocation().toOSString());
 			args.add("--force-reinstalls");
-			if (SandboxType.CABAL_DEV.equals(sandboxFacade.getCabalImplDetails().getType())){
+			//if (SandboxType.CABAL_DEV.equals(sandboxFacade.getCabalImplDetails().getType())){
+			//if (s)
 				args.addAll(sandboxFacade.getCabalImplDetails().getInstallOptions());
-			}
+			//}
 			sandboxFacade.runCabal(args,null);
 		}
 	}
@@ -155,7 +157,7 @@ public class SandboxHelper {
 	 * @throws CoreException
 	 */
 	private static void addSource(BWFacade sandboxFacade,IProject p,Set<IProject> processed) throws CoreException{
-		if (sandboxFacade.isCanceled()){
+		if (sandboxFacade.isCanceled() || !p.isAccessible()){
 			return;
 		}
 		if (processed.add(p)){
