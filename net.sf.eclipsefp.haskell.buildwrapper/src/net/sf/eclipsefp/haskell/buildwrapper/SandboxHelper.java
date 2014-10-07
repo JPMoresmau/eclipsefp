@@ -25,6 +25,7 @@ import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.osgi.util.NLS;
@@ -340,16 +341,29 @@ public class SandboxHelper {
 			switch (st){
 			case CABAL_DEV:
 				return 
-						uq?new File(BuildWrapperPlugin.getUniqueCabalDevSandboxLocation().toOSString()).exists()
+						uq?new File(f.getCabalImplDetails().getSandboxPath()).exists()
 						:f.getProject().getFolder(BWFacade.DIST_FOLDER_CABALDEV).exists();
 			case CABAL:
-				return uq?new File(BuildWrapperPlugin.getUniqueCabalSandboxLocation().toOSString()).exists()
+				return uq?new File(f.getCabalImplDetails().getSandboxPath()).exists()
 						:f.getProject().getFolder(".cabal-sandbox").exists();
 			case NONE:
 				return false;
 			}
 		}
 		return false;
+	}
+	
+	public static void sandboxLocationChanged(BWFacade f){
+		if (f!=null){
+			SandboxType st=f.getCabalImplDetails().getType();
+			if (SandboxType.CABAL.equals(st)){
+				try {
+					f.getProject().getFile("cabal.sandbox.config").delete(true, new NullProgressMonitor());
+				} catch (CoreException ce){
+					BuildWrapperPlugin.logError(BWText.error_sandbox,ce);
+				}
+			}
+		}
 	}
 	
 	/**

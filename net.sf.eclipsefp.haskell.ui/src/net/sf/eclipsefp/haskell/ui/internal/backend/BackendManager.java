@@ -816,7 +816,20 @@ public class BackendManager implements IResourceChangeListener {
           }  else if (event.getProperty().equals(IPreferenceConstants.UNIQUE_SANDBOX)){
              BuildWrapperPlugin.setCabalImplDetails( getCabalImplDetails() );
 
-          } else if (event.getProperty().equals(IPreferenceConstants.ALEX_EXECUTABLE)){
+          } else if (event.getProperty().equals(IPreferenceConstants.UNIQUE_SANDBOX_PATH)){
+            BuildWrapperPlugin.setCabalImplDetails( getCabalImplDetails() );
+//            for (final IProject p:ResourceUtil.listHaskellProjects()){
+//              new Job("") {
+//
+//                @Override
+//                protected IStatus run( IProgressMonitor monitor ) {
+//                  p.build( IncrementalProjectBuilder.FULL_BUILD, monitor);
+//                  return Status.OK_STATUS;
+//                }
+//              }.schedule();;
+//
+//            }
+         } else if (event.getProperty().equals(IPreferenceConstants.ALEX_EXECUTABLE)){
             if (event.getNewValue() instanceof String || event.getNewValue()==null){
               AlexRunner.setFullPath( (String)event.getNewValue() );
             }
@@ -1012,7 +1025,7 @@ public class BackendManager implements IResourceChangeListener {
         details.setExecutable( cabalDev);
         details.setUniqueSandbox( preferenceStore.getBoolean( IPreferenceConstants.UNIQUE_SANDBOX ) );
         String sd=details.isUniqueSandbox()?
-            BuildWrapperPlugin.getUniqueCabalDevSandboxLocation().toOSString()
+            preferenceStore.getString( IPreferenceConstants.UNIQUE_SANDBOX_PATH )
             :BWFacade.DIST_FOLDER_CABALDEV;
         details.setSandboxPath( sd );
         details.getOptions().add("--sandbox="+sd);
@@ -1028,7 +1041,7 @@ public class BackendManager implements IResourceChangeListener {
         details.setUniqueSandbox( preferenceStore.getBoolean( IPreferenceConstants.UNIQUE_SANDBOX ) );
 
         String sd=details.isUniqueSandbox()?
-            BuildWrapperPlugin.getUniqueCabalSandboxLocation().toOSString()
+            preferenceStore.getString( IPreferenceConstants.UNIQUE_SANDBOX_PATH )
             :"";
         details.setSandboxPath( sd );
         if (details.isUniqueSandbox()){

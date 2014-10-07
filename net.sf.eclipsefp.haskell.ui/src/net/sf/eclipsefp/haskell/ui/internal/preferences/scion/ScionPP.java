@@ -1,5 +1,6 @@
 package net.sf.eclipsefp.haskell.ui.internal.preferences.scion;
 
+import net.sf.eclipsefp.haskell.buildwrapper.BuildWrapperPlugin;
 import net.sf.eclipsefp.haskell.ui.HaskellUIPlugin;
 import net.sf.eclipsefp.haskell.ui.internal.preferences.IPreferenceConstants;
 import net.sf.eclipsefp.haskell.ui.internal.util.UITexts;
@@ -273,6 +274,7 @@ public class ScionPP
 	  store.setDefault( IPreferenceConstants.HASKELL_CONSOLE_HIGH_WATER_MARK, 32 * 1024);// 32K
 	  store.setDefault( IPreferenceConstants.HASKELL_CONSOLE_ACTIVATE_ON_WRITE,false);
 	  store.setDefault( UNIQUE_SANDBOX, false );
+	  store.setDefault( UNIQUE_SANDBOX_PATH, BuildWrapperPlugin.getDefaultUniqueCabalSandboxLocation().toOSString() );
 	}
 
   @Override

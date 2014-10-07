@@ -1946,7 +1946,15 @@ public class BWFacade {
 	}
 
 	public void setCabalImplDetails(CabalImplDetails cabalImplDetails) {
+		if (this.cabalImplDetails!=null && cabalImplDetails!=null){
+			if (this.cabalImplDetails.getSandboxPath()!=null && cabalImplDetails.getSandboxPath()!=null){
+				if (!this.cabalImplDetails.getSandboxPath().equals(cabalImplDetails.getSandboxPath())){
+					SandboxHelper.sandboxLocationChanged(this);
+				}
+			}
+		}
 		this.cabalImplDetails = cabalImplDetails;
+
 	}
 	
 	private void registerProcess(Process p){

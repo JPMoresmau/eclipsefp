@@ -61,6 +61,7 @@ public interface IPreferenceConstants {
   public final static String CABALDEV_EXECUTABLE="CABALDEV_EXECUTABLE"; //$NON-NLS-1$
   public final static String UNIQUE_SANDBOX="UNIQUE_SANDBOX"; //$NON-NLS-1$
   public final static String CABAL_SANDBOX="CABAL_SANDBOX"; //$NON-NLS-1$
+  public final static String UNIQUE_SANDBOX_PATH="UNIQUE_SANDBOX_PATH"; //$NON-NLS-1$
   /**
    * Source-graph
    */

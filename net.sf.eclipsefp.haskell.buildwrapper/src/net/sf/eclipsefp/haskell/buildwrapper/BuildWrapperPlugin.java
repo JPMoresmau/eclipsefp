@@ -393,7 +393,7 @@ public class BuildWrapperPlugin extends AbstractUIPlugin {
 	 * get location of cabal-dev global sandbox
 	 * @return
 	 */
-	public static IPath getUniqueCabalDevSandboxLocation(){
+	public static IPath getDefaultUniqueCabalDevSandboxLocation(){
 	    return getDefault().getStateLocation().append( ".cabal-dev" );
 	 }
 
@@ -401,7 +401,7 @@ public class BuildWrapperPlugin extends AbstractUIPlugin {
 	 * get location of cabal global sandbox
 	 * @return
 	 */
-	 public static IPath getUniqueCabalSandboxLocation(){
+	 public static IPath getDefaultUniqueCabalSandboxLocation(){
 	    return getDefault().getStateLocation().append( "sandbox" );
 	 }
 
