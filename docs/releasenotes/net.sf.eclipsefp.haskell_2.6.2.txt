@@ -16,6 +16,7 @@ Fixes:
 
 Features:
 	- Environment tab on Haskell run configurations, passed to process
+	- Choose common sandbox location
 
 Internal:
 
