@@ -25,6 +25,7 @@ import net.sf.eclipsefp.haskell.browser.items.PackageIdentifier;
 import net.sf.eclipsefp.haskell.browser.items.Packaged;
 import net.sf.eclipsefp.haskell.browser.items.TypeClass;
 import net.sf.eclipsefp.haskell.browser.items.TypeSynonym;
+import net.sf.eclipsefp.haskell.browser.items.Unknown;
 import net.sf.eclipsefp.haskell.browser.util.ImageCache;
 import net.sf.eclipsefp.haskell.buildwrapper.BWFacade;
 import net.sf.eclipsefp.haskell.buildwrapper.BuildWrapperPlugin;
@@ -287,6 +288,8 @@ public class AnImport {
          && !visited.contains(ed.getName())) // avoid recursion if a module re-export itself
         {
         decls.addAll( getDeclarationsFromFile( ed.getName(), file.getProject(),visited ) );
+      } else {
+        decls.add( new FileDocumented( new Unknown( ed.getName() ), file ) );
       }
     }
 
