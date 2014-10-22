@@ -829,6 +829,8 @@ public class BackendManager implements IResourceChangeListener {
 //              }.schedule();;
 //
 //            }
+          }  else if (event.getProperty().equals(IPreferenceConstants.MANAGE_DEPENDENCIES)){
+            BuildWrapperPlugin.setCabalImplDetails( getCabalImplDetails() );
          } else if (event.getProperty().equals(IPreferenceConstants.ALEX_EXECUTABLE)){
             if (event.getNewValue() instanceof String || event.getNewValue()==null){
               AlexRunner.setFullPath( (String)event.getNewValue() );
@@ -1019,6 +1021,8 @@ public class BackendManager implements IResourceChangeListener {
     String cabal=CabalImplementationManager.getCabalExecutable();
     IPreferenceStore preferenceStore = HaskellUIPlugin.getDefault().getPreferenceStore();
     String cabalDev = preferenceStore.getString( IPreferenceConstants.CABALDEV_EXECUTABLE );
+
+    details.setManageProjectDependencies( preferenceStore.getBoolean( IPreferenceConstants.MANAGE_DEPENDENCIES ) );
 
     //String cabalDev=ScionManager.getExecutablePath( IPreferenceConstants.CABALDEV_EXECUTABLE, "cabal-dev", false );
     if (cabalDev!=null && cabalDev.length()>0 && new File(cabalDev).exists()){

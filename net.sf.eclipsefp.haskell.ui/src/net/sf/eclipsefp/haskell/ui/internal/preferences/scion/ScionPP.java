@@ -275,6 +275,7 @@ public class ScionPP
 	  store.setDefault( IPreferenceConstants.HASKELL_CONSOLE_ACTIVATE_ON_WRITE,false);
 	  store.setDefault( UNIQUE_SANDBOX, false );
 	  store.setDefault( UNIQUE_SANDBOX_PATH, BuildWrapperPlugin.getDefaultUniqueCabalSandboxLocation().toOSString() );
+	  store.setDefault( MANAGE_DEPENDENCIES, true );
 	}
 
   @Override

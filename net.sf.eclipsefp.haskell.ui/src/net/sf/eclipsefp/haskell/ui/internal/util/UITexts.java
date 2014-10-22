@@ -856,6 +856,7 @@ public final class UITexts extends NLS {
   public static String executables_preferences_unique_sandbox;
   public static String executables_preferences_unique_sandbox_location;
   public static String executables_preferences_cabal_sandbox;
+  public static String executables_preferences_manage_dependencies;
 
   public static String worksheet_addexpression;
   public static String worksheet_addexpression_title;

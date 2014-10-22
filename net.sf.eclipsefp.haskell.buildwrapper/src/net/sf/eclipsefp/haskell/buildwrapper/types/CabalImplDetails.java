@@ -27,7 +27,10 @@ public class CabalImplDetails {
 
 	private String sandboxPath;
 	
-
+	/**
+	 * do we manage project dependencies from cabal file?
+	 */
+	private boolean manageProjectDependencies=true;
 
 	/**
 	 * do we have a unique sandbox?
@@ -87,5 +90,13 @@ public class CabalImplDetails {
 
 	public void setSandboxPath(String sandboxPath) {
 		this.sandboxPath = sandboxPath;
+	}
+
+	public boolean isManageProjectDependencies() {
+		return manageProjectDependencies;
+	}
+
+	public void setManageProjectDependencies(boolean manageProjectDependencies) {
+		this.manageProjectDependencies = manageProjectDependencies;
 	}
 }

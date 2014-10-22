@@ -160,7 +160,7 @@ public class HaskellBuilder extends IncrementalProjectBuilder {
   }
 
   public static void addProjectDependencies(final BWFacade f,final IProject prj){
-    if (f!=null && f.getCabalImplDetails().isSandboxed()){
+    if (f!=null && f.getCabalImplDetails().isSandboxed() && f.getCabalImplDetails().isManageProjectDependencies()){
       IWorkspaceRoot root=ResourcesPlugin.getWorkspace().getRoot();
       try {
         PackageDescription pd=PackageDescriptionLoader.load( BuildWrapperPlugin.getCabalFile( prj ) );

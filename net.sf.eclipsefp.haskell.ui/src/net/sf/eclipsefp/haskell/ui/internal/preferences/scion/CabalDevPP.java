@@ -33,6 +33,8 @@ public class CabalDevPP extends ExecutablePP {
 
   private DirectoryFieldEditor uniqueSandboxLocationField;
 
+  private BooleanFieldEditor manageDependenciesField;
+
   public CabalDevPP(){
     super("cabal-dev","cabal-dev",IPreferenceConstants.CABALDEV_EXECUTABLE);
   }
@@ -90,6 +92,17 @@ public class CabalDevPP extends ExecutablePP {
       }
     } );
     uniqueSandboxLocationField.fillIntoGrid( locComposite, 3 );
+
+    manageDependenciesField= new BooleanFieldEditor( IPreferenceConstants.MANAGE_DEPENDENCIES,
+        UITexts.executables_preferences_manage_dependencies,
+        parentComposite );
+    manageDependenciesField.setPage(this);
+    manageDependenciesField.setPreferenceStore( getPreferenceStore() );
+    manageDependenciesField.load();
+    manageDependenciesField.fillIntoGrid( parentComposite, 3 );
+
+
+
     getShell().layout(true,true);
 
     return c;
@@ -101,6 +114,7 @@ public class CabalDevPP extends ExecutablePP {
     uniqueSandboxField.store();
     cabalSandboxField.store();
     uniqueSandboxLocationField.store();
+    manageDependenciesField.store();
     return super.performOk();
   }
 

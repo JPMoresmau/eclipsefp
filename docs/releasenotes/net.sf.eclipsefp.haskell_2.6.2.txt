@@ -17,6 +17,7 @@ Fixes:
 Features:
 	- Environment tab on Haskell run configurations, passed to process
 	- Choose common sandbox location
+	- Preference to disable automatic project dependency management (https://github.com/JPMoresmau/eclipsefp/issues/235)
 
 Internal:
 
