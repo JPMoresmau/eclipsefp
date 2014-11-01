@@ -44,7 +44,12 @@ public class SandboxHelper {
 	 * @throws CoreException
 	 */
 	public static void installDeps(BWFacade f) throws CoreException{
-		if (f!=null){
+		installDeps(f, new HashSet<BWFacade>());
+	}
+	
+	public static void installDeps(BWFacade f,Set<BWFacade> processedFacades) throws CoreException{
+		
+		if (f!=null && processedFacades.add(f)){
 			SandboxType st=f.getCabalImplDetails().getType();
 			IProject p=f.getProject();
 			
@@ -98,7 +103,19 @@ public class SandboxHelper {
 							addSource(f,pR,processed);
 						}
 					//}
-
+					// Cabal doesn't allow installing only-dependencies if the project has dependent projects in the same sandbox, so call installDeps on dependent
+					if (f.getCabalImplDetails().isUniqueSandbox()){
+						IProject[] refs=p.getReferencingProjects();
+						if (refs.length>0){
+							for(IProject r:refs){
+								BWFacade rf=BuildWrapperPlugin.getFacade(r);
+								if (rf!=null && !rf.isCanceled()){
+									installDeps(rf,processedFacades);
+								}
+							}
+							return;
+						}
+					}
 					
 					LinkedList<String> args=new LinkedList<>();
 					args.add("install");
