@@ -58,12 +58,13 @@ public class GhciLaunchOperationDelegate
             }
             include=!removeFromDebug;
           }
+          String sl=s.toLowerCase(Locale.ENGLISH);
           // ignore verbosity settings, since -v0 will cause us to not show anything
-          if (s.toLowerCase(Locale.ENGLISH).startsWith( "-v" )){ //$NON-NLS-1$
+          if (sl.startsWith( "-v" ) && sl.length()==3){ //$NON-NLS-1$
             include=false;
           }
           // ignore optimisation settings
-          if (s.toLowerCase(Locale.ENGLISH).startsWith( "-o" )){ //$NON-NLS-1$
+          if (sl.startsWith( "-o" ) && sl.length()==3){ //$NON-NLS-1$
             include=false;
           }
           if (include){
