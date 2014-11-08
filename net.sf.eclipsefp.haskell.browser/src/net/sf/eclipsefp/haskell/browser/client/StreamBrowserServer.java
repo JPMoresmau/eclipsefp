@@ -45,16 +45,18 @@ import org.json.JSONObject;
  * Class used for communicating with a Scion Browser instance.
  * 
  * @author Alejandro Serrano
+ * @author JP Moresmau
  */
 public class StreamBrowserServer extends BrowserServer {
 
 	private IPath serverExecutable;
 	private Process process = null;
 	private BufferedWriter in = null;
-	// private BufferedReader err = null;
 	private InputStream out = null;
 	private boolean localDbLoaded = false;
+	private String  localDbPath = null;
 	private boolean hackageDbLoaded = false;
+	private String hackageDbPath = null;
 	private boolean hoogleLoaded = false;
 	private StreamRedirect errorRedirect;
 	public LockObject lock= new LockObject();
@@ -75,7 +77,7 @@ public class StreamBrowserServer extends BrowserServer {
 	public StreamBrowserServer(IPath serverExecutable,boolean logError) throws Exception {
 		this.serverExecutable = serverExecutable;
 		this.logError=logError;
-		startServer(logError);
+		startServer();
 	}
 
 	@Override
@@ -93,7 +95,6 @@ public class StreamBrowserServer extends BrowserServer {
 	@Override
 	public void setLogError(boolean logError) {
 		if (logError!=this.logError && allErrWs!=null){
-			@SuppressWarnings("resource")
 			Writer logStream=getLogStream();
 			if (logStream!=null){
 				if (logError){
@@ -107,7 +108,7 @@ public class StreamBrowserServer extends BrowserServer {
 		
 	}
 	
-	public void startServer(boolean logError) throws Exception {
+	public void startServer() throws Exception {
 		ProcessBuilder builder = new ProcessBuilder(
 				serverExecutable.toOSString());
 		builder.redirectErrorStream(false);
@@ -238,6 +239,19 @@ public class StreamBrowserServer extends BrowserServer {
 		} catch (IOException e) {
 			BrowserPlugin.logError(BrowserText.error_read, e);
 			String lastErr=lastErrW.toString().trim();
+			try {
+				process.exitValue();
+				startServer();
+				if (localDbLoaded && localDbPath!=null){
+					loadLocalDatabase(localDbPath, false);
+				}
+				if (hackageDbLoaded && hackageDbPath!=null){
+					loadHackageDatabase(hackageDbPath, false);
+				}
+			} catch (Exception ignore){
+				// noop
+			}
+			
 			if (lastErr!=null && lastErr.length()>0){
 				throw new IOException(lastErr);
 			}
@@ -264,6 +278,7 @@ public class StreamBrowserServer extends BrowserServer {
 	protected void loadLocalDatabaseInternal(String path, boolean rebuild)
 			throws IOException, JSONException {
 		if (sendAndReceiveOk(Commands.createLoadLocalDatabase(path, rebuild))){
+			localDbPath=path;
 			packageCache.remove(Database.LOCAL);
 			packageCache.remove(Database.ALL);
 			// Notify listeners
@@ -278,6 +293,7 @@ public class StreamBrowserServer extends BrowserServer {
 	protected void loadHackageDatabaseInternal(String path, boolean rebuild)
 			throws IOException, JSONException {
 		if (sendAndReceiveOk(Commands.createLoadHackageDatabase(path, rebuild))){
+			hackageDbPath=path;
 			packageCache.remove(Database.HACKAGE);
 			packageCache.remove(Database.ALL);
 			// Notify listeners

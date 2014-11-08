@@ -15,6 +15,7 @@ Fixes:
 	- Fix --with-ghc flag not passed properly to some operations (install dependencies, etc). Note that due to a Cabal limitation (https://github.com/haskell/cabal/issues/1511) GHC needs to be in your path for successful sandbox init.
 	- Fix wrong arguments passed to GHCi session causing warning messages
 	- Do not install dependencies of a projet that has a dependent project in the same sandbox, install dependencies of top level projects (otherwise Cabal complains).
+	- Allow scion-browser to recover from an error (notified as part of https://github.com/JPMoresmau/scion-class-browser/issues/13)
 
 Features:
 	- Environment tab on Haskell run configurations, passed to process
