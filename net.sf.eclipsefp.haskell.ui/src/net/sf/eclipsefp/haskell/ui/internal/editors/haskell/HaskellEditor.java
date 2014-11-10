@@ -52,6 +52,7 @@ import net.sf.eclipsefp.haskell.ui.internal.views.outline.HaskellOutlinePage;
 import net.sf.eclipsefp.haskell.ui.internal.views.worksheet.WorkSheetView;
 import net.sf.eclipsefp.haskell.ui.util.CabalFileChangeListener;
 import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IStorage;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
@@ -83,6 +84,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorSite;
 import org.eclipse.ui.IFileEditorInput;
+import org.eclipse.ui.IStorageEditorInput;
 import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
@@ -578,11 +580,21 @@ public class HaskellEditor extends TextEditor implements IEditorPreferenceNames,
    */
   public IFile findFile() {
     IEditorInput input = getEditorInput();
+
     if( input instanceof IFileEditorInput ) {
       return ( ( IFileEditorInput ) input ).getFile();
-    } else {
-      HaskellUIPlugin.log( NLS.bind( UITexts.unsupported_input, this.getClass().getName(),input.getClass().getName() ), IStatus.WARNING );
     }
+    if (input instanceof IStorageEditorInput){
+      try {
+        IStorage st=((IStorageEditorInput)input).getStorage();
+        if (st instanceof IFile){
+          return (IFile)st;
+        }
+      } catch (CoreException ce){
+        HaskellUIPlugin.log( ce );
+      }
+    }
+      HaskellUIPlugin.log( NLS.bind( UITexts.unsupported_input, this.getClass().getName(),input.getClass().getName() ), IStatus.WARNING );
 
     return null;
   }
