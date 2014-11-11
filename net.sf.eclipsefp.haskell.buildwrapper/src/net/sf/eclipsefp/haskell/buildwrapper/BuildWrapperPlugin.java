@@ -59,6 +59,8 @@ public class BuildWrapperPlugin extends AbstractUIPlugin {
 	
 	private static Map<IProject, BWFacade> facades=new HashMap<>();
 	
+	private static Set<IProject> addSourceProjects = new HashSet<>();
+	
 	private static String bwPath;
 	private static int maxConfigureFailures=10;
 	private static int maxEvalTime=30;
@@ -433,5 +435,12 @@ public class BuildWrapperPlugin extends AbstractUIPlugin {
           }
         }
         return extensions;
+	}
+	
+	/**
+	 * @return the addSourceProjects
+	 */
+	public static Set<IProject> getAddSourceProjects() {
+		return addSourceProjects;
 	}
 }

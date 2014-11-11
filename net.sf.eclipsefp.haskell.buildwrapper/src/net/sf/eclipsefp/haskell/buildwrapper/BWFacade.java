@@ -106,7 +106,7 @@ public class BWFacade {
 	private boolean hasCabalChanged = false;
 	
 	private Long lastBuild = null;
-	private Map<IProject,Long> lastAddSource = new HashMap<>();
+	private Set<IProject> addSourceProjects = new HashSet<>();
 	
 	/**
 	 * use a long running buildwrapper process?
@@ -1954,7 +1954,7 @@ public class BWFacade {
 			}
 		}
 		this.cabalImplDetails = cabalImplDetails;
-
+		this.addSourceProjects.clear();
 	}
 	
 	private void registerProcess(Process p){
@@ -2058,7 +2058,7 @@ public class BWFacade {
 	/**
 	 * @return the lastAddSource
 	 */
-	public Map<IProject, Long> getLastAddSource() {
-		return lastAddSource;
+	public Set<IProject> getAddSourceProjects() {
+		return addSourceProjects;
 	}
 }
