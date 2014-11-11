@@ -180,7 +180,7 @@ public class SandboxHelper {
 		}
 		if (processed.add(p)){
 			for (IProject pR:p.getReferencedProjects()){
-				installDeps(sandboxFacade,pR,processed);
+				addSource(sandboxFacade,pR,processed);
 			}
 			if (sandboxFacade.isCanceled()){
 				return;
