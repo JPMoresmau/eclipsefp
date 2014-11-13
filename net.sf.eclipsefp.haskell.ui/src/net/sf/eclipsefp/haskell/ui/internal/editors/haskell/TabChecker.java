@@ -69,9 +69,10 @@ public class TabChecker implements IPartListener{
   }
 
   private static void checkTabs(final Display display,final IDocument doc){
-    final String contents=doc.get();
-    if (contents.contains( "\t" )){
-      // we should not be in a job
+    if (doc!=null){
+      final String contents=doc.get();
+      if (contents!=null && contents.contains( "\t" )){
+        // we should not be in a job
         if (MessageDialog.openConfirm( display.getActiveShell() , UITexts.error_tabs  , UITexts.error_tabs_message )){
           int tw=HaskellUIPlugin.getDefault().getPreferenceStore().getInt( IEditorPreferenceNames.EDITOR_TAB_WIDTH );
           StringBuilder sb=new StringBuilder();
@@ -81,6 +82,7 @@ public class TabChecker implements IPartListener{
           String contents2=contents.replace( "\t",sb.toString() );
           doc.set(contents2);
         }
+      }
     }
   }
 }
