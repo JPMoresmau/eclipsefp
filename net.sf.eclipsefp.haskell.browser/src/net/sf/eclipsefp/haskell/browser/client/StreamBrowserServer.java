@@ -277,7 +277,7 @@ public class StreamBrowserServer extends BrowserServer {
 	@Override
 	protected void loadLocalDatabaseInternal(String path, boolean rebuild)
 			throws IOException, JSONException {
-		if (sendAndReceiveOk(Commands.createLoadLocalDatabase(path, rebuild))){
+		if (sendAndReceiveOk(Commands.createLoadLocalDatabase(path, rebuild,BrowserPlugin.getSandboxPath()))){
 			localDbPath=path;
 			packageCache.remove(Database.LOCAL);
 			packageCache.remove(Database.ALL);
@@ -389,18 +389,18 @@ public class StreamBrowserServer extends BrowserServer {
 
 	@Override
 	public HoogleResult[] queryHoogle(Database db,String query) throws Exception {
-		String response = sendAndReceive(Commands.createHoogleQuery(db,query));
+		String response = sendAndReceive(Commands.createHoogleQuery(db,query,BrowserPlugin.getSandboxPath()));
 		return Commands.responseHoogleQuery(response);
 	}
 
 	@Override
 	public void downloadHoogleData() throws IOException, JSONException {
-		sendAndReceiveStatus(Commands.createDownloadHoogleData());
+		sendAndReceiveStatus(Commands.createDownloadHoogleData(BrowserPlugin.getSandboxPath()));
 	}
 
 	@Override
 	public HoogleStatus checkHoogle() throws Exception {
-		HoogleStatus st = sendAndReceiveStatus(Commands.createCheckHoogleData());
+		HoogleStatus st = sendAndReceiveStatus(Commands.createCheckHoogleData(BrowserPlugin.getSandboxPath()));
 		// If is present, notify the views
 		if (HoogleStatus.OK.equals(st)) {
 			hoogleLoaded = true;

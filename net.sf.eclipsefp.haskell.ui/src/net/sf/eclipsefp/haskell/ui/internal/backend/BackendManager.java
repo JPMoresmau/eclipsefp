@@ -278,6 +278,9 @@ public class BackendManager implements IResourceChangeListener {
     HappyRunner.setFullPath( preferenceStore.getString( IPreferenceConstants.HAPPY_EXECUTABLE ) );
     UuagcRunner.setFullPath( preferenceStore.getString( IPreferenceConstants.UUAGC_EXECUTABLE ) );
 
+    CabalImplDetails d=getCabalImplDetails();
+    BrowserPlugin.setSandboxPath(d.isSandboxed() && d.isUniqueSandbox()?d.getSandboxPath():null );
+
     // Sit and listen to the preference store changes
     preferenceStore.addPropertyChangeListener( new ExecutablesPropertiesListener() );
 
@@ -817,7 +820,9 @@ public class BackendManager implements IResourceChangeListener {
              BuildWrapperPlugin.setCabalImplDetails( getCabalImplDetails() );
 
           } else if (event.getProperty().equals(IPreferenceConstants.UNIQUE_SANDBOX_PATH)){
-            BuildWrapperPlugin.setCabalImplDetails( getCabalImplDetails() );
+            CabalImplDetails d= getCabalImplDetails();
+            BuildWrapperPlugin.setCabalImplDetails(d );
+            BrowserPlugin.setSandboxPath(d.isSandboxed() && d.isUniqueSandbox()? d.getSandboxPath():null);
 //            for (final IProject p:ResourceUtil.listHaskellProjects()){
 //              new Job("") {
 //

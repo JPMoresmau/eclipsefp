@@ -51,6 +51,8 @@ public class BrowserPlugin extends AbstractUIPlugin implements IDatabaseLoadedLi
 	private ArrayList<IDatabaseLoadedListener> dbLoadedListeners;
 	private ArrayList<IHoogleLoadedListener> hoogleLoadedListeners;
 
+	private static String sandboxPath;
+	
 	/**
 	 * The constructor
 	 */
@@ -528,6 +530,14 @@ public class BrowserPlugin extends AbstractUIPlugin implements IDatabaseLoadedLi
         	 return d.getDoc();	 
          }
          return "";
+	}
+
+	public static String getSandboxPath() {
+		return sandboxPath;
+	}
+
+	public static void setSandboxPath(String sandboxPath) {
+		BrowserPlugin.sandboxPath = sandboxPath;
 	}
 	
 }

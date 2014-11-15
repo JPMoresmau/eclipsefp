@@ -27,11 +27,14 @@ import org.json.JSONObject;
 public class Commands {
 
 	public static JSONObject createLoadLocalDatabase(String path,
-			boolean rebuild) throws JSONException {
+			boolean rebuild,String sandbox) throws JSONException {
 		JSONObject o = new JSONObject();
 		o.put("command", "load-local-db");
 		o.put("filepath", path);
 		o.put("rebuild", rebuild);
+		if (sandbox!=null){
+			o.put("sandbox", sandbox);
+		}
 		return o;
 	}
 	
@@ -195,11 +198,14 @@ public class Commands {
 		return o;
 	}
 	
-	public static JSONObject createHoogleQuery(Database db,String query) throws JSONException {
+	public static JSONObject createHoogleQuery(Database db,String query,String sandbox) throws JSONException {
 		JSONObject o = new JSONObject();
 		o.put("command", "hoogle-query");
 		setCurrentDatabase(db,o);
 		o.put("query", query);
+		if (sandbox!=null){
+			o.put("sandbox", sandbox);
+		}
 		return o;
 	}
 	
@@ -214,15 +220,21 @@ public class Commands {
 		return aResults.toArray(new HoogleResult[jResults.length()]);
 	}
 	
-	public static JSONObject createDownloadHoogleData() throws JSONException {
+	public static JSONObject createDownloadHoogleData(String sandbox) throws JSONException {
 		JSONObject o = new JSONObject();
 		o.put("command", "hoogle-data");
+		if (sandbox!=null){
+			o.put("sandbox", sandbox);
+		}
 		return o;
 	}
 	
-	public static JSONObject createCheckHoogleData() throws JSONException {
+	public static JSONObject createCheckHoogleData(String sandbox) throws JSONException {
 		JSONObject o = new JSONObject();
 		o.put("command", "hoogle-check");
+		if (sandbox!=null){
+			o.put("sandbox", sandbox);
+		}
 		return o;
 	}
 	
