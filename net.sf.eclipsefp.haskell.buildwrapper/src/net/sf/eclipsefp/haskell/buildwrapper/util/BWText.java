@@ -36,6 +36,8 @@ public class BWText extends NLS {
   public static String 		  job_sandbox_deps;
   
   public static String        job_eval;
+  public static String        job_deps;
+  
   public static String        error_deleteMarkers;
   public static String        error_gettingFlags;
   public static String		  error_noexe;

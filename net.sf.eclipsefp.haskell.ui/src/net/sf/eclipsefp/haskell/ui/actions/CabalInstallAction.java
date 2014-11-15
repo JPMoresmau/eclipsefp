@@ -39,7 +39,7 @@ import org.eclipse.ui.IWorkbenchPart;
   * @author JP Moresmau
  */
 public class CabalInstallAction implements IObjectActionDelegate {
-  private final Set<IProject> projects=new LinkedHashSet<>();
+  protected final Set<IProject> projects=new LinkedHashSet<>();
   private Shell currentShell;
 
   /**

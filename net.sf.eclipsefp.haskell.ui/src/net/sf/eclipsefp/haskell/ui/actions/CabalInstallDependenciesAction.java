@@ -6,8 +6,11 @@
 package net.sf.eclipsefp.haskell.ui.actions;
 
 import java.util.List;
+import net.sf.eclipsefp.haskell.buildwrapper.JobFacade;
+import net.sf.eclipsefp.haskell.buildwrapper.types.CabalImplDetails;
 import net.sf.eclipsefp.haskell.buildwrapper.util.BWText;
 import net.sf.eclipsefp.haskell.ui.HaskellUIPlugin;
+import net.sf.eclipsefp.haskell.ui.internal.backend.BackendManager;
 import net.sf.eclipsefp.haskell.ui.internal.util.UITexts;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IncrementalProjectBuilder;
@@ -17,6 +20,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
+import org.eclipse.jface.action.IAction;
 import org.eclipse.osgi.util.NLS;
 
 
@@ -55,6 +59,19 @@ public class CabalInstallDependenciesAction extends CabalInstallAction {
     return UITexts.install_sandbox_dependencies_text;
   }
 
+  /* (non-Javadoc)
+   * @see net.sf.eclipsefp.haskell.ui.actions.CabalInstallAction#run(org.eclipse.jface.action.IAction)
+   */
+  @Override
+  public void run( final IAction arg0 ) {
+    CabalImplDetails cid=BackendManager.getCabalImplDetails();
+    // install via sandboxhelper that will install deps of top level projects to keep consistency
+    if (cid.isSandboxed() && cid.isUniqueSandbox()){
+      JobFacade.installDeps( projects );
+      return;
+    }
+    super.run( arg0 );
+  }
 
   /* (non-Javadoc)
    * @see net.sf.eclipsefp.haskell.ui.actions.CabalInstallAction#getAfter(org.eclipse.core.resources.IProject)

@@ -6,7 +6,9 @@
 package net.sf.eclipsefp.haskell.buildwrapper;
 
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import net.sf.eclipsefp.haskell.buildwrapper.types.BuildOptions;
 import net.sf.eclipsefp.haskell.buildwrapper.types.EvalHandler;
@@ -519,4 +521,32 @@ public class JobFacade  {
 	    realFacade.getThingAtPointJobQueue(file).addJob(buildJob);
 	}
 	
+	public static void installDeps(final Set<IProject> projects){
+		final String jobNamePrefix = BWText.job_deps;
+
+	      Job buildJob = new Job (jobNamePrefix) {
+	        @Override
+	        protected IStatus run(IProgressMonitor monitor) {
+	          try {
+	            monitor.beginTask(jobNamePrefix, IProgressMonitor.UNKNOWN);
+	            Set<BWFacade> fcds=new HashSet<>();
+	            for (IProject p:projects){
+	              BWFacade f=BuildWrapperPlugin.getFacade( p );
+	              if (f!=null){
+	                try {
+	                  SandboxHelper.installDeps( f, fcds );
+	                } catch (Exception ioe){
+	                  BuildWrapperPlugin.logError(ioe.getLocalizedMessage(),ioe);
+	                }
+	              }
+	            }
+	          } finally {
+	            monitor.done();
+	          }
+	          return Status.OK_STATUS;
+	        }
+	      };
+	      buildJob.setPriority(Job.BUILD);
+	      buildJob.schedule();
+	}
 }

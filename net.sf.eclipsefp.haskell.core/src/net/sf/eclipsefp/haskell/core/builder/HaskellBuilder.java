@@ -190,10 +190,11 @@ public class HaskellBuilder extends IncrementalProjectBuilder {
                * we need to make sure dependencies are added before the synchronize
                */
               f.cabalFileChanged();
-
+              // if we have new internal dependencies
+              SandboxHelper.installDeps(f);
             }
         }
-        SandboxHelper.installDeps(f);
+
 
       } catch(CoreException ce){
         HaskellCorePlugin.log( ce );

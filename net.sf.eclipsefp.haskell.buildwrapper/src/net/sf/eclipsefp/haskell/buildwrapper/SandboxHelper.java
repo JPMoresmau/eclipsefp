@@ -231,10 +231,11 @@ public class SandboxHelper {
 			case CABAL:
 				// in Cabal sandboxes, we have automatic updates
 				// either we build in the common sandbox, or we use addSource which maintain up to date packages
-				IProject p=f.getProject();
-				for (IProject pR:p.getReferencingProjects()){
-					build(p,pR,processed);
-				}
+				// we let Eclipse manage this: if we build manually we don't want to build everything...
+//				IProject p=f.getProject();
+//				for (IProject pR:p.getReferencingProjects()){
+//					build(p,pR,processed);
+//				}
 				break;
 			case NONE:
 				break;
