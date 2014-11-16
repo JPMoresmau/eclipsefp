@@ -27,7 +27,7 @@ import org.eclipse.swt.widgets.Text;
  *
  */
 public class CabalHaddockOptionsPage extends WizardPage  {
-  private static boolean doHoogle=false;
+  private static boolean doHoogle=true; // since we can use Hoogle data from our own projects, default to true
   private static boolean doExecutables=false;
   private static boolean doInternal=false;
   private static boolean doColourSrc=false;
