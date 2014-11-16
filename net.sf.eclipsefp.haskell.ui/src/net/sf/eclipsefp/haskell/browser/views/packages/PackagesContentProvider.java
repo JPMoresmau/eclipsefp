@@ -18,8 +18,13 @@ import org.eclipse.jface.viewers.Viewer;
  */
 public class PackagesContentProvider implements ITreeContentProvider {
 
-	PackagesItem[] localCache = null;
-	PackagesItem[] hackageCache = null;
+	private static PackagesItem[] localCache = null;
+	private static PackagesItem[] hackageCache = null;
+
+	public static void clearCache(){
+	  localCache = null;
+	  hackageCache = null;
+	}
 
 	@Override
   public Object[] getElements(final Object inputElement) {
@@ -44,12 +49,12 @@ public class PackagesContentProvider implements ITreeContentProvider {
 		  if (localCache == null) {
 	      cacheLocal();
 	    }
-			return this.localCache;
+			return PackagesContentProvider.localCache;
 		case HACKAGE:
 		  if (hackageCache == null) {
         cacheHackage();
       }
-		  return this.hackageCache;
+		  return PackagesContentProvider.hackageCache;
 		default:
 		  return new Object[0];
 		}
@@ -73,8 +78,8 @@ public class PackagesContentProvider implements ITreeContentProvider {
 	}
 
 	public void uncache() {
-		this.localCache = null;
-		this.hackageCache = null;
+		PackagesContentProvider.localCache = null;
+		PackagesContentProvider.hackageCache = null;
 	}
 
 	private void cacheLocal() {
@@ -84,9 +89,9 @@ public class PackagesContentProvider implements ITreeContentProvider {
 			for (HaskellPackage pkg : BrowserPlugin.getSharedInstance().getPackages(Database.LOCAL)) {
         cache.add(new PackagesItem(Database.LOCAL, pkg));
       }
-			this.localCache = cache.toArray(new PackagesItem[cache.size()]);
+			PackagesContentProvider.localCache = cache.toArray(new PackagesItem[cache.size()]);
 		} catch (Throwable ex) {
-			this.localCache = new PackagesItem[0];
+			PackagesContentProvider.localCache = new PackagesItem[0];
 		}
 	}
 
@@ -97,9 +102,9 @@ public class PackagesContentProvider implements ITreeContentProvider {
       for (HaskellPackage pkg : BrowserPlugin.getSharedInstance().getPackages(Database.HACKAGE)) {
         cache.add(new PackagesItem(Database.HACKAGE, pkg));
       }
-      this.hackageCache = cache.toArray(new PackagesItem[cache.size()]);
+      PackagesContentProvider.hackageCache = cache.toArray(new PackagesItem[cache.size()]);
     } catch (Throwable ex) {
-      this.hackageCache = new PackagesItem[0];
+      PackagesContentProvider.hackageCache = new PackagesItem[0];
     }
   }
 

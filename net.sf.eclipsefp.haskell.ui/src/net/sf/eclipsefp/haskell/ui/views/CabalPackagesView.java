@@ -505,7 +505,8 @@ public class CabalPackagesView extends ViewPart {
                   }
                 }
               });
-              BrowserPlugin.loadLocalDatabase( true );
+              HaskellUIPlugin.getDefault().getBackendManager().rebuildBrowser();
+
             }
           });
         } catch (Exception ioe){

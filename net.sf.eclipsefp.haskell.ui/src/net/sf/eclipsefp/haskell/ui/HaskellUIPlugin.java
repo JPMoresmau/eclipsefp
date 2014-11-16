@@ -65,7 +65,7 @@ public class HaskellUIPlugin extends AbstractUIPlugin {
    */
   private ResourceBundle resourceBundle = null;
   // The scion-server manager object
-  private BackendManager fScionManager = null;
+  private BackendManager fBackendManager = null;
 
   public HaskellUIPlugin() {
     plugin = this;
@@ -74,7 +74,7 @@ public class HaskellUIPlugin extends AbstractUIPlugin {
 
   @Override
   public void stop( final BundleContext context ) throws Exception {
-    fScionManager.stop();
+    fBackendManager.stop();
     HaskellUIImages.disposeImageDescriptorRegistry();
     ColorProvider.getInstance().dispose();
     ScannerManager.getInstance().dispose();
@@ -85,8 +85,8 @@ public class HaskellUIPlugin extends AbstractUIPlugin {
   public void start( final BundleContext context ) throws Exception {
     super.start( context );
     //getPreferenceManager().activateBuildConsolePreferences();
-    fScionManager = new BackendManager();
-    fScionManager.start();
+    fBackendManager = new BackendManager();
+    fBackendManager.start();
   }
 
   /**
@@ -180,8 +180,8 @@ public class HaskellUIPlugin extends AbstractUIPlugin {
   // Scion manager
   // //////////////
 
-  public BackendManager getScionManager() {
-    return fScionManager;
+  public BackendManager getBackendManager() {
+    return fBackendManager;
   }
   /**
    * Get the {@link ScionInstance} associated with a viewer's underlying editor

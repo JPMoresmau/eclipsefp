@@ -11,6 +11,7 @@ import net.sf.eclipsefp.haskell.browser.BrowserPlugin;
 import net.sf.eclipsefp.haskell.browser.Database;
 import net.sf.eclipsefp.haskell.browser.items.HaskellPackage;
 import net.sf.eclipsefp.haskell.browser.items.PackageIdentifier;
+import net.sf.eclipsefp.haskell.browser.views.packages.PackagesContentProvider;
 import net.sf.eclipsefp.haskell.buildwrapper.BWFacade;
 import net.sf.eclipsefp.haskell.buildwrapper.BuildWrapperPlugin;
 import net.sf.eclipsefp.haskell.buildwrapper.JobFacade;
@@ -459,16 +460,20 @@ public class BackendManager implements IResourceChangeListener {
       display.asyncExec( new Runnable() {
         @Override
         public void run() {
-          Job builder =  new BrowserLocalDatabaseRebuildJob(UITexts.scionBrowserRebuildingDatabase);
-          //builder.setRule( ResourcesPlugin.getWorkspace().getRoot() );
-          builder.setPriority( Job.DECORATE );
-          builder.schedule();
+          rebuildBrowser();
         }
       } );
     } else {
       browserExecutablePath = null;
       BrowserPlugin.useNullSharedInstance();
     }
+  }
+
+  public void rebuildBrowser(){
+    Job builder =  new BrowserLocalDatabaseRebuildJob(UITexts.scionBrowserRebuildingDatabase);
+    //builder.setRule( ResourcesPlugin.getWorkspace().getRoot() );
+    builder.setPriority( Job.DECORATE );
+    builder.schedule();
   }
 
   private boolean registerPerspectiveListener(final IWorkbenchWindow w){
@@ -1177,7 +1182,7 @@ public class BackendManager implements IResourceChangeListener {
       monitor.beginTask( UITexts.scionBrowserRebuildingDatabase, IProgressMonitor.UNKNOWN );
       status = BrowserPlugin.loadLocalDatabase( true );
       monitor.done();
-
+      PackagesContentProvider.clearCache();
       return status;
     }
   }

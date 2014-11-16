@@ -68,6 +68,8 @@ public class CabalInstallDependenciesAction extends CabalInstallAction {
     // install via sandboxhelper that will install deps of top level projects to keep consistency
     if (cid.isSandboxed() && cid.isUniqueSandbox()){
       JobFacade.installDeps( projects );
+      HaskellUIPlugin.getDefault().getBackendManager().rebuildBrowser();
+
       return;
     }
     super.run( arg0 );
@@ -99,6 +101,8 @@ public class CabalInstallDependenciesAction extends CabalInstallAction {
                 }
                 p.build( IncrementalProjectBuilder.FULL_BUILD , mon );
               }
+              HaskellUIPlugin.getDefault().getBackendManager().rebuildBrowser();
+
             } catch (CoreException ce){
               return new Status( IStatus.ERROR, HaskellUIPlugin.getPluginId(), ce.getLocalizedMessage(),ce);
             }
