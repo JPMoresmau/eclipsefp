@@ -198,11 +198,12 @@ public class Commands {
 		return o;
 	}
 	
-	public static JSONObject createHoogleQuery(Database db,String query,String sandbox) throws JSONException {
+	public static JSONObject createHoogleQuery(Database db,String path,String query,String sandbox) throws JSONException {
 		JSONObject o = new JSONObject();
 		o.put("command", "hoogle-query");
 		setCurrentDatabase(db,o);
 		o.put("query", query);
+		o.put("filepath", path);
 		if (sandbox!=null){
 			o.put("sandbox", sandbox);
 		}
@@ -223,6 +224,17 @@ public class Commands {
 	public static JSONObject createDownloadHoogleData(String sandbox) throws JSONException {
 		JSONObject o = new JSONObject();
 		o.put("command", "hoogle-data");
+		if (sandbox!=null){
+			o.put("sandbox", sandbox);
+		}
+		return o;
+	}
+	
+	public static JSONObject createInitHoogle(String path,boolean addToDB,String sandbox) throws JSONException {
+		JSONObject o = new JSONObject();
+		o.put("command", "hoogle-init");
+		o.put("filepath", path);
+		o.put("addToDB", addToDB);
 		if (sandbox!=null){
 			o.put("sandbox", sandbox);
 		}

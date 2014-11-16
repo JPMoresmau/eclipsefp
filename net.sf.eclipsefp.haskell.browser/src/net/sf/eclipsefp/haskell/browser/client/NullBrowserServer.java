@@ -109,18 +109,26 @@ public class NullBrowserServer extends BrowserServer {
 	}
 
 	@Override
-	public HoogleResult[] queryHoogle(Database db,String query) throws Exception {
+	public HoogleResult[] queryHoogle(Database db,String path,String query) throws Exception {
 		// Return nothing
 		return new HoogleResult[0];
 	}
+//	
+//	@Override
+//	public void downloadHoogleData() {
+//		// Do nothing
+//	}
+//	
+//	@Override
+//	public HoogleStatus checkHoogle() {
+//		return HoogleStatus.MISSING;
+//	}
 	
+	/* (non-Javadoc)
+	 * @see net.sf.eclipsefp.haskell.browser.BrowserServer#initHoogle(java.lang.String)
+	 */
 	@Override
-	public void downloadHoogleData() {
-		// Do nothing
-	}
-	
-	@Override
-	public HoogleStatus checkHoogle() {
+	public HoogleStatus initHoogle(String path,boolean addToDB) throws Exception {
 		return HoogleStatus.MISSING;
 	}
 

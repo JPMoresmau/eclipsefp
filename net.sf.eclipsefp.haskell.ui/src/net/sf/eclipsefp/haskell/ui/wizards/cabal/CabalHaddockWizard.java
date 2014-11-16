@@ -10,10 +10,12 @@ import java.util.ArrayList;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
+import net.sf.eclipsefp.haskell.browser.BrowserPlugin;
 import net.sf.eclipsefp.haskell.core.cabal.CabalImplementationManager;
 import net.sf.eclipsefp.haskell.core.util.ResourceUtil;
 import net.sf.eclipsefp.haskell.debug.core.internal.launch.AbstractHaskellLaunchDelegate;
 import net.sf.eclipsefp.haskell.ui.HaskellUIPlugin;
+import net.sf.eclipsefp.haskell.ui.internal.backend.BackendManager;
 import net.sf.eclipsefp.haskell.ui.internal.util.UITexts;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
@@ -125,6 +127,12 @@ public class CabalHaddockWizard extends Wizard implements IExportWizard {
                   PlatformUI.getWorkbench().getBrowserSupport().createBrowser(p.getName() ).openURL( idx.getLocationURI().toURL() );
                 } catch ( Exception ce ) {
                   HaskellUIPlugin.log( ce );
+                }
+              }
+              if (CabalHaddockOptionsPage.isDoHoogle()){
+                IFile txt=f.getFile("doc/html/"+ p.getName()+"/"+ p.getName()+".txt" );
+                if (txt.exists() && BackendManager.getCabalImplDetails().isSandboxed() && BackendManager.getCabalImplDetails().isUniqueSandbox()){
+                  BrowserPlugin.addToHoogle( txt.getLocation().toFile() );
                 }
               }
             }

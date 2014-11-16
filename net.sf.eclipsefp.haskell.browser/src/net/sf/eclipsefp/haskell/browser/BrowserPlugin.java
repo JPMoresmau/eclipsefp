@@ -4,8 +4,12 @@
  */
 package net.sf.eclipsefp.haskell.browser;
 
+import java.io.File;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.Writer;
+import java.nio.file.Files;
+import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
@@ -14,6 +18,7 @@ import net.sf.eclipsefp.haskell.browser.client.NullBrowserServer;
 import net.sf.eclipsefp.haskell.browser.client.StreamBrowserServer;
 import net.sf.eclipsefp.haskell.browser.items.Declaration;
 import net.sf.eclipsefp.haskell.browser.items.Documented;
+import net.sf.eclipsefp.haskell.browser.items.HoogleResult;
 import net.sf.eclipsefp.haskell.browser.items.Packaged;
 import net.sf.eclipsefp.haskell.browser.util.BrowserText;
 import net.sf.eclipsefp.haskell.util.FileUtil;
@@ -260,6 +265,20 @@ public class BrowserPlugin extends AbstractUIPlugin implements IDatabaseLoadedLi
 			return new Status(IStatus.ERROR, PLUGIN_ID, BrowserText.error_loadlocaldb, ex);
 		}
 	}
+	
+	public static IStatus initHoogle(boolean addToDB) {
+		try {
+			getSharedInstance().initHoogle(getLocalDatabasePath().toOSString(),addToDB);
+			return Status.OK_STATUS;
+		} catch (Throwable ex) {
+			return new Status(IStatus.ERROR, PLUGIN_ID, BrowserText.error_loadlocaldb, ex);
+		}
+	}
+	
+	public static HoogleResult[] queryHoogle(Database db,String query) throws Exception{
+		return getSharedInstance().queryHoogle(db,getLocalDatabasePath().toOSString(),query);
+	}
+	
 	
 	/**
 	 * Loads the Hackage database in the current shared instance
@@ -540,4 +559,14 @@ public class BrowserPlugin extends AbstractUIPlugin implements IDatabaseLoadedLi
 		BrowserPlugin.sandboxPath = sandboxPath;
 	}
 	
+	public static void addToHoogle(File f){
+		File db=getLocalDatabasePath().toFile();
+		File txt=new File(new File(db.getParentFile(),"hoogle"),f.getName());
+		try {
+			Files.copy(f.toPath(), txt.toPath(), StandardCopyOption.REPLACE_EXISTING);
+			initHoogle(true);
+		} catch (IOException ioe){
+			BrowserPlugin.logError(ioe.getLocalizedMessage(), ioe);
+		}
+	}
 }

@@ -56,15 +56,16 @@ public class HoogleContentProvider implements ITreeContentProvider {
       try {
         // Get results depending of set of databases to check
         HoogleResult[] initialResults;
+
         if (localDbCheck.getSelection() && hackageDbCheck.getSelection()) {
           //BrowserPlugin.getSharedInstance().setCurrentDatabase( DatabaseType.ALL, null );
-          initialResults = BrowserPlugin.getSharedInstance().queryHoogle(Database.ALL, newQuery );
+          initialResults = BrowserPlugin.queryHoogle(Database.ALL, newQuery );
         } else if (localDbCheck.getSelection()) {
           //BrowserPlugin.getSharedInstance().setCurrentDatabase( DatabaseType.LOCAL, null );
-          initialResults = BrowserPlugin.getSharedInstance().queryHoogle(Database.LOCAL, newQuery );
+          initialResults = BrowserPlugin.queryHoogle(Database.LOCAL, newQuery );
         } else if (hackageDbCheck.getSelection()) {
           //BrowserPlugin.getSharedInstance().setCurrentDatabase( DatabaseType.HACKAGE, null );
-          initialResults = BrowserPlugin.getSharedInstance().queryHoogle(Database.HACKAGE, newQuery );
+          initialResults = BrowserPlugin.queryHoogle(Database.HACKAGE, newQuery );
         } else {
           initialResults = new HoogleResult[0];
         }

@@ -10,7 +10,6 @@ import java.util.Stack;
 import net.sf.eclipsefp.haskell.browser.BrowserPlugin;
 import net.sf.eclipsefp.haskell.browser.Database;
 import net.sf.eclipsefp.haskell.browser.items.HaskellPackage;
-import net.sf.eclipsefp.haskell.browser.items.HoogleStatus;
 import net.sf.eclipsefp.haskell.browser.items.PackageIdentifier;
 import net.sf.eclipsefp.haskell.buildwrapper.BWFacade;
 import net.sf.eclipsefp.haskell.buildwrapper.BuildWrapperPlugin;
@@ -627,47 +626,53 @@ public class BackendManager implements IResourceChangeListener {
   }
 
   void checkHoogleDataIsPresent(final String extraHooglePath) {
-    boolean rebuild = false;
-    try {
-      // Set extra paths if needed
-     if (extraHooglePath != null && extraHooglePath.length() > 0) {
-        BrowserPlugin.getSharedInstance().setExtraHooglePath( extraHooglePath );
-      }
-      rebuild = HoogleStatus.ERROR.equals(BrowserPlugin.getSharedInstance().checkHoogle());
-    } catch( Exception e ) {
-      // ignore
-    }
-    if( rebuild ) {
-      // There is no "fmap", we don't have a database
-      final Display display = Display.getDefault();
-
-      display.asyncExec( new Runnable() {
-
-        @Override
-        public void run() {
-          // needs ui thread
-          Shell parentShell = display.getActiveShell();
-          if( MessageDialog
-              .openQuestion(
-                  parentShell,
-                  UITexts.hoogle_dataNotPresent_title,
-                  UITexts.hoogle_dataNotPresent_message ) ) {
-            display.asyncExec( new Runnable() {
-
-              @Override
-              public void run() {
-                Job builder = new HoogleDownloadDataJob(
-                    UITexts.hoogle_downloadingData );
-                // no need to stop all other operations
-                //builder.setRule( ResourcesPlugin.getWorkspace().getRoot() );
-                builder.setPriority( Job.DECORATE );
-                builder.schedule();
-              }
-            } );
-          }
-        }
-      } );
-    }
+//    boolean rebuild = false;
+//    try {
+//      // Set extra paths if needed
+//     if (extraHooglePath != null && extraHooglePath.length() > 0) {
+//        BrowserPlugin.getSharedInstance().setExtraHooglePath( extraHooglePath );
+//      }
+//      rebuild = HoogleStatus.ERROR.equals(BrowserPlugin.getSharedInstance().checkHoogle());
+//    } catch( Exception e ) {
+//      // ignore
+//    }
+//    if( rebuild ) {
+//      // There is no "fmap", we don't have a database
+//      final Display display = Display.getDefault();
+//
+//      display.asyncExec( new Runnable() {
+//
+//        @Override
+//        public void run() {
+//          // needs ui thread
+//          Shell parentShell = display.getActiveShell();
+//          if( MessageDialog
+//              .openQuestion(
+//                  parentShell,
+//                  UITexts.hoogle_dataNotPresent_title,
+//                  UITexts.hoogle_dataNotPresent_message ) ) {
+//            display.asyncExec( new Runnable() {
+//
+//              @Override
+//              public void run() {
+//                Job builder = new HoogleDownloadDataJob(
+//                    UITexts.hoogle_downloadingData );
+//                // no need to stop all other operations
+//                //builder.setRule( ResourcesPlugin.getWorkspace().getRoot() );
+//                builder.setPriority( Job.DECORATE );
+//                builder.schedule();
+//              }
+//            } );
+//          }
+//        }
+//      } );
+//    }
+    Job builder = new HoogleDownloadDataJob(
+      UITexts.hoogle_downloadingData );
+    // no need to stop all other operations
+    //builder.setRule( ResourcesPlugin.getWorkspace().getRoot() );
+    builder.setPriority( Job.DECORATE );
+    builder.schedule();
   }
 
 
@@ -1239,8 +1244,7 @@ public class BackendManager implements IResourceChangeListener {
     protected IStatus run( final IProgressMonitor monitor ) {
       monitor.beginTask( UITexts.hoogle_downloadingData, IProgressMonitor.UNKNOWN );
       try {
-        BrowserPlugin.getSharedInstance().downloadHoogleData();
-        BrowserPlugin.getSharedInstance().checkHoogle();
+        BrowserPlugin.initHoogle(false);
       } catch( Exception e ) {
         // Do nothing if fails
       }

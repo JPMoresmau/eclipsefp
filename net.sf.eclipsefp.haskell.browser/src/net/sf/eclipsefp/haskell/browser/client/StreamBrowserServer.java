@@ -388,27 +388,37 @@ public class StreamBrowserServer extends BrowserServer {
 	}
 
 	@Override
-	public HoogleResult[] queryHoogle(Database db,String query) throws Exception {
-		String response = sendAndReceive(Commands.createHoogleQuery(db,query,BrowserPlugin.getSandboxPath()));
+	public HoogleResult[] queryHoogle(Database db,String path,String query) throws Exception {
+		String response = sendAndReceive(Commands.createHoogleQuery(db,path,query,BrowserPlugin.getSandboxPath()));
 		return Commands.responseHoogleQuery(response);
 	}
+//
+//	@Override
+//	public void downloadHoogleData() throws IOException, JSONException {
+//		sendAndReceiveStatus(Commands.createDownloadHoogleData(BrowserPlugin.getSandboxPath()));
+//	}
+//
+//	@Override
+//	public HoogleStatus checkHoogle() throws Exception {
+//		HoogleStatus st = sendAndReceiveStatus(Commands.createCheckHoogleData(BrowserPlugin.getSandboxPath()));
+//		// If is present, notify the views
+//		if (HoogleStatus.OK.equals(st)) {
+//			hoogleLoaded = true;
+//			notifyHoogleLoaded(new BrowserEvent(this));
+//		}
+//		return st;
+//	}
 
-	@Override
-	public void downloadHoogleData() throws IOException, JSONException {
-		sendAndReceiveStatus(Commands.createDownloadHoogleData(BrowserPlugin.getSandboxPath()));
-	}
-
-	@Override
-	public HoogleStatus checkHoogle() throws Exception {
-		HoogleStatus st = sendAndReceiveStatus(Commands.createCheckHoogleData(BrowserPlugin.getSandboxPath()));
-		// If is present, notify the views
+	public HoogleStatus initHoogle(String path,boolean addToDB) throws Exception {
+		HoogleStatus st = sendAndReceiveStatus(Commands.createInitHoogle(path,addToDB,BrowserPlugin.getSandboxPath()));
 		if (HoogleStatus.OK.equals(st)) {
 			hoogleLoaded = true;
 			notifyHoogleLoaded(new BrowserEvent(this));
 		}
 		return st;
-	}
 
+	}
+	
 	@Override
 	public void stop() {
 		// Nothing is loaded

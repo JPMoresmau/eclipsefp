@@ -157,12 +157,14 @@ public abstract class BrowserServer {
 	
 	public abstract void setExtraHooglePath(String newPath) throws IOException, JSONException;
 
-	public abstract HoogleResult[] queryHoogle(Database db,String query) throws Exception;
+	public abstract HoogleResult[] queryHoogle(Database db,String path,String query) throws Exception;
 
-	public abstract void downloadHoogleData() throws IOException, JSONException;
+	//public abstract void downloadHoogleData() throws IOException, JSONException;
 
-	public abstract HoogleStatus checkHoogle() throws Exception;
+	//public abstract HoogleStatus checkHoogle() throws Exception;
 
+	public abstract HoogleStatus initHoogle(String path, boolean addToDB) throws Exception;
+	
 	public abstract void stop();
 	
 	public boolean isRunning(){
