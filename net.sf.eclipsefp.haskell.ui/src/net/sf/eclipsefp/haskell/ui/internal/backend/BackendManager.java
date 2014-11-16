@@ -105,7 +105,7 @@ public class BackendManager implements IResourceChangeListener {
   private boolean browserStarted=false;
 
   private final static String MINIMUM_BUILDWRAPPER="0.7.2";
-  private final static String MINIMUM_SCIONBROWSER="0.2.12";
+  private final static String MINIMUM_SCIONBROWSER="0.4.0";
 
   public BackendManager() {
     // The interesting stuff is done in the start() method
