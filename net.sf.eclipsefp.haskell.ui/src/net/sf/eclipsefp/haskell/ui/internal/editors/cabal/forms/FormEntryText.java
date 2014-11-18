@@ -31,9 +31,10 @@ import org.eclipse.ui.forms.widgets.FormToolkit;
 public class FormEntryText extends FormEntry {
 
   private Text textField;
+  private String oldValue = null;
   private String value = ""; //$NON-NLS-1$
-  private boolean dirty;
   private boolean isIgnoreModify = false;
+  private boolean isIgnoreNextSet = false;
 
   @Override
   public void init( final IProject project, final Composite parent,
@@ -59,6 +60,10 @@ public class FormEntryText extends FormEntry {
 
   @Override
   public void setValue( final String value, final boolean blockNotification ) {
+    if (isIgnoreNextSet){
+      isIgnoreNextSet=false;
+      return;
+    }
     this.isIgnoreModify = blockNotification;
     // remove line separators if we're not multiline
     this.value = ( value != null ) ? isMultiline()?
@@ -67,6 +72,9 @@ public class FormEntryText extends FormEntry {
         : ""; //$NON-NLS-1$
     this.textField.setText( this.value != null ? this.value : "" ); //$NON-NLS-1$
     this.isIgnoreModify = false;
+    if (oldValue==null && !blockNotification){
+      oldValue=value;
+    }
   }
 
   @Override
@@ -81,7 +89,7 @@ public class FormEntryText extends FormEntry {
 
   /** Returns true if the text has been modified. */
   public boolean isDirty() {
-    return dirty;
+    return !value.equals(oldValue);
   }
 
   /**
@@ -89,15 +97,15 @@ public class FormEntryText extends FormEntry {
    * listener. This call clears the 'dirty' flag.
    */
   public void commit() {
-    if( dirty ) {
-      value = textField.getText();
-      notifyTextValueChanged();
+    if( isDirty() ) {
+      oldValue = value;
     }
-    dirty = false;
   }
 
   public void cancelEdit() {
-    dirty = false;
+    isIgnoreNextSet=true;
+    value = oldValue;
+    notifyTextValueChanged();
   }
 
   // helping functions
@@ -106,21 +114,25 @@ public class FormEntryText extends FormEntry {
   private void keyReleaseOccured( final KeyEvent evt ) {
     if( evt.character == '\r' && ( textField.getStyle() & SWT.MULTI ) == 0 ) {
       // commit value
-      if( dirty ) {
+      if( isDirty() ) {
         commit();
       }
+      isIgnoreNextSet=false;
     } else if( evt.character == '\u001b' ) { // Escape character
-      if( !value.equals( textField.getText() ) ) {
-        textField.setText( value != null ? value : "" ); // restore old //$NON-NLS-1$
-      }
-      dirty = false;
+      //if( !textField.getText().equals( oldValue ) ) {
+      textField.setText( oldValue != null ? oldValue : "" ); // restore old //$NON-NLS-1$
+      //}
+      cancelEdit();
+    } else {
+      isIgnoreNextSet=false;
+      value=textField.getText();
+      notifyTextValueChanged();
     }
     notifySelectionChanged();
   }
 
   private void editOccured( final ModifyEvent evt ) {
     if( !isIgnoreModify ) {
-      dirty = true;
       notifyTextDirty();
     }
   }
@@ -151,7 +163,7 @@ public class FormEntryText extends FormEntry {
 
       @Override
       public void focusLost( final FocusEvent evt ) {
-        if( dirty ) {
+        if( isDirty() ) {
           commit();
         }
       }
