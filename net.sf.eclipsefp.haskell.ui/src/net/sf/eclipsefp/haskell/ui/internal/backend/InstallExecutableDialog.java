@@ -6,11 +6,14 @@
 package net.sf.eclipsefp.haskell.ui.internal.backend;
 
 
+import java.util.ArrayList;
+import java.util.List;
 import net.sf.eclipsefp.haskell.ui.HaskellUIPlugin;
 import net.sf.eclipsefp.haskell.ui.internal.preferences.IPreferenceConstants;
 import net.sf.eclipsefp.haskell.ui.internal.util.UITexts;
 import net.sf.eclipsefp.haskell.ui.util.HaskellUIImages;
 import net.sf.eclipsefp.haskell.ui.util.IImageNames;
+import org.apache.commons.lang3.StringUtils;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.osgi.util.NLS;
@@ -100,7 +103,7 @@ public class InstallExecutableDialog extends Dialog {
     l.setLayoutData( gd );
 
     bExtras=new Button(c,SWT.CHECK);
-    bExtras.setText( UITexts.executables_extra );
+    bExtras.setText( NLS.bind( UITexts.executables_extra, getExtraNames()) );
     bExtras.setSelection( true );
     gd=new GridData(GridData.FILL_HORIZONTAL);
     gd.horizontalSpan=2;
@@ -134,6 +137,28 @@ public class InstallExecutableDialog extends Dialog {
     return super.close();
   }
 
+  private String getExtraNames(){
+    StringBuilder sb=new StringBuilder();
+    String sep="";
+    for(InstallExecutableRunnable.Package p:getExtras()){
+      sb.append( sep );
+      sep=", ";
+      sb.append(StringUtils.capitalize( p.getPkgName()));
+    }
+    return sb.toString();
+  }
+
+  private List<InstallExecutableRunnable.Package> getExtras(){
+    List<InstallExecutableRunnable.Package> pkgs=new ArrayList<>();
+    pkgs.add( new InstallExecutableRunnable.Package( "hoogle", IPreferenceConstants.SCION_BROWSER_EXTRA_HOOGLE_PATH) );
+    pkgs.add( new InstallExecutableRunnable.Package( "hlint", IPreferenceConstants.HLINT_EXECUTABLE) );
+    pkgs.add( new InstallExecutableRunnable.Package( "stylish-haskell",IPreferenceConstants.STYLISHHASKELL_EXECUTABLE) );
+    // causes too many issues during install
+    //pkgs.add( new InstallExecutableRunnable.Package( "SourceGraph",IPreferenceConstants.SOURCEGRAPH_EXECUTABLE) );
+
+    return pkgs;
+  }
+
   @Override
   protected void okPressed() {
     final InstallExecutableRunnable j=new InstallExecutableRunnable();
@@ -144,10 +169,7 @@ public class InstallExecutableDialog extends Dialog {
       j.getPackages().add( new InstallExecutableRunnable.Package( "scion-browser", IPreferenceConstants.SCION_BROWSER_SERVER_EXECUTABLE) );
     }
     if (bExtras.getSelection()){
-      j.getPackages().add( new InstallExecutableRunnable.Package( "hoogle", IPreferenceConstants.SCION_BROWSER_EXTRA_HOOGLE_PATH) );
-      j.getPackages().add( new InstallExecutableRunnable.Package( "hlint", IPreferenceConstants.HLINT_EXECUTABLE) );
-      j.getPackages().add( new InstallExecutableRunnable.Package( "stylish-haskell",IPreferenceConstants.STYLISHHASKELL_EXECUTABLE) );
-      j.getPackages().add( new InstallExecutableRunnable.Package( "SourceGraph",IPreferenceConstants.SOURCEGRAPH_EXECUTABLE) );
+      j.getPackages().addAll( getExtras() );
     }
     //j.setBuildWrapper( buildWrapper );
     j.setCabalUpdate( true );
