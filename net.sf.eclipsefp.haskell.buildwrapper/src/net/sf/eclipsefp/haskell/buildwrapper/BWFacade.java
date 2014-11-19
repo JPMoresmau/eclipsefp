@@ -1806,22 +1806,22 @@ public class BWFacade {
 				return;
 			}
 			outlines.clear();
-			
-			Runnable r2=new Runnable(){
-				@Override
-				public void run() {
-
-					if (SandboxHelper.isSandboxed(BWFacade.this)){
-						try {
-							SandboxHelper.installDeps(BWFacade.this);
-						} catch (CoreException ce){
-							BuildWrapperPlugin.logError(BWText.error_sandbox,ce);
-						}
-					}
-					
-				}
-			};
-			waitForThread(r2, mon);
+			// why does clean recalculate dependencies?
+//			Runnable r2=new Runnable(){
+//				@Override
+//				public void run() {
+//
+//					if (SandboxHelper.isSandboxed(BWFacade.this)){
+//						try {
+//							SandboxHelper.installDeps(BWFacade.this);
+//						} catch (CoreException ce){
+//							BuildWrapperPlugin.logError(BWText.error_sandbox,ce);
+//						}
+//					}
+//					
+//				}
+//			};
+//			waitForThread(r2, mon);
 			Runnable r3=new Runnable(){
 				@Override
 				public void run() {
