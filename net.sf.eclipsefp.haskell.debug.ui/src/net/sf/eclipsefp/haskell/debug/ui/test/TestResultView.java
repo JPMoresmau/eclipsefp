@@ -73,7 +73,7 @@ public class TestResultView extends ViewPart {
    */
   @Override
   public void createPartControl( final Composite parent ) {
-    parent.setLayout( new GridLayout(6,true) );
+    parent.setLayout( new GridLayout(6,false) );
 
     CLabel clRuns=new CLabel( parent, SWT.LEFT );
     clRuns.setText( UITexts.test_view_runs );
@@ -82,6 +82,7 @@ public class TestResultView extends ViewPart {
     tRuns.setText( "0" ); //$NON-NLS-1$
     tRuns.setEditable( false );
     tRuns.setBackground( parent.getBackground() );
+    tRuns.setLayoutData( new GridData( SWT.FILL, SWT.CENTER, true, false ) );
 
     CLabel clErrors=new CLabel(  parent, SWT.LEFT );
     clErrors.setText( UITexts.test_view_errors );
@@ -92,6 +93,7 @@ public class TestResultView extends ViewPart {
     tErrors.setText( "0" ); //$NON-NLS-1$
     tErrors.setEditable( false );
     tErrors.setBackground( parent.getBackground() );
+    tErrors.setLayoutData( new GridData( SWT.FILL, SWT.CENTER, true, false ) );
 
     CLabel clFailures=new CLabel(  parent, SWT.LEFT );
     clFailures.setText( UITexts.test_view_failures );
@@ -101,6 +103,7 @@ public class TestResultView extends ViewPart {
     tFailures.setText( "0" ); //$NON-NLS-1$
     tFailures.setEditable( false );
     tFailures.setBackground( parent.getBackground() );
+    tFailures.setLayoutData( new GridData( SWT.FILL, SWT.CENTER, true, false ) );
 
     final Composite mainComposite=new Composite(parent,SWT.NONE);
     final GridData gd=new GridData(GridData.GRAB_HORIZONTAL | GridData.GRAB_VERTICAL | GridData.FILL_BOTH);
@@ -256,7 +259,15 @@ public class TestResultView extends ViewPart {
     if (testTree!=null && !testTree.getTree().isDisposed()){
       testTree.getTree().setFocus();
     }
-
+    if (tRuns!=null && !tRuns.isDisposed()){
+      tRuns.setBackground( tRuns.getParent().getBackground() );
+    }
+    if (tFailures!=null && !tFailures.isDisposed()){
+      tFailures.setBackground( tFailures.getParent().getBackground() );
+    }
+    if (tErrors!=null && !tErrors.isDisposed()){
+      tErrors.setBackground( tErrors.getParent().getBackground() );
+    }
   }
 
   /**
