@@ -72,6 +72,7 @@ public class BWFacade {
 	public static final String DIST_FOLDER=".dist-buildwrapper";
 	public static final String DIST_FOLDER_CABAL=DIST_FOLDER+"/dist";
 	public static final String DIST_FOLDER_CABALDEV=DIST_FOLDER+"/cabal-dev";
+	public static final String DIST_FOLDER_SANDBOX=DIST_FOLDER+"/sandbox";
 	
 	private static final String prefix="build-wrapper-json:";
 	
@@ -1807,21 +1808,22 @@ public class BWFacade {
 			}
 			outlines.clear();
 			// why does clean recalculate dependencies?
-//			Runnable r2=new Runnable(){
-//				@Override
-//				public void run() {
-//
-//					if (SandboxHelper.isSandboxed(BWFacade.this)){
-//						try {
-//							SandboxHelper.installDeps(BWFacade.this);
-//						} catch (CoreException ce){
-//							BuildWrapperPlugin.logError(BWText.error_sandbox,ce);
-//						}
-//					}
-//					
-//				}
-//			};
-//			waitForThread(r2, mon);
+			// if the sandbox is inside the project...
+			if (getCabalImplDetails().isSandboxed() && !getCabalImplDetails().isUniqueSandbox()){
+				Runnable r2=new Runnable(){
+					@Override
+					public void run() {
+							try {
+								SandboxHelper.installDeps(BWFacade.this);
+							} catch (CoreException ce){
+								BuildWrapperPlugin.logError(BWText.error_sandbox,ce);
+							}
+						
+					}
+				};
+				waitForThread(r2, mon);
+			}
+			
 			Runnable r3=new Runnable(){
 				@Override
 				public void run() {

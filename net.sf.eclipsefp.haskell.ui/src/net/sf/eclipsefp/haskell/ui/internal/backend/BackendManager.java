@@ -1061,7 +1061,7 @@ public class BackendManager implements IResourceChangeListener {
 
         String sd=details.isUniqueSandbox()?
             preferenceStore.getString( IPreferenceConstants.UNIQUE_SANDBOX_PATH )
-            :"";
+            :BWFacade.DIST_FOLDER_SANDBOX;
         details.setSandboxPath( sd );
         if (details.isUniqueSandbox()){
           details.getInitOptions().add("--sandbox");
