@@ -148,7 +148,7 @@ public class InstallExecutableDialog extends Dialog {
     return sb.toString();
   }
 
-  private List<InstallExecutableRunnable.Package> getExtras(){
+  public static List<InstallExecutableRunnable.Package> getExtras(){
     List<InstallExecutableRunnable.Package> pkgs=new ArrayList<>();
     pkgs.add( new InstallExecutableRunnable.Package( "hoogle", IPreferenceConstants.SCION_BROWSER_EXTRA_HOOGLE_PATH) );
     pkgs.add( new InstallExecutableRunnable.Package( "hlint", IPreferenceConstants.HLINT_EXECUTABLE) );

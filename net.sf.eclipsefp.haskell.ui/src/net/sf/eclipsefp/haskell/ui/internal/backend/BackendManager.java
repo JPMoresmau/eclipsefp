@@ -304,10 +304,7 @@ public class BackendManager implements IResourceChangeListener {
     final InstallExecutableRunnable j=new InstallExecutableRunnable();
     j.getPackages().add( new InstallExecutableRunnable.Package( "buildwrapper", IPreferenceConstants.BUILDWRAPPER_EXECUTABLE) );
     j.getPackages().add( new InstallExecutableRunnable.Package( "scion-browser", IPreferenceConstants.SCION_BROWSER_SERVER_EXECUTABLE) );
-    j.getPackages().add( new InstallExecutableRunnable.Package( "hoogle", IPreferenceConstants.SCION_BROWSER_EXTRA_HOOGLE_PATH) );
-    j.getPackages().add( new InstallExecutableRunnable.Package( "hlint", IPreferenceConstants.HLINT_EXECUTABLE) );
-    j.getPackages().add( new InstallExecutableRunnable.Package( "stylish-haskell",IPreferenceConstants.STYLISHHASKELL_EXECUTABLE) );
-    j.getPackages().add( new InstallExecutableRunnable.Package( "SourceGraph",IPreferenceConstants.SOURCEGRAPH_EXECUTABLE) );
+    j.getPackages().addAll (InstallExecutableDialog.getExtras());
     j.setCabalUpdate( true );
     j.setGlobal( false );
     new Thread(j).start();

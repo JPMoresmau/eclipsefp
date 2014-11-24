@@ -95,7 +95,7 @@ available at http://www.eclipse.org/legal/epl-v10.html.
          id="net.sf.eclipsefp.haskell.ui"
          download-size="0"
          install-size="0"
-         version="2.6.2.qualifier"
+         version="2.6.3.qualifier"
          unpack="false"/>
 
    <plugin
