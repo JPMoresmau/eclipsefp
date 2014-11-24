@@ -219,6 +219,11 @@ public abstract class AbstractHaskellLaunchDelegate extends LaunchConfigurationD
         long startTime=System.currentTimeMillis();
         processAttrs.put( ILaunchAttributes.START_TIME, String.valueOf(startTime) );
         String startDate=DateFormat.getDateTimeInstance( DateFormat.LONG, DateFormat.LONG ).format( new Date(startTime) );
+        // see process console: label is used on its own for private config
+        if (DebugUITools.isPrivate( configuration )){
+          startDate=launch.getLaunchConfiguration().getName() + " " + startDate; //$NON-NLS-1$
+        }
+
 
         final IProcess process=DebugPlugin.newProcess( launch, proc, startDate, processAttrs );
         DebugPlugin.getDefault().getLaunchManager().addLaunchListener( new ILaunchesListener2() {
