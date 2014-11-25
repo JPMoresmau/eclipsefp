@@ -34,7 +34,6 @@ public class FormEntryText extends FormEntry {
   private String oldValue = null;
   private String value = ""; //$NON-NLS-1$
   private boolean isIgnoreModify = false;
-  private boolean isIgnoreNextSet = false;
 
   @Override
   public void init( final IProject project, final Composite parent,
@@ -60,8 +59,8 @@ public class FormEntryText extends FormEntry {
 
   @Override
   public void setValue( final String value, final boolean blockNotification ) {
-    if (isIgnoreNextSet){
-      isIgnoreNextSet=false;
+    // we don't modify while we're editing
+    if (this.textField.isFocusControl()){
       return;
     }
     this.isIgnoreModify = blockNotification;
@@ -70,7 +69,12 @@ public class FormEntryText extends FormEntry {
         value
         : value.replace( "\n", " " ).replace( "\r", "" )
         : ""; //$NON-NLS-1$
-    this.textField.setText( this.value != null ? this.value : "" ); //$NON-NLS-1$
+    String v=this.value != null ? this.value : "" ;//$NON-NLS-1$
+    if (!v.equals(this.textField.getText())){
+      this.textField.setText( v );
+    }
+
+
     this.isIgnoreModify = false;
     if (oldValue==null && !blockNotification){
       oldValue=value;
@@ -103,7 +107,6 @@ public class FormEntryText extends FormEntry {
   }
 
   public void cancelEdit() {
-    isIgnoreNextSet=true;
     value = oldValue;
     notifyTextValueChanged();
   }
@@ -117,14 +120,16 @@ public class FormEntryText extends FormEntry {
       if( isDirty() ) {
         commit();
       }
-      isIgnoreNextSet=false;
     } else if( evt.character == '\u001b' ) { // Escape character
       //if( !textField.getText().equals( oldValue ) ) {
-      textField.setText( oldValue != null ? oldValue : "" ); // restore old //$NON-NLS-1$
+      int pos=this.textField.getCaretPosition();
+      String v=oldValue != null ? oldValue : "" ;//$NON-NLS-1$
+      textField.setText( v); // restore old
+      pos=Math.min( pos, v.length() );
+      this.textField.setSelection( pos, pos );
       //}
       cancelEdit();
     } else {
-      isIgnoreNextSet=false;
       value=textField.getText();
       notifyTextValueChanged();
     }
