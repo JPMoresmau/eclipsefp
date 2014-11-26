@@ -251,7 +251,15 @@ public class HoogleView extends ViewPart implements SelectionListener,
 
   @Override
   public void setFocus() {
-    text.setFocus();
+    if (text!=null && !text.isDisposed()){
+      text.setFocus();
+    }
+    if (hackageDb!=null && !hackageDb.isDisposed()){
+      hackageDb.setBackground( hackageDb.getParent().getBackground() );
+    }
+    if (localDb!=null && !localDb.isDisposed()){
+      localDb.setBackground( localDb.getParent().getBackground() );
+    }
   }
 
   @Override
