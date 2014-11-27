@@ -20,14 +20,19 @@ import net.sf.eclipsefp.haskell.browser.items.HoogleResultDeclaration;
 import net.sf.eclipsefp.haskell.browser.items.HoogleResultModule;
 import net.sf.eclipsefp.haskell.browser.items.HoogleResultPackage;
 import net.sf.eclipsefp.haskell.browser.util.HtmlUtil;
-import net.sf.eclipsefp.haskell.browser.views.NoDatabaseContentProvider;
-import net.sf.eclipsefp.haskell.browser.views.NoDatabaseRoot;
+import net.sf.eclipsefp.haskell.browser.views.SpecialRoot;
 import net.sf.eclipsefp.haskell.ui.HaskellUIPlugin;
 import net.sf.eclipsefp.haskell.ui.handlers.OpenDefinitionHandler;
 import net.sf.eclipsefp.haskell.ui.internal.util.UITexts;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.jobs.IJobChangeEvent;
+import org.eclipse.core.runtime.jobs.ISchedulingRule;
+import org.eclipse.core.runtime.jobs.Job;
+import org.eclipse.core.runtime.jobs.JobChangeAdapter;
 import org.eclipse.jface.viewers.DoubleClickEvent;
-import org.eclipse.jface.viewers.IContentProvider;
 import org.eclipse.jface.viewers.IDoubleClickListener;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
@@ -60,7 +65,7 @@ import org.eclipse.ui.part.ViewPart;
  *
  */
 public class HoogleView extends ViewPart implements SelectionListener,
-    ISelectionChangedListener, IDoubleClickListener, IHoogleLoadedListener, IDatabaseLoadedListener {
+    ISelectionChangedListener, IDoubleClickListener, IHoogleLoadedListener, IDatabaseLoadedListener, ISchedulingRule {
 
   /**
    * search for the given text in Hoogle as if it was typed in the view
@@ -131,7 +136,6 @@ public class HoogleView extends ViewPart implements SelectionListener,
   Text text;
   TreeViewer viewer;
   Browser doc;
-  IContentProvider provider;
   Button localDb;
   Button hackageDb;
 
@@ -201,6 +205,7 @@ public class HoogleView extends ViewPart implements SelectionListener,
     viewer.addDoubleClickListener( this );
     // Hook for changes in selection
     viewer.addPostSelectionChangedListener( this );
+    viewer.setContentProvider( new HoogleContentProvider() );
     // Wait the Hoogle database to be ready
     BrowserPlugin.getDefault().addHoogleLoadedListener( this );
   }
@@ -212,12 +217,14 @@ public class HoogleView extends ViewPart implements SelectionListener,
       @Override
       public void run() {
 
-        provider = new HoogleContentProvider(localDb, hackageDb);
+
         //viewer.setLabelProvider( new HoogleLabelProvider() );
         if (!viewer.getTree().isDisposed()){
-          viewer.setContentProvider( provider );
-          if (!text.isDisposed()){
-            viewer.setInput( text.getText() );
+
+          if (!text.isDisposed() && text.getText().length()>0){
+            search( text.getText() );
+          } else {
+            viewer.setInput( null );
           }
           viewer.refresh();
         }
@@ -228,6 +235,56 @@ public class HoogleView extends ViewPart implements SelectionListener,
     } );
   }
 
+  private void search(final String text){
+    viewer.setInput( SpecialRoot.SEARCHING );
+    viewer.refresh();
+    final HoogleSearchResult r=new HoogleSearchResult( localDb.getSelection(),hackageDb.getSelection() );
+    final Display d=Display.getCurrent();
+    Job job=new Job(UITexts.browser_hoogleSearching){
+      /* (non-Javadoc)
+       * @see org.eclipse.core.runtime.jobs.Job#run(org.eclipse.core.runtime.IProgressMonitor)
+       */
+      @Override
+      protected IStatus run( final IProgressMonitor monitor ) {
+        r.search( text );
+        return Status.OK_STATUS;
+      }
+    };
+    job.addJobChangeListener( new JobChangeAdapter(){
+      /* (non-Javadoc)
+       * @see org.eclipse.core.runtime.jobs.JobChangeAdapter#done(org.eclipse.core.runtime.jobs.IJobChangeEvent)
+       */
+      @Override
+      public void done( final IJobChangeEvent event ) {
+        d.asyncExec( new Runnable(){
+          /* (non-Javadoc)
+           * @see java.lang.Runnable#run()
+           */
+          @Override
+          public void run() {
+            if (r.getResults().isEmpty()){
+              viewer.setInput( SpecialRoot.EMPTY );
+              viewer.refresh();
+            } else {
+              viewer.setInput( r );
+              viewer.refresh();
+
+              Object first = ((HoogleContentProvider)viewer.getContentProvider()).getFirstElement();
+              if( first != null ) {
+                viewer.setSelection( new StructuredSelection( first ), true );
+                viewer.getControl().setFocus();
+              }
+
+            }
+          }
+        } );
+
+      }
+    } );
+    job.setRule( this );
+    job.setPriority( Job.INTERACTIVE );
+    job.schedule();
+  }
 
 
   @Override
@@ -239,10 +296,7 @@ public class HoogleView extends ViewPart implements SelectionListener,
         if (!text.isDisposed()){
           text.setEnabled( false );
         }
-        provider = new NoDatabaseContentProvider();
-        //viewer.setLabelProvider( new NoDatabaseLabelProvider( true ) );
-        viewer.setContentProvider( provider );
-        viewer.setInput( NoDatabaseRoot.ROOT );
+        viewer.setInput( SpecialRoot.NO_DATABASE );
         viewer.refresh();
       }
     } );
@@ -272,17 +326,8 @@ public class HoogleView extends ViewPart implements SelectionListener,
     if( e.detail == SWT.CANCEL ) {
       viewer.setInput( "" );
       viewer.refresh();
-    } else if (provider != null) {
-      viewer.setInput( text.getText() );
-      viewer.refresh();
-      if (provider instanceof HoogleContentProvider) {
-        Object first = ((HoogleContentProvider)provider).getFirstElement();
-        if( first != null ) {
-          viewer.setSelection( new StructuredSelection( first ), true );
-          viewer.getControl().setFocus();
-        }
-      }
-
+    } else {
+      search( text.getText() );
     }
   }
 
@@ -292,7 +337,7 @@ public class HoogleView extends ViewPart implements SelectionListener,
     TreeSelection selection = ( TreeSelection )event.getSelection();
 
     Object o = selection.getFirstElement();
-    if( o == null || o instanceof NoDatabaseRoot ) {
+    if( o == null || o instanceof SpecialRoot ) {
       doc.setText( "" );
       return;
     }
@@ -353,7 +398,7 @@ public class HoogleView extends ViewPart implements SelectionListener,
   public void doubleClick( final DoubleClickEvent event ) {
     TreeSelection selection = ( TreeSelection )event.getSelection();
     Object o = selection.getFirstElement();
-    if( o == null || o instanceof NoDatabaseRoot ) {
+    if( o == null || o instanceof SpecialRoot ) {
       return;
     }
 
@@ -432,5 +477,15 @@ public class HoogleView extends ViewPart implements SelectionListener,
         hackageDb.setEnabled( false );
       }
     } );
+  }
+
+  @Override
+  public boolean isConflicting(final ISchedulingRule arg0) {
+    return this==arg0;
+  }
+
+  @Override
+  public boolean contains(final ISchedulingRule arg0) {
+    return this==arg0;
   }
 }

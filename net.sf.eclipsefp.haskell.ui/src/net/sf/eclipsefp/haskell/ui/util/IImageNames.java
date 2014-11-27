@@ -83,9 +83,11 @@ public interface IImageNames {
   // overlays
   String ERROR_OVERLAY        = ID + ".ERROR_OVERLAY"; //$NON-NLS-1$
   String WARNING_OVERLAY      = ID + ".WARNING_OVERLAY"; //$NON-NLS-1$
-  String ERROR_OBJECT        = ID + ".ERROR_OBJECT"; //$NON-NLS-1$
-  String FAILURE_OVERLAY        = ID + ".FAILURE_OVERLAY"; //$NON-NLS-1$
-  String SUCCESS_OVERLAY        = ID + ".SUCCESS_OVERLAY"; //$NON-NLS-1$
+  String ERROR_OBJECT         = ID + ".ERROR_OBJECT"; //$NON-NLS-1$
+  String WARNING_OBJECT       = ID+".WARNING_OBJECT"; //$NON-NLS-1$
+  String SEARCH_OBJECT        = ID+".SEARCH_OBJECT"; //$NON-NLS-1$
+  String FAILURE_OVERLAY      = ID + ".FAILURE_OVERLAY"; //$NON-NLS-1$
+  String SUCCESS_OVERLAY      = ID + ".SUCCESS_OVERLAY"; //$NON-NLS-1$
   String ACTION_SORT          = ID + ".ACTION_SORT"; //$NON-NLS-1$
 
   String IMPORT_REMOVE        = ID+".IMPORT_REMOVE"; //$NON-NLS-1$

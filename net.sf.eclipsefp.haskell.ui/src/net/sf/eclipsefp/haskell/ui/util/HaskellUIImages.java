@@ -72,7 +72,9 @@ public class HaskellUIImages implements IImageNames {
     declare( FAILURE_OVERLAY,      OVR + "failed_ovr.gif"); //$NON-NLS-1$
     declare( SUCCESS_OVERLAY,      OVR + "success_ovr.gif"); //$NON-NLS-1$
     declare( WARNING_OVERLAY,      OVR + "warning_co.gif"); //$NON-NLS-1$
-    declare( ERROR_OBJECT,        OBJECT + "error_obj.gif"); //$NON-NLS-1$
+    declare( ERROR_OBJECT,         OBJECT + "error_obj.gif"); //$NON-NLS-1$
+    declare( WARNING_OBJECT,       OBJECT + "warning_obj.gif"); //$NON-NLS-1$
+    declare( SEARCH_OBJECT,       OBJECT + "hsearch_obj.gif"); //$NON-NLS-1$
     // views
     declare( DEP_VIEW_IMPORTS,     ACTION + "mdep_imports.gif" ); //$NON-NLS-1$
     declare( DEP_VIEW_IMPORTEDBY,  ACTION + "mdep_importedby.gif" ); //$NON-NLS-1$

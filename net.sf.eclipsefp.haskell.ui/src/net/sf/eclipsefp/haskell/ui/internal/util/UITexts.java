@@ -728,6 +728,8 @@ public final class UITexts extends NLS {
   public static String browser_packageDatabase;
   public static String browser_hoogleSearchIn;
   public static String browser_hoogleWarning;
+  public static String browser_hoogleSearching;
+  public static String browser_hoogleNoResult;
 
 
   public static String NewModuleWizard_0;

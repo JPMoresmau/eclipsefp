@@ -9,9 +9,9 @@ import net.sf.eclipsefp.haskell.browser.BrowserPlugin;
 import net.sf.eclipsefp.haskell.browser.DatabaseLoadedEvent;
 import net.sf.eclipsefp.haskell.browser.IDatabaseLoadedListener;
 import net.sf.eclipsefp.haskell.browser.util.HtmlUtil;
-import net.sf.eclipsefp.haskell.browser.views.NoDatabaseContentProvider;
+import net.sf.eclipsefp.haskell.browser.views.SingleObjectProvider;
 import net.sf.eclipsefp.haskell.browser.views.NoDatabaseLabelProvider;
-import net.sf.eclipsefp.haskell.browser.views.NoDatabaseRoot;
+import net.sf.eclipsefp.haskell.browser.views.SpecialRoot;
 import net.sf.eclipsefp.haskell.ui.handlers.OpenDefinitionHandler;
 import org.eclipse.jface.viewers.DoubleClickEvent;
 import org.eclipse.jface.viewers.IContentProvider;
@@ -115,9 +115,9 @@ public class PackagesView extends ViewPart implements IDatabaseLoadedListener,
           // Put the "no database" content and label
           viewer.setLabelProvider( new NoDatabaseLabelProvider( false ) );
           viewer.setSorter( new ViewerSorter() );
-          provider = new NoDatabaseContentProvider();
+          provider = new SingleObjectProvider();
           viewer.setContentProvider( provider );
-          viewer.setInput( NoDatabaseRoot.ROOT );
+          viewer.setInput( SpecialRoot.NO_DATABASE );
           viewer.refresh();
         } else {
           PackagesContentProvider daProvider =

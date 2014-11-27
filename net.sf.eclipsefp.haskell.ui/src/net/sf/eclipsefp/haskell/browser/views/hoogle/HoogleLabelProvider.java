@@ -11,15 +11,17 @@ import net.sf.eclipsefp.haskell.browser.items.HoogleResult;
 import net.sf.eclipsefp.haskell.browser.items.HoogleResultConstructor;
 import net.sf.eclipsefp.haskell.browser.items.HoogleResultDeclaration;
 import net.sf.eclipsefp.haskell.browser.util.ImageCache;
-import net.sf.eclipsefp.haskell.browser.views.NoDatabaseRoot;
+import net.sf.eclipsefp.haskell.browser.views.SpecialRoot;
 import net.sf.eclipsefp.haskell.ui.internal.util.UITexts;
+import net.sf.eclipsefp.haskell.ui.util.HaskellUIImages;
+import net.sf.eclipsefp.haskell.ui.util.IImageNames;
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.ILabelProviderListener;
 import org.eclipse.swt.graphics.Image;
 
 /**
  * Label provider for Hoogle results.
- * @author Alejandro Serrano
+ * @author Alejandro Serrano, JP Moresmau
  *
  */
 public class HoogleLabelProvider implements ILabelProvider {
@@ -27,9 +29,12 @@ public class HoogleLabelProvider implements ILabelProvider {
   @Override
   @SuppressWarnings ( "unchecked" )
   public Image getImage( final Object element ) {
-    if (element instanceof NoDatabaseRoot){
+    if (SpecialRoot.NO_DATABASE.equals(element)){
       return ImageCache.DATABASE;
-
+    } else if (SpecialRoot.EMPTY.equals( element )){
+      return HaskellUIImages.getImage( IImageNames.WARNING_OBJECT );
+    } else if (SpecialRoot.SEARCHING.equals( element )){
+      return HaskellUIImages.getImage( IImageNames.SEARCH_OBJECT );
     }
     HoogleResult result = null;
     if (element instanceof HoogleResult) {
@@ -66,9 +71,12 @@ public class HoogleLabelProvider implements ILabelProvider {
   public String getText( final Object element ) {
 
     HoogleResult result = null;
-    if (element instanceof NoDatabaseRoot){
+    if (SpecialRoot.NO_DATABASE.equals( element) ){
       return UITexts.scionBrowserNoDatabaseLoadedOrHoogleNotPresent;
-
+    } else if (SpecialRoot.SEARCHING.equals( element) ){
+      return UITexts.browser_hoogleSearching;
+    } else if (SpecialRoot.EMPTY.equals( element) ){
+      return UITexts.browser_hoogleNoResult;
     } else if (element instanceof HoogleResult) {
       result = (HoogleResult)element;
       switch(result.getType()) {

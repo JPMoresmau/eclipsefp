@@ -5,10 +5,11 @@ import org.eclipse.jface.viewers.Viewer;
 
 /**
  * Content provider used when the database or Hoogle haven't been loaded yet.
- * @author Alejandro Serrano
+ * @author Alejandro Serrano, JPMoresmau
  *
  */
-public class NoDatabaseContentProvider implements ITreeContentProvider {
+public class SingleObjectProvider implements ITreeContentProvider {
+  private Object newInput = null;
 
   @Override
   public void dispose() {
@@ -17,12 +18,12 @@ public class NoDatabaseContentProvider implements ITreeContentProvider {
 
   @Override
   public void inputChanged( final Viewer viewer, final Object oldInput, final Object newInput ) {
-    // Do nothing
+    this.newInput=newInput;
   }
 
   @Override
   public Object[] getElements( final Object inputElement ) {
-    return new Object[] { NoDatabaseRoot.ROOT };
+    return new Object[] { newInput};
   }
 
   @Override

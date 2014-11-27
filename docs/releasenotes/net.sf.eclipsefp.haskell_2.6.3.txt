@@ -14,6 +14,7 @@ Fixes:
 	- Do not install SourceGraph automatically, really.
 
 Features:
+	- Hoogle search is done in a job, doesn't freeze the UI
 
 Internal:
 
