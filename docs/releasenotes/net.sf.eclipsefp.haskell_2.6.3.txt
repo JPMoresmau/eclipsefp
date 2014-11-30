@@ -12,9 +12,11 @@ Necessary Haskell packages:
 Fixes:
 	- Take changes into account from cabal editor fields without having to take focus from them (https://github.com/JPMoresmau/eclipsefp/issues/169)
 	- Do not install SourceGraph automatically, really.
+	- Ensure all created files have the same encoding as the project. (https://github.com/JPMoresmau/eclipsefp/issues/247)
 
 Features:
 	- Hoogle search is done in a job, doesn't freeze the UI
+	- Ensure all created projects have UTF8 encoding by default. (https://github.com/JPMoresmau/eclipsefp/issues/247)
 
 Internal:
 

@@ -7,6 +7,7 @@ import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import net.sf.eclipsefp.haskell.core.HaskellCorePlugin;
 import net.sf.eclipsefp.haskell.core.internal.util.CoreTexts;
+import net.sf.eclipsefp.haskell.util.FileUtil;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
@@ -114,6 +115,7 @@ public class ProjectCreationOperation {
     if( !result.isOpen() ) {
       result.open( monitor );
     }
+    result.setDefaultCharset( FileUtil.UTF8, monitor );
     return result;
   }
 

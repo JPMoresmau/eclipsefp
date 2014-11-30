@@ -113,13 +113,18 @@ public class SourceFileGenerator {
     String fileName = createFileName( style, moduleName );
     IFile result = destFolder.getFile( new Path( fileName ) );
     try {
-      InputStream isContent = new ByteArrayInputStream( fileContent.getBytes(destFolder.getDefaultCharset( true )) );
+
       SubProgressMonitor subMon = monitor==null?null:new SubProgressMonitor( monitor, 4 );
       if (!result.exists()){
+        String charSet=destFolder.getDefaultCharset( true );
+        InputStream isContent = new ByteArrayInputStream( fileContent.getBytes(charSet) );
         result.create( isContent, true, subMon );
       } else if (overwrite){
+        String charSet=result.getCharset();
+        InputStream isContent = new ByteArrayInputStream( fileContent.getBytes(charSet) );
         result.setContents( isContent,true,true,subMon);
       }
+
       return result;
     } catch (UnsupportedEncodingException uee){
       throw new CoreException( new Status(IStatus.ERROR,HaskellCorePlugin.getPluginId(),uee.getLocalizedMessage(),uee) );

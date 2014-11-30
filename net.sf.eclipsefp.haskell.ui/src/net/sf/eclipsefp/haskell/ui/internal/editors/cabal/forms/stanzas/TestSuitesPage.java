@@ -105,7 +105,7 @@ public class TestSuitesPage extends CabalFormPage implements SelectionListener {
           srcs.add( md.getSrcPath() );
         }
         /**
-         * create test moduke
+         * create test module
          */
         String m=createTestModule( pd, def, md.getModule(), isHTF?ICorePreferenceNames.TEMPLATE_MODULE_HTF:ICorePreferenceNames.TEMPLATE_MODULE,overwrite );
         /**
