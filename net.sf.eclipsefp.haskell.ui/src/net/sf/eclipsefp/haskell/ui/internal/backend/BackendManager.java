@@ -281,6 +281,12 @@ public class BackendManager implements IResourceChangeListener {
     CabalImplDetails d=getCabalImplDetails();
     BrowserPlugin.setSandboxPath(d.isSandboxed() && d.isUniqueSandbox()?d.getSandboxPath():null );
 
+    
+    File sandbox=getToolSandbox();
+    if (sandbox!=null){
+      BrowserPlugin.setToolSandboxPath(sandbox.getAbsolutePath());
+    }
+
     // Sit and listen to the preference store changes
     preferenceStore.addPropertyChangeListener( new ExecutablesPropertiesListener() );
 
@@ -1073,6 +1079,19 @@ public class BackendManager implements IResourceChangeListener {
     details.getOptions().add( "--with-ghc="+CompilerManager.getCompilerExecutable() );
     //HaskellUIPlugin.getDefault().getPreferenceStore().getString( IPreferenceConstants.CABALDEV_EXECUTABLE );
     return details;
+  }
+
+  /**
+   * get the location of the sandbox for tools, or null if our Cabal doesn't support it
+   * @return
+   */
+  public static File getToolSandbox(){
+    if (CabalImplementationManager.getInstance().getDefaultCabalImplementation().allowsSandbox()){
+      File folder=new File(HaskellUIPlugin.getDefault().getStateLocation().append( "sandbox" ).toOSString());
+      folder.mkdirs();
+      return folder;
+    }
+    return null;
   }
 
   /**

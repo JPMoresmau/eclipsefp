@@ -56,7 +56,14 @@ public class BrowserPlugin extends AbstractUIPlugin implements IDatabaseLoadedLi
 	private ArrayList<IDatabaseLoadedListener> dbLoadedListeners;
 	private ArrayList<IHoogleLoadedListener> hoogleLoadedListeners;
 
+	/**
+	 * the sandbox used for user projects, useful to get packages to index, etc.
+	 */
 	private static String sandboxPath;
+	/**
+	 * the sandbox used for internal tools, useful to get the Hoogle we downloaded.
+	 */
+	private static String toolSandboxPath;
 	
 	/**
 	 * The constructor
@@ -551,6 +558,14 @@ public class BrowserPlugin extends AbstractUIPlugin implements IDatabaseLoadedLi
          return "";
 	}
 
+	public static String getToolSandboxPath() {
+		return toolSandboxPath;
+	}
+
+	public static void setToolSandboxPath(String sandboxPath) {
+		BrowserPlugin.toolSandboxPath = sandboxPath;
+	}
+	
 	public static String getSandboxPath() {
 		return sandboxPath;
 	}

@@ -75,10 +75,10 @@ public class InstallExecutableRunnable implements Runnable {
     if (cabalUpdate){
       commands.add(new Command(UITexts.cabalUpdateProgress,Arrays.asList( cabalExecutable , "update" )));
     }
+    File sandbox = BackendManager.getToolSandbox();
 
-    if (CabalImplementationManager.getInstance().getDefaultCabalImplementation().allowsSandbox()){
-      folder=new File(HaskellUIPlugin.getDefault().getStateLocation().append( "sandbox" ).toOSString());
-      folder.mkdirs();
+    if (sandbox!=null){
+      folder=sandbox;
       commands.add(new Command(UITexts.cabalInitProgress,Arrays.asList( cabalExecutable , "sandbox","init","--sandbox="+ folder )));
       binDir=new File(folder,"bin");
 

@@ -389,7 +389,7 @@ public class StreamBrowserServer extends BrowserServer {
 
 	@Override
 	public HoogleResult[] queryHoogle(Database db,String path,String query) throws Exception {
-		String response = sendAndReceive(Commands.createHoogleQuery(db,path,query,BrowserPlugin.getSandboxPath()));
+		String response = sendAndReceive(Commands.createHoogleQuery(db,path,query,BrowserPlugin.getToolSandboxPath()));
 		return Commands.responseHoogleQuery(response);
 	}
 //
@@ -410,7 +410,7 @@ public class StreamBrowserServer extends BrowserServer {
 //	}
 
 	public HoogleStatus initHoogle(String path,boolean addToDB) throws Exception {
-		HoogleStatus st = sendAndReceiveStatus(Commands.createInitHoogle(path,addToDB,BrowserPlugin.getSandboxPath()));
+		HoogleStatus st = sendAndReceiveStatus(Commands.createInitHoogle(path,addToDB,BrowserPlugin.getToolSandboxPath()));
 		if (HoogleStatus.OK.equals(st)) {
 			hoogleLoaded = true;
 			notifyHoogleLoaded(new BrowserEvent(this));
