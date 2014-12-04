@@ -41,6 +41,7 @@ import net.sf.eclipsefp.haskell.core.util.ResourceUtil;
 import net.sf.eclipsefp.haskell.ui.HaskellUIPlugin;
 import net.sf.eclipsefp.haskell.ui.internal.editors.haskell.HaskellEditor;
 import net.sf.eclipsefp.haskell.ui.internal.resolve.DiscreteCompletionProposal;
+import net.sf.eclipsefp.haskell.util.LangUtil;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.jface.text.IDocument;
@@ -469,6 +470,25 @@ public class AnImport {
    */
   private boolean isItemBoundary(final char c){
     return Character.isWhitespace( c ) || c==',' || c=='(' || c==')';
+  }
+
+  public ICompletionProposal removeAll(final IDocument doc, final String label) {
+    try {
+      String contents = importDef.getLocation().getContents( doc );
+      String newContents=contents;
+      int ixP=contents.indexOf( "(" );
+      if (ixP>-1){
+
+          newContents=LangUtil.rtrim(contents.substring( 0,ixP ));
+          int st=importDef.getLocation().getStartOffset( doc );
+          return new DiscreteCompletionProposal( newContents.toString(), st, contents.length(),
+               ImageCache.MODULE, label, null, "" );
+
+      }
+    } catch (Exception e) {
+      HaskellUIPlugin.log( e );
+    }
+    return null;
   }
 
   public ICompletionProposal removeItem(final IDocument doc, final Collection<String> items, final String label) {

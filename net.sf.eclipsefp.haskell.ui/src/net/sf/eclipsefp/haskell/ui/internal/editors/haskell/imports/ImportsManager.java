@@ -160,6 +160,9 @@ public class ImportsManager {
           // We didn't need to add an import in first place
           return null;
         }
+        if (name==null){
+          return imp.removeAll( doc, label );
+        }
         if (imp.getImportDef().isHiding()) {
           return imp.removeItem( doc, name, label );
         }
@@ -178,10 +181,18 @@ public class ImportsManager {
       int offsetToPut = doc.getLineOffset( line ) + doc.getLineLength( line );
       // 2. Create contents
       String contents;
-      if (qualified != null) {
-        contents = "import qualified " + place + " as " + qualified + " (" + name + ")";
+      if (name!=null){
+        if (qualified != null) {
+          contents = "import qualified " + place + " as " + qualified + " (" + name + ")";
+        } else {
+          contents = "import " + place + " (" + name + ")";
+        }
       } else {
-        contents = "import " + place + " (" + name + ")";
+        if (qualified != null) {
+          contents = "import qualified " + place + " as " + qualified;
+        } else {
+          contents = "import " + place;
+        }
       }
       // 3. Create the proposal
       return new DiscreteCompletionProposal( contents + PlatformUtil.NL, offsetToPut, 0, ImageCache.MODULE, label, null, "" );

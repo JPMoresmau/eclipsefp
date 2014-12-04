@@ -369,6 +369,7 @@ public class BuildMarkerResolutionGenerator implements
             } else {
               res.add( new AddImportResolution( name, module, qualified ) );
             }
+            res.add( new AddImportResolution( null, module, qualified ) );
           }
         }
       }
@@ -394,6 +395,7 @@ public class BuildMarkerResolutionGenerator implements
             String module=ResourceUtil.getModuleName( f );
             if (module!=null){
               res.add( new AddImportResolution( name, module, qualified ) );
+              res.add( new AddImportResolution( null, module, qualified ) );
             }
           }
         }
@@ -406,6 +408,7 @@ public class BuildMarkerResolutionGenerator implements
             if (module!=null){
               res.add( new AddImportResolution( name, module, qualified ) );
               res.add( new AddImportResolution( name+"(..)", module, qualified ) );
+              res.add( new AddImportResolution( null, module, qualified ) );
               found=true;
             }
           }
@@ -420,6 +423,7 @@ public class BuildMarkerResolutionGenerator implements
                 for (String s:m.get(f).keySet()){
                   res.add( new AddImportResolution( s+"("+name+")", module, qualified ) );
                   res.add( new AddImportResolution( s+"(..)", module, qualified ) );
+                  res.add( new AddImportResolution( null, module, qualified ) );
                   found=true;
                 }
               }

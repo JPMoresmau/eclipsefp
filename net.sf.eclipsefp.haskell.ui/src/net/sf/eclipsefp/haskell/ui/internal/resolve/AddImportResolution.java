@@ -31,7 +31,11 @@ public class AddImportResolution extends MarkerCompletion {
 
   @Override
   public String getLabel() {
-    return NLS.bind( UITexts.resolve_import_add, element, place );
+    if (element==null){
+      return NLS.bind( UITexts.resolve_import_add_everything, place );
+    } else {
+      return NLS.bind( UITexts.resolve_import_add, element, place );
+    }
   }
 
   @Override
