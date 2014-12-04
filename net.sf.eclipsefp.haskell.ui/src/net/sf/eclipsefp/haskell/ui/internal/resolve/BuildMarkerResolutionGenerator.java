@@ -113,7 +113,7 @@ public class BuildMarkerResolutionGenerator implements
             }
           }
           // Language pragma needed
-          else if (addFlagPragma(res,msg,msgL, GhcMessages.WARNING_USEFLAG_CONTAINS,GhcMessages.WARNING_USEFLAG_CONTAINS2,GhcMessages.WARNING_USEFLAG_CONTAINS3)){
+          else if (addFlagPragma(res,msg,msgL, GhcMessages.WARNING_USEFLAG_CONTAINS,GhcMessages.WARNING_USEFLAG_CONTAINS2,GhcMessages.WARNING_USEFLAG_CONTAINS3,GhcMessages.WARNING_USEFLAG_CONTAINS4)){
             //
           } else if ((ix=msgL.indexOf( GhcMessages.WARNING_SUPPRESS_CONTAINS ))>-1){
              int end=ix-2;
@@ -472,7 +472,6 @@ public class BuildMarkerResolutionGenerator implements
         }
         // we'll cut from start, but we'll look at the name from ix2...
         int start=ix+1+s.length();
-
         for (;ix2<msg.length();ix2++){
           // flags are letters and sometimes numbers (Rank2Types)
           if (!Character.isLetterOrDigit( msg.charAt( ix2 ) )){

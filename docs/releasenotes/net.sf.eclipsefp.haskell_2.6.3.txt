@@ -19,6 +19,7 @@ Features:
 	- Hoogle search is done in a job, doesn't freeze the UI
 	- Ensure all created projects have UTF8 encoding by default. (https://github.com/JPMoresmau/eclipsefp/issues/247)
 	- Import quick fix can import whole module
+	- Quick fixes for more pragmas messages
 
 Internal:
 
