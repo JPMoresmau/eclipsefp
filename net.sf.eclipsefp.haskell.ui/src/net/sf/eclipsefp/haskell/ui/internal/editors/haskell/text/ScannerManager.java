@@ -198,7 +198,7 @@ public class ScannerManager implements IEditorPreferenceNames {
     return getPreferenceStore().getBoolean( boldKey );
   }
 
-  private IPreferenceStore getPreferenceStore() {
+  public IPreferenceStore getPreferenceStore() {
     if (prefStore!=null){
       return prefStore;
     }

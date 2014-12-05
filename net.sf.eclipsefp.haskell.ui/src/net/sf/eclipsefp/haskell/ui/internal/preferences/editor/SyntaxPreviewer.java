@@ -104,11 +104,11 @@ public class SyntaxPreviewer extends SourceViewer implements IEditorPreferenceNa
         || EDITOR_BACKGROUND_DEFAULT_COLOR.equals( p ) ) {
       return true;
     }
-    /*for (ColorListEntry cle:SyntaxTab.colorListModel){
+    for (ColorListEntry cle:SyntaxPP.colorListModel){
       if (p.equals(cle.getBoldKey()) || p.equals( cle.getColorKey() )){
         return true;
       }
-    }*/
+    }
     return false;
   }
 

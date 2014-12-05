@@ -88,6 +88,15 @@ public class ScionTokenScanner implements IPartitionTokenScanner, IEditorPrefere
     this.file=file;
     //,final Display display
     //this.display=display;
+    getCaseS();
+
+    man.getPreferenceStore().addPropertyChangeListener(this);
+    buildTokenTypes();
+
+
+  }
+
+  private void buildTokenTypes(){
     this.tokenByTypes = new HashMap<String, ContentTypeToken>() {
       // Eclipse insists on a serial version identifier, not that this hash map will ever
       // get serialized...
@@ -114,11 +123,7 @@ public class ScionTokenScanner implements IPartitionTokenScanner, IEditorPrefere
         put( ITokenTypes.TEMPLATE_HASKELL, new ContentTypeToken(IDocument.DEFAULT_CONTENT_TYPE,man.createToken( EDITOR_TH_COLOR, EDITOR_TH_BOLD   ) ));
       }
     };
-
-    getCaseS();
-    HaskellUIPlugin.getDefault().getPreferenceStore().addPropertyChangeListener( this );
   }
-
 
   @Override
   public int getTokenLength() {
@@ -561,7 +566,7 @@ public class ScionTokenScanner implements IPartitionTokenScanner, IEditorPrefere
     } else if (arg0.getProperty().equals( EDITOR_TASK_TAGS_CASE )){
       getCaseS();
     }
-
+    buildTokenTypes();
   }
 
 

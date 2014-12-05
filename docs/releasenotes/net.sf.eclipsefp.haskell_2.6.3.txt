@@ -14,6 +14,7 @@ Fixes:
 	- Do not install SourceGraph automatically, really.
 	- Ensure all created files have the same encoding as the project. (https://github.com/JPMoresmau/eclipsefp/issues/247)
 	- Fix Hoogle path resolution in sandbox (https://sourceforge.net/p/eclipsefp/discussion/371922/thread/23cda54e/?limit=25#04b6)
+	- Fix syntax color preview (colors didn't change automatically)
 
 Features:
 	- Hoogle search is done in a job, doesn't freeze the UI

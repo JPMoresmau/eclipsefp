@@ -150,7 +150,7 @@ public class HaskellReconcilingStrategy extends SpellingReconcileStrategy {
 
   private void reconcile() {
     // on save we do typecheck and synchronize outline, so only use reconciler when dirty
-    if (editor.isDirty()) {
+    if (editor!=null && editor.isDirty()) {
       editor.synchronize();
     }
   }
