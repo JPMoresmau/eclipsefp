@@ -113,7 +113,10 @@ public class BuildMarkerResolutionGenerator implements
             }
           }
           // Language pragma needed
-          else if (addFlagPragma(res,msg,msgL, GhcMessages.WARNING_USEFLAG_CONTAINS,GhcMessages.WARNING_USEFLAG_CONTAINS2,GhcMessages.WARNING_USEFLAG_CONTAINS3,GhcMessages.WARNING_USEFLAG_CONTAINS4)){
+          else if (addFlagPragma(res,msg,msgL, GhcMessages.WARNING_USEFLAG_CONTAINS
+               ,GhcMessages.WARNING_USEFLAG_CONTAINS2,GhcMessages.WARNING_USEFLAG_CONTAINS3
+               ,GhcMessages.WARNING_USEFLAG_CONTAINS4,GhcMessages.WARNING_USEFLAG_CONTAINS5
+               ,GhcMessages.WARNING_USEFLAG_CONTAINS6)){
             //
           } else if ((ix=msgL.indexOf( GhcMessages.WARNING_SUPPRESS_CONTAINS ))>-1){
              int end=ix-2;

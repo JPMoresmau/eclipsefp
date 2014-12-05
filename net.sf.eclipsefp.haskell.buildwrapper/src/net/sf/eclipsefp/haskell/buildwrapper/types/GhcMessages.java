@@ -22,6 +22,8 @@ public interface GhcMessages {
   public static String WARNING_USEFLAG_CONTAINS2="perhaps you intended"; //$NON-NLS-1$
   public static String WARNING_USEFLAG_CONTAINS3="use"; //$NON-NLS-1$
   public static String WARNING_USEFLAG_CONTAINS4="you need"; //$NON-NLS-1$
+  public static String WARNING_USEFLAG_CONTAINS5="using"; //$NON-NLS-1$
+  public static String WARNING_USEFLAG_CONTAINS6="try"; //$NON-NLS-1$
   public static String WARNING_SUPPRESS_CONTAINS="to suppress this message"; //$NON-NLS-1$
 
   
