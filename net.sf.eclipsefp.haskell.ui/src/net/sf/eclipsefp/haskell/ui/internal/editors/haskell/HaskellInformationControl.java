@@ -298,4 +298,13 @@ For some other reason, everything works fine if we specify the size with compute
     };
   }
 
+
+  /* (non-Javadoc)
+   * @see org.eclipse.jface.text.AbstractInformationControl#setLocation(org.eclipse.swt.graphics.Point)
+   */
+  @Override
+  public void setLocation( final Point location ) {
+    // move control slightly to the right so we can still right click on the icon
+    super.setLocation( new Point(location.x+20,location.y) );
+  }
 }
