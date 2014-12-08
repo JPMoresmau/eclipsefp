@@ -6,10 +6,10 @@
 package net.sf.eclipsefp.haskell.ui.internal.resolve;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 import org.eclipse.core.resources.IMarker;
+import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.Position;
 import org.eclipse.jface.text.contentassist.ICompletionProposal;
 import org.eclipse.jface.text.quickassist.IQuickAssistInvocationContext;
@@ -51,12 +51,26 @@ public class QuickAssistProcessor implements IQuickAssistProcessor {
   public ICompletionProposal[] computeQuickAssistProposals(
       final IQuickAssistInvocationContext invocationContext ) {
     List<ICompletionProposal> res=new ArrayList<>();
+    // get line of invocation
+    int line=0;
+    try {
+      line=invocationContext.getSourceViewer().getDocument().getLineOfOffset( invocationContext.getOffset() );
+    } catch (BadLocationException ble){
+      // ignore
+    }
     for (Iterator<?> it=invocationContext.getSourceViewer().getAnnotationModel().getAnnotationIterator();it.hasNext();){
       Annotation ann=(Annotation)it.next();
       if (ann instanceof MarkerAnnotation){
         Position p=invocationContext.getSourceViewer().getAnnotationModel().getPosition( ann );
-
-        if (p.getOffset()==invocationContext.getOffset() || p.includes(invocationContext.getOffset())){
+        // line of marker
+        int line2=-1;
+        try {
+          line2=invocationContext.getSourceViewer().getDocument().getLineOfOffset( p.getOffset() );
+        } catch (BadLocationException ble){
+          // ignore
+        }
+        // same offset, or same line, or marker includes the offset
+        if (p.getOffset()==invocationContext.getOffset() || p.includes(invocationContext.getOffset()) || line==line2){
           IMarker marker=((MarkerAnnotation)ann ).getMarker();
           IMarkerResolution[] res1=generator.getResolutions( marker);
           for (IMarkerResolution imr:res1){
@@ -71,7 +85,12 @@ public class QuickAssistProcessor implements IQuickAssistProcessor {
         }
       }
     }
-    res.addAll(Arrays.asList( spelling.computeQuickAssistProposals( invocationContext ) ));
+    for (ICompletionProposal cp:spelling.computeQuickAssistProposals( invocationContext ) ){
+      // do not show "no suggestions" if we have something else
+      if (!cp.getClass().getName().equals( "org.eclipse.ui.internal.texteditor.spelling.NoCompletionsProposal" ) || res.isEmpty()){
+        res.add( cp );
+      }
+    }
 
     return res.toArray( new ICompletionProposal[res.size()] );
   }
