@@ -5,6 +5,7 @@
  */
 package net.sf.eclipsefp.haskell.ui.internal.preferences.scion;
 
+import java.io.File;
 import net.sf.eclipsefp.haskell.core.cabal.CabalImplementation;
 import net.sf.eclipsefp.haskell.core.cabal.CabalImplementationManager;
 import net.sf.eclipsefp.haskell.ui.internal.preferences.IPreferenceConstants;
@@ -78,7 +79,21 @@ public class CabalDevPP extends ExecutablePP {
     locComposite.setLayout( new GridLayout(3,false) );
 
 
-    uniqueSandboxLocationField=new DirectoryFieldEditor( IPreferenceConstants.UNIQUE_SANDBOX_PATH, UITexts.executables_preferences_unique_sandbox_location, locComposite );
+    uniqueSandboxLocationField=new DirectoryFieldEditor( IPreferenceConstants.UNIQUE_SANDBOX_PATH, UITexts.executables_preferences_unique_sandbox_location, locComposite ){
+      /* (non-Javadoc)
+       * @see org.eclipse.jface.preference.DirectoryFieldEditor#doCheckState()
+       */
+      @Override
+      protected boolean doCheckState() {
+        String fileName = getTextControl().getText();
+        fileName = fileName.trim();
+        if (fileName.length() == 0 && isEmptyStringAllowed()) {
+          return true;
+        }
+        File file = new File(fileName);
+        return !file.isFile();
+      }
+    };
     uniqueSandboxLocationField.setPage(this);
     uniqueSandboxLocationField.setPreferenceStore( getPreferenceStore() );
     uniqueSandboxLocationField.load();
