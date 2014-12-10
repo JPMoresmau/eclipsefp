@@ -359,6 +359,7 @@ public final class UITexts extends NLS {
   public static String preferences_project_file_TEMPLATE_CABAL_LIBRARY;
   public static String preferences_project_file_TEMPLATE_CABAL_EXE;
   public static String preferences_project_file_TEMPLATE_CABAL_HTF;
+  public static String preferences_project_file_TEMPLATE_CABAL_TASTY;
   public static String preferences_project_file_TEMPLATE_CABAL;
   public static String preferences_project_file_TEMPLATE_CABAL_SETUP;
   public static String preferences_project_file_TEMPLATE_MODULE;
@@ -366,6 +367,8 @@ public final class UITexts extends NLS {
   public static String preferences_project_file_TEMPLATE_GTK;
   public static String preferences_project_file_TEMPLATE_MODULE_HTF;
   public static String preferences_project_file_TEMPLATE_MAIN_HTF;
+  public static String preferences_project_file_TEMPLATE_MODULE_TASTY;
+  public static String preferences_project_file_TEMPLATE_MAIN_TASTY;
   public static String preferences_project_file_TEMPLATE_IMPORT_HTF;
   public static String preferences_project_file_TEMPLATE_CABAL_TF;
   public static String preferences_project_file_TEMPLATE_CABAL_STDIO;
@@ -649,6 +652,7 @@ public final class UITexts extends NLS {
   public static String cabalEditor_testFrameworkTestSuite;
   public static String cabalEditor_isTestFrameworkTestSuite;
   public static String cabalEditor_HTFTestSuite;
+  public static String cabalEditor_TastyTestSuite;
 
   public static String renameParticipant_title;
   public static String moveParticipant_title;

@@ -73,6 +73,15 @@ public class CorePreferenceInitializer extends AbstractPreferenceInitializer
       "  "+CabalSyntax.FIELD_BUILD_DEPENDS+":  base >= 4, HTF > 0.9"+PlatformUtil.NL //$NON-NLS-1$ //$NON-NLS-2$
     );
 
+    coreNode.put( TEMPLATE_CABAL_TASTY,
+        CabalSyntax.SECTION_TESTSUITE+ " ${"+TemplateVariables.SECTION_NAME+"}"  +PlatformUtil.NL+ //$NON-NLS-1$ //$NON-NLS-2$
+        "  "+CabalSyntax.FIELD_TYPE+":           "+CabalSyntax.VALUE_EXITCODE_STDIO_1_0+ PlatformUtil.NL+ //$NON-NLS-1$ //$NON-NLS-2$
+        //"  "+CabalSyntax.FIELD_HS_SOURCE_DIRS+": ${"+TemplateVariables.SRC+"}" +PlatformUtil.NL+ //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+        "  "+CabalSyntax.FIELD_MAIN_IS+":        Main.hs"+PlatformUtil.NL+ //$NON-NLS-1$ //$NON-NLS-2$
+        "  "+CabalSyntax.FIELD_GHC_OPTIONS+":    -Wall -rtsopts" +PlatformUtil.NL+ //$NON-NLS-1$ //$NON-NLS-2$
+        "  "+CabalSyntax.FIELD_BUILD_DEPENDS+":  base >= 4, tasty > 0.10, tasty-hunit, HUnit, tasty-quickcheck, QuickCheck "+PlatformUtil.NL //$NON-NLS-1$ //$NON-NLS-2$
+      );
+
     coreNode.put( TEMPLATE_CABAL_TF,
         CabalSyntax.SECTION_TESTSUITE+ " ${"+TemplateVariables.SECTION_NAME+"}"  +PlatformUtil.NL+ //$NON-NLS-1$ //$NON-NLS-2$
         "  "+CabalSyntax.FIELD_TYPE+":                  "+CabalSyntax.VALUE_EXITCODE_STDIO_1_0 + PlatformUtil.NL+ //$NON-NLS-1$ //$NON-NLS-2$
@@ -134,11 +143,26 @@ public class CorePreferenceInitializer extends AbstractPreferenceInitializer
         "import Test.Framework"  +PlatformUtil.NL //$NON-NLS-1$
     );
 
+    coreNode.put( TEMPLATE_MODULE_TASTY,
+        "${"+TemplateVariables.MODULE+"}"+PlatformUtil.NL+ //$NON-NLS-1$ //$NON-NLS-2$
+        "import Test.Tasty"  +PlatformUtil.NL+ //$NON-NLS-1$
+        "import Test.Tasty.QuickCheck as QC"  +PlatformUtil.NL+ //$NON-NLS-1$
+        "import Test.Tasty.HUnit"  +PlatformUtil.NL //$NON-NLS-1$
+    );
+
     coreNode.put( TEMPLATE_MAIN_HTF,
         "${"+TemplateVariables.MODULE_HTF+"}"+PlatformUtil.NL+ //$NON-NLS-1$ //$NON-NLS-2$
         "${"+TemplateVariables.IMPORTS_HTF+"}"  +PlatformUtil.NL+ //$NON-NLS-1$ //$NON-NLS-2$
         "main :: IO()"+PlatformUtil.NL+ //$NON-NLS-1$
         "main = htfMain htf_importedTests"+PlatformUtil.NL //$NON-NLS-1$
+    );
+
+    coreNode.put( TEMPLATE_MAIN_TASTY,
+        "${"+TemplateVariables.MODULE_TASTY+"}"+PlatformUtil.NL+ //$NON-NLS-1$ //$NON-NLS-2$
+        "main :: IO()"+PlatformUtil.NL+ //$NON-NLS-1$
+        "main = defaultMain tests"+PlatformUtil.NL+PlatformUtil.NL+ //$NON-NLS-1$
+        "tests :: TestTree"+PlatformUtil.NL+ //$NON-NLS-1$
+        "tests = testGroup \"Tests\" []"+PlatformUtil.NL //$NON-NLS-1$
     );
 
     coreNode.put( TEMPLATE_IMPORT_HTF,

@@ -58,7 +58,7 @@ import org.eclipse.ui.forms.widgets.ScrolledForm;
 
 /**
  * Page for handling test-suite stanzas in the Cabal file.
- * @author Alejandro Serrano
+ * @author Alejandro Serrano, JP Moresmau
  *
  */
 public class TestSuitesPage extends CabalFormPage implements SelectionListener {
@@ -79,6 +79,90 @@ public class TestSuitesPage extends CabalFormPage implements SelectionListener {
     super( editor, TestSuitesPage.class.getName(), UITexts.cabalEditor_testSuites, project );
   }
 
+  private enum TestType {
+    HTF(ICorePreferenceNames.TEMPLATE_MODULE_HTF,ICorePreferenceNames.TEMPLATE_MAIN_HTF){
+       @Override
+       public void addVariables( final Map<String, String> vars ,final String imports) {
+        /**
+         * imports
+         */
+        vars.put( TemplateVariables.IMPORTS_HTF, imports );
+        /**
+         * generate HTF module header
+         */
+        if (vars.containsKey( TemplateVariables.MODULE )){
+          String mod1=HaskellCorePlugin.populateTemplate( ICorePreferenceNames.TEMPLATE_MODULE_HTF, vars );
+          vars.put( TemplateVariables.MODULE_HTF, mod1 );
+        }
+      }
+    },
+    TASTY(ICorePreferenceNames.TEMPLATE_MODULE_TASTY,ICorePreferenceNames.TEMPLATE_MAIN_TASTY){
+       @Override
+       public void addVariables( final Map<String, String> vars ,final String imports) {
+        /**
+         * imports
+         */
+        vars.put( TemplateVariables.IMPORTS, imports );
+        /**
+         * generate HTF module header
+         */
+        if (vars.containsKey( TemplateVariables.MODULE )){
+          String mod1=HaskellCorePlugin.populateTemplate( ICorePreferenceNames.TEMPLATE_MODULE_TASTY, vars );
+          vars.put( TemplateVariables.MODULE_TASTY, mod1 );
+        }
+      }
+    },
+    OTHER(ICorePreferenceNames.TEMPLATE_MODULE,ICorePreferenceNames.TEMPLATE_MAIN){
+       @Override
+       public void addVariables( final Map<String, String> vars ,final String imports) {
+        /**
+         * imports
+         */
+        vars.put( TemplateVariables.IMPORTS, imports );
+
+      }
+    };
+
+
+    private String moduleTemplate;
+    private String mainTemplate;
+
+    private TestType(final String mod,final String main){
+      moduleTemplate=mod;
+      mainTemplate=main;
+
+    }
+
+
+    /**
+     * @return the moduleTemplate
+     */
+    public String getModuleTemplate() {
+      return moduleTemplate;
+    }
+
+
+    /**
+     * @return the mainTemplate
+     */
+    public String getMainTemplate() {
+      return mainTemplate;
+    }
+
+    public abstract void addVariables( final Map<String, String> vars ,String imports);
+  }
+
+  private TestType getTestType(final String pref){
+    switch(pref){
+      case ICorePreferenceNames.TEMPLATE_CABAL_HTF:
+          return TestType.HTF;
+      case ICorePreferenceNames.TEMPLATE_CABAL_TASTY:
+          return TestType.TASTY;
+      default:
+          return TestType.OTHER;
+    }
+  }
+
   public void addStanza(final PackageDescription desc,final String pref,final TestSuiteDialog.TestSuiteDef def,final boolean overwrite){
     Map<String,String> vars=new HashMap<>();
     vars.put( TemplateVariables.PROJECT_NAME, getPackageDescription().getPackageStanza().getName() );
@@ -93,7 +177,7 @@ public class TestSuitesPage extends CabalFormPage implements SelectionListener {
       boolean needLibrary=false;
       StringBuilder imports=new StringBuilder();
 
-      boolean isHTF= ICorePreferenceNames.TEMPLATE_CABAL_HTF.equals( pref );
+      TestType testType=getTestType( pref );
       /**
        * for each testes module, reference the module directly or just the library
        */
@@ -107,11 +191,12 @@ public class TestSuitesPage extends CabalFormPage implements SelectionListener {
         /**
          * create test module
          */
-        String m=createTestModule( pd, def, md.getModule(), isHTF?ICorePreferenceNames.TEMPLATE_MODULE_HTF:ICorePreferenceNames.TEMPLATE_MODULE,overwrite );
+        String m=createTestModule( pd, def, md.getModule(),
+            testType.getModuleTemplate(),overwrite );
         /**
          * generate import directive
          */
-        if (isHTF){
+        if (TestType.HTF.equals( testType )){
           vars.put( TemplateVariables.MODULE_NAME,m);
           String mod1=HaskellCorePlugin.populateTemplate( ICorePreferenceNames.TEMPLATE_IMPORT_HTF, vars );
           imports.append(mod1);
@@ -155,7 +240,7 @@ public class TestSuitesPage extends CabalFormPage implements SelectionListener {
        * create main
        */
       if (! ICorePreferenceNames.TEMPLATE_CABAL_DETAILED.equals( pref )){
-        createMain( pd, def ,isHTF,imports.toString(),overwrite);
+        createMain( pd, def ,testType,imports.toString(),overwrite);
       }
 
       desc.addStanza( pd );
@@ -170,7 +255,7 @@ public class TestSuitesPage extends CabalFormPage implements SelectionListener {
    * @param imports
    * @param overwrite should we overwrite existing files?
    */
-  private void createMain( final PackageDescriptionStanza pd,final TestSuiteDialog.TestSuiteDef def,final boolean isHTF,final String imports,final boolean overwrite){
+  private void createMain( final PackageDescriptionStanza pd,final TestSuiteDialog.TestSuiteDef def,final TestType testType,final String imports,final boolean overwrite){
     final String mainName=def.getName() + "." + EHaskellCommentStyle.USUAL.getFileExtension(); //$NON-NLS-1$
 
     pd.update( CabalSyntax.FIELD_MAIN_IS, mainName );
@@ -180,24 +265,14 @@ public class TestSuitesPage extends CabalFormPage implements SelectionListener {
     mci.setModuleName( "Main" );
     mci.setSourceContainer( def.getSrc() );
     mci.setProject( sourceDirsSection.getProject() );
-    mci.setTemplatePreferenceName(isHTF?ICorePreferenceNames.TEMPLATE_MAIN_HTF: ICorePreferenceNames.TEMPLATE_MAIN);
+    mci.setTemplatePreferenceName(testType.getMainTemplate());
     CodeGenerator cg=new CodeGenerator(){
       /* (non-Javadoc)
        * @see net.sf.eclipsefp.haskell.core.internal.code.CodeGenerator#addVariables(java.util.Map)
        */
       @Override
       protected void addVariables( final Map<String, String> vars ) {
-        /**
-         * imports
-         */
-        vars.put( isHTF?TemplateVariables.IMPORTS_HTF:TemplateVariables.IMPORTS, imports );
-        /**
-         * generate HTF module header
-         */
-        if (isHTF && vars.containsKey( TemplateVariables.MODULE )){
-          String mod1=HaskellCorePlugin.populateTemplate( ICorePreferenceNames.TEMPLATE_MODULE_HTF, vars );
-          vars.put( TemplateVariables.MODULE_HTF, mod1 );
-        }
+        testType.addVariables( vars, imports );
       }
     };
     SourceFileGenerator gen=new SourceFileGenerator(cg){
@@ -340,6 +415,8 @@ public class TestSuitesPage extends CabalFormPage implements SelectionListener {
 
     final Action addHTFAction = new NewTestSuiteAction( UITexts.cabalEditor_HTFTestSuite, ICorePreferenceNames.TEMPLATE_CABAL_HTF ) ;
 
+    final Action addTastyAction = new NewTestSuiteAction( UITexts.cabalEditor_TastyTestSuite, ICorePreferenceNames.TEMPLATE_CABAL_TASTY ) ;
+
     final Action addTestFrameworkAction = new NewTestSuiteAction( UITexts.cabalEditor_testFrameworkTestSuite, ICorePreferenceNames.TEMPLATE_CABAL_TF ) ;
 
     final Action addStdioAction = new NewTestSuiteAction( UITexts.cabalEditor_stdioTestSuite,ICorePreferenceNames.TEMPLATE_CABAL_STDIO );
@@ -362,6 +439,7 @@ public class TestSuitesPage extends CabalFormPage implements SelectionListener {
         menu = menuManager.createContextMenu( parent );
 
         menuManager.add( addHTFAction );
+        menuManager.add( addTastyAction );
         menuManager.add( addTestFrameworkAction );
         menuManager.add( addStdioAction );
         menuManager.add( addDetailedAction );

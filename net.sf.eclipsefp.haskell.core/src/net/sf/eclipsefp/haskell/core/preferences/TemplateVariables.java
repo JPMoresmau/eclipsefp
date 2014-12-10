@@ -22,6 +22,7 @@ public interface TemplateVariables {
   public static final String MODULE_NAME="module_name"; //$NON-NLS-1$
   public static final String MODULE_HTF="module_htf"; //$NON-NLS-1$
   public static final String IMPORTS_HTF="imports_htf"; //$NON-NLS-1$
+  public static final String MODULE_TASTY="module_tasty"; //$NON-NLS-1$
   public static final String IMPORTS="imports"; //$NON-NLS-1$
   public static final String SECTION_NAME="section_name"; //$NON-NLS-1$
 }

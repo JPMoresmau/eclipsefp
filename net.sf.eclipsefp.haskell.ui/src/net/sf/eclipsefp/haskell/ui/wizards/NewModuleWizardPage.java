@@ -223,6 +223,7 @@ public class NewModuleWizardPage extends StatusWizardPage implements IModuleCrea
     defTemplate = new TemplateDef( ICorePreferenceNames.TEMPLATE_MODULE, UITexts.preferences_project_file_TEMPLATE_MODULE );
     ltds.add(defTemplate );
     ltds.add( new TemplateDef( ICorePreferenceNames.TEMPLATE_MODULE_HTF, UITexts.preferences_project_file_TEMPLATE_MODULE_HTF ) );
+    ltds.add( new TemplateDef( ICorePreferenceNames.TEMPLATE_MODULE_TASTY, UITexts.preferences_project_file_TEMPLATE_MODULE_TASTY ) );
 
     cvTemplates.setInput( ltds );
     cvTemplates.setSelection( new StructuredSelection( defTemplate) );
