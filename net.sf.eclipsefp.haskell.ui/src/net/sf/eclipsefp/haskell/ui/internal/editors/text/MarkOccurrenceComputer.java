@@ -31,7 +31,7 @@ public class MarkOccurrenceComputer {
   private static final String ANNOTATION_TYPE
     = "net.sf.eclipsefp.haskell.ui.occurrences"; //$NON-NLS-1$
 
-  private final HaskellEditor editor;
+  private HaskellEditor editor;
   private IDocument document;
 
   public MarkOccurrenceComputer( final HaskellEditor editor ) {
@@ -39,6 +39,11 @@ public class MarkOccurrenceComputer {
       throw new IllegalArgumentException();
     }
     this.editor = editor;
+  }
+
+  public void dispose(){
+    this.editor=null;
+    this.document=null;
   }
 
   public void setDocument( final IDocument document ) {

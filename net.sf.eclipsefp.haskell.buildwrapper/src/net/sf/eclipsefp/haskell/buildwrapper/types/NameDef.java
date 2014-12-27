@@ -22,7 +22,7 @@ import org.json.JSONObject;
  *
  */
 public class NameDef {
-	private Set<OutlineDefType> types=new HashSet<>();
+	private Set<OutlineDefType> types;
 	private String name;
 	
 	/**
@@ -38,6 +38,7 @@ public class NameDef {
 			name=name.substring(ix+1);
 		}
 		JSONArray arr=obj.getJSONArray("t");
+		types=new HashSet<>(arr.length());
 		for (int a=0;a<arr.length();a++){
 			types.add(OutlineDefType.valueOf(arr.getString(a).toUpperCase(Locale.ENGLISH)));
 		}

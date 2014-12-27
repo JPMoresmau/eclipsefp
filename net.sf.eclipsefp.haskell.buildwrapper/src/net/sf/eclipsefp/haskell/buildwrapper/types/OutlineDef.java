@@ -67,7 +67,7 @@ public class OutlineDef {
 		}
 	};
 	
-	private Set<OutlineDefType> types=new HashSet<>();
+	private Set<OutlineDefType> types;
 	private String name;
 	private Location loc;
 	
@@ -91,6 +91,7 @@ public class OutlineDef {
 	public OutlineDef(String name, OutlineDefType type, Location loc) {
 		super();
 		this.name = name;
+		types=new HashSet<>(1);
 		this.types.add(type);
 		this.loc = loc;
 	}
@@ -98,6 +99,7 @@ public class OutlineDef {
 	public OutlineDef(IFile f,JSONObject obj) throws JSONException{
 		this.name=obj.getString("n");
 		JSONArray arr=obj.getJSONArray("t");
+		types=new HashSet<>(arr.length());
 		for (int a=0;a<arr.length();a++){
 			types.add(OutlineDefType.valueOf(arr.getString(a).toUpperCase(Locale.ENGLISH)));
 		}

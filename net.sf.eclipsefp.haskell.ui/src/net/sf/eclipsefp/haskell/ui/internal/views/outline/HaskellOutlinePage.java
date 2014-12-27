@@ -37,7 +37,7 @@ import org.eclipse.ui.views.contentoutline.ContentOutlinePage;
 public class HaskellOutlinePage extends ContentOutlinePage {
 
   private List<OutlineDef> input;
-  private final HaskellEditor editor;
+  private HaskellEditor editor;
 
 
 
@@ -111,9 +111,14 @@ public class HaskellOutlinePage extends ContentOutlinePage {
   /** <p>sets the input of the outline page.</p> */
   public void setInput( final List<OutlineDef> outlineDefs ) {
      this.input=outlineDefs;
-     this.update();
+     if (this.input!=null){
+       this.update();
+     } else {
+       editor=null;
+     }
 
   }
+
 
 
   public List<OutlineDef> getInput() {

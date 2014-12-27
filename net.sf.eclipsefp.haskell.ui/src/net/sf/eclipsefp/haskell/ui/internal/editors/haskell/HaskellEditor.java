@@ -495,9 +495,19 @@ public class HaskellEditor extends TextEditor implements IEditorPreferenceNames,
     CabalFileChangeListenerManager.removeDynamicListener( this );
     if( outlinePage != null ) {
       outlinePage.setInput( null );
+      outlinePage.dispose();
+      outlinePage=null;
     }
     if (tokenScanner!=null){
       tokenScanner.dispose();
+      tokenScanner=null;
+    }
+    names.clear();
+    lastOutlineResult=null;
+    importsManager=null;
+    if (markOccurrencesComputer!=null){
+      markOccurrencesComputer.dispose();
+      markOccurrencesComputer=null;
     }
     final IFile file=findFile();
     if (file!=null){
