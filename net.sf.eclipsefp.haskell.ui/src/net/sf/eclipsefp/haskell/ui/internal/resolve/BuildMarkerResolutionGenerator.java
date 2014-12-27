@@ -26,6 +26,7 @@ import net.sf.eclipsefp.haskell.buildwrapper.types.UsageResults;
 import net.sf.eclipsefp.haskell.buildwrapper.usage.UsageQueryFlags;
 import net.sf.eclipsefp.haskell.core.HaskellCorePlugin;
 import net.sf.eclipsefp.haskell.core.cabalmodel.CabalSyntax;
+import net.sf.eclipsefp.haskell.core.compiler.CompilerManager;
 import net.sf.eclipsefp.haskell.core.util.ResourceUtil;
 import net.sf.eclipsefp.haskell.hlint.HLintFixer;
 import net.sf.eclipsefp.haskell.hlint.Suggestion;
@@ -114,58 +115,58 @@ public class BuildMarkerResolutionGenerator implements
               }
             }
           }
-          // Language pragma needed
-          if (addFlagPragma(res,msg,msgL, GhcMessages.WARNING_USEFLAG_CONTAINS
-               ,GhcMessages.WARNING_USEFLAG_CONTAINS2,GhcMessages.WARNING_USEFLAG_CONTAINS3
-               ,GhcMessages.WARNING_USEFLAG_CONTAINS4,GhcMessages.WARNING_USEFLAG_CONTAINS5
-               ,GhcMessages.WARNING_USEFLAG_CONTAINS6)){
-            //
-          }
-          if ((ix=msgL.indexOf( GhcMessages.WARNING_SUPPRESS_CONTAINS ))>-1){
-             int end=ix-2;
-             int ix2=msg.lastIndexOf( ' ',end);
-             if (ix2>-1){
-               String flag=msg.substring( ix2+1,end+1 ).trim();
-               addPragma(res,flag);
-             }
-          }
-          if ((ix=msgL.indexOf( GhcMessages.NOT_ENABLED ))>1){
-            String flag=msg.substring( 0,ix ).trim();
-            res.add( new AddLanguagePragmaResolution( flag ) );
-          }
-          if ((ix=msgL.indexOf( GhcMessages.PERMITS_THIS ))>1){
-            int ix2=msg.substring(0,ix).lastIndexOf("(-X");
-            String flag=msg.substring( ix2+1,ix ).trim();
-            addPragma(res,flag);
-          }
-          if ((ix=msgL.indexOf( GhcMessages.TRY ))>1){
-            int ix2=msg.indexOf(" ",ix+GhcMessages.TRY.length());
-            if (ix2>-1){
-              String flag=msg.substring( ix+GhcMessages.TRY.length()-2,ix2).trim();
-              addPragma(res,flag);
-            }
-          }
-          if ((ix=msgL.indexOf( GhcMessages.YOU_NEED ))>1){
-            int ix2=msg.indexOf(" ",ix+GhcMessages.YOU_NEED.length());
-            if (ix2>-1){
-              String flag=msg.substring( ix+GhcMessages.YOU_NEED.length()-2,ix2).trim();
-              addPragma(res,flag);
-            }
-          }
-          if ((ix=msgL.indexOf( GhcMessages.DID_YOU_MEAN ))>1){
-            int ix2=msg.indexOf("?",ix+GhcMessages.DID_YOU_MEAN.length());
-            if (ix2>-1){
-              String flag=msg.substring( ix+GhcMessages.DID_YOU_MEAN.length(),ix2).trim();
-              addPragma(res,flag);
-            }
-          }
-          if ((ix=msgL.indexOf( GhcMessages.DID_YOU_MEAN_NO_X ))>1){
-            int ix2=msg.indexOf("?",ix+GhcMessages.DID_YOU_MEAN_NO_X.length());
-            if (ix2>-1){
-              String flag=msg.substring( ix+GhcMessages.DID_YOU_MEAN_NO_X.length(),ix2).trim();
-              addPragma(res,flag);
-            }
-          }
+
+//          if (addFlagPragma(res,msg,msgL, GhcMessages.WARNING_USEFLAG_CONTAINS
+//               ,GhcMessages.WARNING_USEFLAG_CONTAINS2,GhcMessages.WARNING_USEFLAG_CONTAINS3
+//               ,GhcMessages.WARNING_USEFLAG_CONTAINS4,GhcMessages.WARNING_USEFLAG_CONTAINS5
+//               ,GhcMessages.WARNING_USEFLAG_CONTAINS6)){
+//            //
+//          }
+//          if ((ix=msgL.indexOf( GhcMessages.WARNING_SUPPRESS_CONTAINS ))>-1){
+//             int end=ix-2;
+//             int ix2=msg.lastIndexOf( ' ',end);
+//             if (ix2>-1){
+//               String flag=msg.substring( ix2+1,end+1 ).trim();
+//               addPragma(res,flag);
+//             }
+//          }
+//          if ((ix=msgL.indexOf( GhcMessages.NOT_ENABLED ))>1){
+//            String flag=msg.substring( 0,ix ).trim();
+//            res.add( new AddLanguagePragmaResolution( flag ) );
+//          }
+//          if ((ix=msgL.indexOf( GhcMessages.PERMITS_THIS ))>1){
+//            int ix2=msg.substring(0,ix).lastIndexOf("(-X");
+//            String flag=msg.substring( ix2+1,ix ).trim();
+//            addPragma(res,flag);
+//          }
+//          if ((ix=msgL.indexOf( GhcMessages.TRY ))>1){
+//            int ix2=msg.indexOf(" ",ix+GhcMessages.TRY.length());
+//            if (ix2>-1){
+//              String flag=msg.substring( ix+GhcMessages.TRY.length()-2,ix2).trim();
+//              addPragma(res,flag);
+//            }
+//          }
+//          if ((ix=msgL.indexOf( GhcMessages.YOU_NEED ))>1){
+//            int ix2=msg.indexOf(" ",ix+GhcMessages.YOU_NEED.length());
+//            if (ix2>-1){
+//              String flag=msg.substring( ix+GhcMessages.YOU_NEED.length()-2,ix2).trim();
+//              addPragma(res,flag);
+//            }
+//          }
+//          if ((ix=msgL.indexOf( GhcMessages.DID_YOU_MEAN ))>1){
+//            int ix2=msg.indexOf("?",ix+GhcMessages.DID_YOU_MEAN.length());
+//            if (ix2>-1){
+//              String flag=msg.substring( ix+GhcMessages.DID_YOU_MEAN.length(),ix2).trim();
+//              addPragma(res,flag);
+//            }
+//          }
+//          if ((ix=msgL.indexOf( GhcMessages.DID_YOU_MEAN_NO_X ))>1){
+//            int ix2=msg.indexOf("?",ix+GhcMessages.DID_YOU_MEAN_NO_X.length());
+//            if (ix2>-1){
+//              String flag=msg.substring( ix+GhcMessages.DID_YOU_MEAN_NO_X.length(),ix2).trim();
+//              addPragma(res,flag);
+//            }
+//          }
           if ((ix=msgL.indexOf( GhcMessages.CAST_FROM_CHAR ))>1){
             addPragma( res, "-XOverloadedStrings" );
           }
@@ -320,8 +321,11 @@ public class BuildMarkerResolutionGenerator implements
               }
             }
           }
-          if (msg.indexOf( "DeriveDataTypeable")>-1){
-            res.add( new AddLanguagePragmaResolution( "DeriveDataTypeable" ) );
+          // Language pragma needed
+          for (String ext:CompilerManager.getExtensions()){
+            if (msg.indexOf( ext)>-1){
+              res.add( new AddLanguagePragmaResolution( ext ) );
+            }
           }
         }
       }
