@@ -232,14 +232,37 @@ public class SandboxHelper {
 				// in Cabal sandboxes, we have automatic updates
 				// either we build in the common sandbox, or we use addSource which maintain up to date packages
 				// we let Eclipse manage this: if we build manually we don't want to build everything...
-//				IProject p=f.getProject();
-//				for (IProject pR:p.getReferencingProjects()){
-//					build(p,pR,processed);
-//				}
+				// so we just restart the running processes
+				IProject p=f.getProject();
+				for (IProject pR:p.getReferencingProjects()){
+					closeLongRunning(pR,processed);
+				}
 				break;
 			case NONE:
 				break;
 			}
+		}
+	}
+	
+	/**
+	 * close long running buildwrapper processes
+	 * @param p
+	 * @param processed
+	 * @throws CoreException
+	 */
+	private static void closeLongRunning(IProject p,Set<IProject> processed) throws CoreException{
+		if (processed.add(p)){
+			BWFacade f=BuildWrapperPlugin.getFacade(p);
+			if (f!=null){
+				if (f.isCanceled()){
+					return;
+				}
+				f.closeAllProcesses();
+				for (IProject pR:p.getReferencingProjects()){
+					closeLongRunning(pR,processed);
+				}
+			}
+			
 		}
 	}
 	
