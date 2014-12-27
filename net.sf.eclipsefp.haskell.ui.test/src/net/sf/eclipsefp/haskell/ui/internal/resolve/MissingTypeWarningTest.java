@@ -41,7 +41,7 @@ public class MissingTypeWarningTest {
   @Test
   public void testForAll(){
     String full="Top-level binding with no type signature:\n           fun :: forall t. t -> [Char] -> [Char]";
-    String type="fun :: forall t. t -> [Char] -> [Char]";
+    String type="fun :: forall t. t -> String -> String";
     assertEquals(type,MissingTypeWarningResolution.extractTypeFromMessage( GhcMessages.WARNING_NOTYPE_TOPLEVEL_CONTAINS, full ));
   }
 

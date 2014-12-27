@@ -23,6 +23,7 @@ Features:
 	- Import quick fix can import whole module
 	- Quick fixes for more pragmas messages
 	- Support for Tasty test suite template (but not for a specific test runner)
+	- Allows several different fixes for same error
 
 Internal:
 

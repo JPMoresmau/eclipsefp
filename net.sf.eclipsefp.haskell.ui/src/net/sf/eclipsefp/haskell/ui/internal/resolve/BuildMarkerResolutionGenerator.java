@@ -70,19 +70,21 @@ public class BuildMarkerResolutionGenerator implements
           // Type signature not found
           if (msgL.indexOf( GhcMessages.WARNING_NOTYPE_CONTAINS )>-1){
             res.add(new MissingTypeWarningResolution(GhcMessages.WARNING_INFERREDTYPE_START));
-          } else if (msgL.indexOf( GhcMessages.WARNING_NOTYPE_TOPLEVEL_CONTAINS )>-1){
+          }
+          if (msgL.indexOf( GhcMessages.WARNING_NOTYPE_TOPLEVEL_CONTAINS )>-1){
             // type is given on next line
             res.add(new MissingTypeWarningResolution(GhcMessages.WARNING_NOTYPE_TOPLEVEL_CONTAINS));
           }
           // Useless import
-          else if (msgL.indexOf( GhcMessages.WARNING_IMPORT_USELESS_CONTAINS )>-1){
+          if (msgL.indexOf( GhcMessages.WARNING_IMPORT_USELESS_CONTAINS )>-1){
             res.add(new RemoveImportResolution());
             int ix2=msgL.indexOf( GhcMessages.WARNING_IMPORT_USELESS_START );
             if (ix2>-1){
               String newImport=msg.substring( ix2+GhcMessages.WARNING_IMPORT_USELESS_START.length() ).trim();
               res.add( new ReplaceImportResolution( newImport ) );
             }
-          } else if (msgL.indexOf( GhcMessages.WARNING_IMPORT_USELESS_CONTAINS2 )>-1){
+          }
+          if (msgL.indexOf( GhcMessages.WARNING_IMPORT_USELESS_CONTAINS2 )>-1){
             int ixe2=-1;
             if ((ixe2=msgL.indexOf( GhcMessages.WARNING_IMPORT_USELESS_ELEMENT2 )) > -1) {
               // Redundant element
@@ -113,60 +115,71 @@ public class BuildMarkerResolutionGenerator implements
             }
           }
           // Language pragma needed
-          else if (addFlagPragma(res,msg,msgL, GhcMessages.WARNING_USEFLAG_CONTAINS
+          if (addFlagPragma(res,msg,msgL, GhcMessages.WARNING_USEFLAG_CONTAINS
                ,GhcMessages.WARNING_USEFLAG_CONTAINS2,GhcMessages.WARNING_USEFLAG_CONTAINS3
                ,GhcMessages.WARNING_USEFLAG_CONTAINS4,GhcMessages.WARNING_USEFLAG_CONTAINS5
                ,GhcMessages.WARNING_USEFLAG_CONTAINS6)){
             //
-          } else if ((ix=msgL.indexOf( GhcMessages.WARNING_SUPPRESS_CONTAINS ))>-1){
+          }
+          if ((ix=msgL.indexOf( GhcMessages.WARNING_SUPPRESS_CONTAINS ))>-1){
              int end=ix-2;
              int ix2=msg.lastIndexOf( ' ',end);
              if (ix2>-1){
                String flag=msg.substring( ix2+1,end+1 ).trim();
                addPragma(res,flag);
              }
-          } else if ((ix=msgL.indexOf( GhcMessages.NOT_ENABLED ))>1){
+          }
+          if ((ix=msgL.indexOf( GhcMessages.NOT_ENABLED ))>1){
             String flag=msg.substring( 0,ix ).trim();
             res.add( new AddLanguagePragmaResolution( flag ) );
-          } else if ((ix=msgL.indexOf( GhcMessages.PERMITS_THIS ))>1){
+          }
+          if ((ix=msgL.indexOf( GhcMessages.PERMITS_THIS ))>1){
             int ix2=msg.substring(0,ix).lastIndexOf("(-X");
             String flag=msg.substring( ix2+1,ix ).trim();
             addPragma(res,flag);
-          } else if ((ix=msgL.indexOf( GhcMessages.TRY ))>1){
+          }
+          if ((ix=msgL.indexOf( GhcMessages.TRY ))>1){
             int ix2=msg.indexOf(" ",ix+GhcMessages.TRY.length());
             if (ix2>-1){
               String flag=msg.substring( ix+GhcMessages.TRY.length()-2,ix2).trim();
               addPragma(res,flag);
             }
-          } else if ((ix=msgL.indexOf( GhcMessages.YOU_NEED ))>1){
+          }
+          if ((ix=msgL.indexOf( GhcMessages.YOU_NEED ))>1){
             int ix2=msg.indexOf(" ",ix+GhcMessages.YOU_NEED.length());
             if (ix2>-1){
               String flag=msg.substring( ix+GhcMessages.YOU_NEED.length()-2,ix2).trim();
               addPragma(res,flag);
             }
-          } else if ((ix=msgL.indexOf( GhcMessages.DID_YOU_MEAN ))>1){
+          }
+          if ((ix=msgL.indexOf( GhcMessages.DID_YOU_MEAN ))>1){
             int ix2=msg.indexOf("?",ix+GhcMessages.DID_YOU_MEAN.length());
             if (ix2>-1){
-              String flag=msg.substring( ix+GhcMessages.DID_YOU_MEAN.length()-2,ix2).trim();
+              String flag=msg.substring( ix+GhcMessages.DID_YOU_MEAN.length(),ix2).trim();
               addPragma(res,flag);
             }
-          } else if ((ix=msgL.indexOf( GhcMessages.DID_YOU_MEAN_NO_X ))>1){
+          }
+          if ((ix=msgL.indexOf( GhcMessages.DID_YOU_MEAN_NO_X ))>1){
             int ix2=msg.indexOf("?",ix+GhcMessages.DID_YOU_MEAN_NO_X.length());
             if (ix2>-1){
               String flag=msg.substring( ix+GhcMessages.DID_YOU_MEAN_NO_X.length(),ix2).trim();
               addPragma(res,flag);
             }
-          } else if ((ix=msgL.indexOf( GhcMessages.CAST_FROM_CHAR ))>1){
+          }
+          if ((ix=msgL.indexOf( GhcMessages.CAST_FROM_CHAR ))>1){
             addPragma( res, "-XOverloadedStrings" );
-          } else if ((ix=msgL.indexOf( GhcMessages.CAST_FROM_CHAR_SHORT ))>1){
+          }
+          if ((ix=msgL.indexOf( GhcMessages.CAST_FROM_CHAR_SHORT ))>1){
             addPragma( res, "-XOverloadedStrings" );
-          } else if ((ix=msgL.indexOf( GhcMessages.CAST_FROM_CHAR_7_8 ))>1){
+          }
+          if ((ix=msgL.indexOf( GhcMessages.CAST_FROM_CHAR_7_8 ))>1){
             addPragma( res, "-XOverloadedStrings" );
-          } else if ((ix=msgL.indexOf( GhcMessages.CAST_FROM_CHAR_SHORT_7_8 ))>1){
+          }
+          if ((ix=msgL.indexOf( GhcMessages.CAST_FROM_CHAR_SHORT_7_8 ))>1){
             addPragma( res, "-XOverloadedStrings" );
           }
           // Import a package
-          else if (msgL.indexOf(GhcMessages.MISSING_MODULE)>-1){
+          if (msgL.indexOf(GhcMessages.MISSING_MODULE)>-1){
             int start=GhcMessages.MISSING_MODULE.length();
             int length=GhcMessages.MISSING_MODULE_ADD_START.length();
             ix=msgL.indexOf( GhcMessages.MISSING_MODULE_ADD_START,start );
@@ -216,7 +229,7 @@ public class BuildMarkerResolutionGenerator implements
             }
           }
           // Not in scope
-          else if ((ix=msgL.indexOf( GhcMessages.NOT_IN_SCOPE_START) )>-1){
+          if ((ix=msgL.indexOf( GhcMessages.NOT_IN_SCOPE_START) )>-1){
             ResolutionSuggestion s=new ResolutionSuggestion( msg, ix,msgL );
             if (s.getSuggestions()!=null){
               for (String suggestion:s.getSuggestions()){
@@ -225,7 +238,8 @@ public class BuildMarkerResolutionGenerator implements
             }
             addBrowserSuggestions( marker, s.getOutOfScopeName(), s.getOutOfScopeQualifier(), res);
             addUsageSuggestions( marker, s.getOutOfScopeName() , s.getOutOfScopeQualifier(), res);
-          } else if (msgL.indexOf( GhcMessages.IS_A_DATA_CONSTRUCTOR )>-1){
+          }
+          if (msgL.indexOf( GhcMessages.IS_A_DATA_CONSTRUCTOR )>-1){
             int btix=msg.indexOf('`');
             int sqix=msg.indexOf('\'',btix);
             //String module=msg.substring(btix+1,sqix);
@@ -254,14 +268,16 @@ public class BuildMarkerResolutionGenerator implements
             or
               `import System.Exit (ExitCode (..))'
               Main.hs /nxt/test line 16 Haskell Problem 39935*/
-          }  else if (msgL.indexOf( GhcMessages.DO_DISCARDED_START )>-1){
+          }
+          if (msgL.indexOf( GhcMessages.DO_DISCARDED_START )>-1){
             res.add(new AddGhcPragmaResolution( "-fno-warn-unused-do-bind" ));
             res.add(new AddGHCOptionResolution( "-fno-warn-unused-do-bind" ));
 //            int fixIx=msgL.indexOf( GhcMessages.DO_DISCARDED_FIX );
 //            if (fixIx>-1){
 //
 //            }
-          } else if ((ix=msgL.indexOf( CabalMessages.DEPENDENCIES_MISSING ))>-1){
+          }
+          if ((ix=msgL.indexOf( CabalMessages.DEPENDENCIES_MISSING ))>-1){
             // sandbox does the download for us, so if we're missing a dependency and sandbox,
             // either it's badly spelt or we don't have internet connnection...
             if (!BackendManager.getCabalImplDetails().isSandboxed()){
@@ -287,11 +303,14 @@ public class BuildMarkerResolutionGenerator implements
             } else {
               res.add( new InstallDeps() );
             }
-          } else if (msgL.indexOf( GhcMessages.NAKED )>-1){
+          }
+          if (msgL.indexOf( GhcMessages.NAKED )>-1){
             res.add( new AddLanguagePragmaResolution( "TemplateHaskell" ) );
-          } else if (msgL.indexOf( GhcMessages.INPUT_CASE )>-1){
+          }
+          if (msgL.indexOf( GhcMessages.INPUT_CASE )>-1){
             res.add( new AddLanguagePragmaResolution( "LambdaCase" ) );
-          } else if ((ix=msgL.indexOf( CabalMessages.CABAL_VERSION  ))>-1){
+          }
+          if ((ix=msgL.indexOf( CabalMessages.CABAL_VERSION  ))>-1){
             ix+=CabalMessages.CABAL_VERSION.length();
             int ix2=msgL.indexOf( '\'', ix );
             if (ix2>-1){
@@ -300,7 +319,8 @@ public class BuildMarkerResolutionGenerator implements
                 res.add(new CabalFieldSetter( CabalSyntax.FIELD_CABAL_VERSION, value ));
               }
             }
-          } else if (msg.indexOf( "DeriveDataTypeable")>-1){
+          }
+          if (msg.indexOf( "DeriveDataTypeable")>-1){
             res.add( new AddLanguagePragmaResolution( "DeriveDataTypeable" ) );
           }
         }
