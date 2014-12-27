@@ -256,6 +256,11 @@ public class BWFacade {
 		return arr;
 	}
 	
+	/**
+	 * parse the build result JSON structure, adding markers on impacted files
+	 * @param arr the build result as a JSON array
+	 * @return was the build successful?
+	 */
 	public boolean parseBuildResult(JSONArray arr){
 		if (arr!=null && arr.length()>1){
 			Set<IResource> ress=new HashSet<>();
@@ -266,7 +271,7 @@ public class BWFacade {
 					for (int a=0;a<files.length();a++){
 						String s=files.optString(a);
 						if (s!=null && s.length()>0){
-							final IResource res=project.findMember(s);
+							final IResource res=findMember(project,s);
 							if (res!=null){
 								ress.add(res);
 								BuildWrapperPlugin.deleteProblems(res);
@@ -280,6 +285,33 @@ public class BWFacade {
 			return parseNotes(notes,ress,null,null);
 		}
 		return true;
+	}
+	
+	/**
+	 * find a resource in a project or a referencing project
+	 * @param p the project
+	 * @param s the resource path
+	 * @return the resource found or null if not found
+	 */
+	private static IResource findMember(IProject p,String s){
+		IResource res=p.findMember(s);
+		// linker errors may have full path
+		if (res==null){
+			String f=s.replace("\\\\", "\\");
+			String pos=p.getLocation().toOSString();
+			if (f.startsWith(pos)){
+				res=p.findMember(f.substring(pos.length()));
+			}
+		}
+		if (res==null){
+			for (IProject pR:p.getReferencingProjects()){
+				res=findMember(pR, s);
+				if (res!=null){
+					return res;
+				}
+			}
+		}
+		return res;
 	}
 	
 //	private static String escapeFlags(String flag){
@@ -1196,6 +1228,14 @@ public class BWFacade {
 		return true;
 	}
 	
+	/**
+	 * parse notes from JSON, either adding them as markers or putting them into the collect
+	 * @param notes
+	 * @param ress
+	 * @param m
+	 * @param collect
+	 * @return
+	 */
 	private boolean parseNotes(JSONArray notes,Set<IResource> ress,Map<IResource,IDocument> m,Collection<Note> collect){
 		boolean buildOK=true;
 		if (notes!=null){
@@ -1225,27 +1265,23 @@ public class BWFacade {
 					if (collect!=null){
 						collect.add(n);
 					} else {
-						IResource res=project.findMember(f);
-						// linker errors may have full path
-						if (res==null){
-							f=f.replace("\\\\", "\\");
-							String pos=project.getLocation().toOSString();
-							if (f.startsWith(pos)){
-								res=project.findMember(f.substring(pos.length()));
-							}
-						}
+						IResource res=findMember(project,f);
 						if (res!=null){
 							if (ress.add(res)){
 								BuildWrapperPlugin.deleteProblems(res);
+							}
+							if (res.getLocation().toOSString().equals(getCabalFile())){
+								if (isOtherProject(project, n.getMessage())){
+									continue;
+								}
+								hasCabalProblems=true;
 							}
 							try {
 								n.applyAsMarker(res,m!=null?m.get(res):null);
 							} catch (CoreException ce){
 								BuildWrapperPlugin.logError(BWText.process_apply_note_error, ce);
 							}
-							if (res.getLocation().toOSString().equals(getCabalFile())){
-								hasCabalProblems=true;
-							}
+							
 						}
 					} 
 				}
@@ -1256,6 +1292,20 @@ public class BWFacade {
 		return buildOK;
 	}
 
+	private static boolean isOtherProject(IProject p,String message){
+		boolean other=false;
+		for (IProject pR:p.getReferencingProjects()){
+			if (message.startsWith(pR.getName())){
+				return true;
+			}
+			other=isOtherProject(pR, message);
+			if (other){
+				return other;
+			}
+		}
+		return other;
+	}
+	
 	private Component parseComponent(JSONObject obj){
 		boolean buildable=false;
 		try {
