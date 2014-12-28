@@ -99,7 +99,7 @@ public abstract class ExecutableOrTestSuiteLaunchOperation extends LaunchOperati
       // ICompilationUnit,
       // return it.
       result = configurations.get( 0 );
-    } else {
+    } else if (count>1){
       // Otherwise, if there is more than one config associated with the
       // ICompilationUnit, prompt the user to choose one.
       result = choose( configurations );
