@@ -788,7 +788,7 @@ public class BWFacade {
 	}
 	
 	public List<Component> getComponents(){
-		if (components!=null){
+		if (components!=null && components.size()>0){
 			return components;
 		}
 		LinkedList<String> command=new LinkedList<>();
