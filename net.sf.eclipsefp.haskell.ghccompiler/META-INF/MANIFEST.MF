@@ -1,7 +1,7 @@
 Manifest-Version: 1.0
 Bundle-Name: %bundleName
 Bundle-SymbolicName: net.sf.eclipsefp.haskell.ghccompiler;singleton:=true
-Bundle-Version: 2.6.1.qualifier
+Bundle-Version: 2.6.3.qualifier
 Bundle-Activator: net.sf.eclipsefp.haskell.ghccompiler.GhcCompilerPlugin
 Bundle-Vendor: %bundleVendor
 Bundle-Localization: plugin

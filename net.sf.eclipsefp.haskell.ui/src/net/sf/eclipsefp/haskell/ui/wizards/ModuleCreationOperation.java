@@ -100,7 +100,7 @@ public class ModuleCreationOperation implements IRunnableWithProgress {
           }
          List<PackageDescriptionStanza> pdss=new ArrayList<>( pd.getStanzas() );
           for (PackageDescriptionStanza pds:pdss){
-            if (pds.getType()!=null && (pds.getType().equals( CabalSyntax.SECTION_LIBRARY ) || pds.getType().equals( CabalSyntax.SECTION_EXECUTABLE )  || pds.getType().equals( CabalSyntax.SECTION_TESTSUITE ))){
+            if (pds.getType()!=null && pds.isSourceStanza()){
               pds=pd.getSameStanza( pds );
               RealValuePosition vp=null;
               if(sIncluded.contains( pds.toTypeName() )){

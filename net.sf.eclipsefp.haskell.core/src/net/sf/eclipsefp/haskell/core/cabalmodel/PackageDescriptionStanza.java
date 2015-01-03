@@ -493,13 +493,32 @@ public class PackageDescriptionStanza {
     for (PackageDescriptionStanza st:getStanzas()){
       ret.addAll(st.getSourceDirs());
     }
-    if (ret.isEmpty() && (getType()!=null && (getType().equals( CabalSyntax.SECTION_EXECUTABLE)
-        || getType().equals( CabalSyntax.SECTION_LIBRARY)
-        || getType().equals( CabalSyntax.SECTION_TESTSUITE)))){
+    if (ret.isEmpty() && (getType()!=null && isSourceStanza())){
       ret.add("."); //$NON-NLS-1$
     }
     return ret;
    }
+
+  /**
+   * Are we a stanza that contains sources?
+   * @return
+   */
+  public boolean isSourceStanza(){
+    return getType().equals( CabalSyntax.SECTION_EXECUTABLE)
+        || getType().equals( CabalSyntax.SECTION_LIBRARY)
+        || getType().equals( CabalSyntax.SECTION_TESTSUITE)
+        || getType().equals( CabalSyntax.SECTION_BENCHMARK);
+  }
+
+  /**
+   * are we a stanza that can contain a Main module?
+   * @return
+   */
+  public boolean isMainStanza(){
+    return getType().equals( CabalSyntax.SECTION_EXECUTABLE)
+        || getType().equals( CabalSyntax.SECTION_TESTSUITE)
+        || getType().equals( CabalSyntax.SECTION_BENCHMARK);
+  }
 
   public Collection<String> getNonHaskellFiles(){
     Collection<String> ret=new HashSet<>();

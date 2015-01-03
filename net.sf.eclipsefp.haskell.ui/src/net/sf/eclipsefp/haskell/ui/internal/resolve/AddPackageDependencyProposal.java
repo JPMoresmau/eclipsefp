@@ -90,7 +90,7 @@ public class AddPackageDependencyProposal implements ICompletionProposal {
         PackageDescriptionStanza pds=pd.getStanzas().get(a);
         CabalSyntax cs=pds.getType();
         if (appNames.isEmpty() || appNames.contains( pds.toTypeName() )){
-          if (CabalSyntax.SECTION_EXECUTABLE.equals(cs) || CabalSyntax.SECTION_LIBRARY.equals(cs) || CabalSyntax.SECTION_TESTSUITE.equals(cs)){
+          if (pds.isSourceStanza()){
             RealValuePosition rvp=update(pds);
             if (rvp!=null){
               rvp.updateDocument( doc );
