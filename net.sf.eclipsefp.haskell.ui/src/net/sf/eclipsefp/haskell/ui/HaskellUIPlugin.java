@@ -29,6 +29,7 @@ import org.eclipse.core.runtime.IExtensionRegistry;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.resource.ImageRegistry;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.ITextViewer;
@@ -40,7 +41,9 @@ import org.eclipse.ui.IFileEditorInput;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.editors.text.EditorsUI;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
+import org.eclipse.ui.texteditor.ChainedPreferenceStore;
 import org.eclipse.ui.texteditor.ITextEditor;
 import org.osgi.framework.BundleContext;
 
@@ -66,6 +69,20 @@ public class HaskellUIPlugin extends AbstractUIPlugin {
   private ResourceBundle resourceBundle = null;
   // The scion-server manager object
   private BackendManager fBackendManager = null;
+
+  private static IPreferenceStore combinedPreferenceStore;
+
+  /**
+   * The preference store for editors, combining standard Eclipse + ours
+   * @return
+   */
+  public static synchronized IPreferenceStore getEditorPreferenceStore(){
+    if (combinedPreferenceStore==null){
+      IPreferenceStore generalTextStore= EditorsUI.getPreferenceStore();
+      combinedPreferenceStore= new ChainedPreferenceStore(new IPreferenceStore[] {generalTextStore, getDefault().getPreferenceStore() });
+    }
+    return combinedPreferenceStore;
+  }
 
   public HaskellUIPlugin() {
     plugin = this;

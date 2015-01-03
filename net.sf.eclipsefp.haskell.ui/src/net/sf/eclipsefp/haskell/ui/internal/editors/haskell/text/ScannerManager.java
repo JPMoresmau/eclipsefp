@@ -22,7 +22,7 @@ import org.eclipse.swt.graphics.Color;
   *
   * @author Leif Frenzel
   */
-public class ScannerManager implements IEditorPreferenceNames {
+public class ScannerManager implements IEditorPreferenceNames,IPropertyChangeListener {
 
   /** The internal singleton reference to ScannerManager */
   private static class SingletonHolder {
@@ -41,14 +41,14 @@ public class ScannerManager implements IEditorPreferenceNames {
   private HaskellCommentScanner literateCommentScanner;
 
   private final Map<String, PropertyChangeHandler> propertyChangeHandlers;
-  private IPropertyChangeListener propertyChangeListener;
+  //private IPropertyChangeListener propertyChangeListener;
 
   private TextAttribute commentAttribute;
   private TextAttribute literateCommentAttribute;
 
   private final Map<String, IToken> tokens = new Hashtable<>();
 
-  private IPreferenceStore prefStore;
+  private IPreferenceStore prefStore=HaskellUIPlugin.getEditorPreferenceStore();
   private ColorProvider colorProvider;
 
   private ScannerManager() {
@@ -63,7 +63,7 @@ public class ScannerManager implements IEditorPreferenceNames {
   }
 
   public void dispose() {
-    getPreferenceStore().removePropertyChangeListener( propertyChangeListener );
+    getPreferenceStore().removePropertyChangeListener( this );
     if (colorProvider!=null){
       colorProvider.dispose();
     }
@@ -167,21 +167,19 @@ public class ScannerManager implements IEditorPreferenceNames {
     }
     return result;
   }
+  @Override
+  public void propertyChange( final PropertyChangeEvent event ) {
+    getColorProvider().changeColor( event.getProperty(),
+                                             event.getNewValue() );
+    // now notify all tokens out there
+    PropertyChangeHandler handler = getHandler( event.getProperty() );
+    if( handler != null ) {
+      handler.handleChange( event );
+    }
+  }
 
   private void initializePropertyListener() {
-    propertyChangeListener = new IPropertyChangeListener() {
-      @Override
-      public void propertyChange( final PropertyChangeEvent event ) {
-        getColorProvider().changeColor( event.getProperty(),
-                                                 event.getNewValue() );
-        // now notify all tokens out there
-        PropertyChangeHandler handler = getHandler( event.getProperty() );
-        if( handler != null ) {
-          handler.handleChange( event );
-        }
-      }
-    };
-    getPreferenceStore().addPropertyChangeListener( propertyChangeListener );
+    getPreferenceStore().addPropertyChangeListener( this );
   }
 
   private void putHandler( final String key,

@@ -12,6 +12,7 @@ import net.sf.eclipsefp.haskell.ui.internal.editors.haskell.text.HaskellReconcil
 import net.sf.eclipsefp.haskell.ui.internal.editors.haskell.text.ScannerManager;
 import net.sf.eclipsefp.haskell.ui.internal.editors.haskell.text.ScionTokenScanner;
 import net.sf.eclipsefp.haskell.ui.internal.preferences.editor.IEditorPreferenceNames;
+import net.sf.eclipsefp.haskell.ui.internal.preferences.editor.SyntaxPreviewer;
 import net.sf.eclipsefp.haskell.ui.internal.resolve.QuickAssistProcessor;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.jface.preference.IPreferenceStore;
@@ -51,7 +52,7 @@ public class HaskellSourceViewerConfiguration extends SourceViewerConfiguration 
   /** The associated Haskell editor */
 	final HaskellEditor editor;
 	/** The plugin's preference store, needed to create a new ScannerManager */
-	private IPreferenceStore prefStore;
+	private IPreferenceStore prefStore=HaskellUIPlugin.getEditorPreferenceStore();
 	/** The syntax highlighting and other content management container */
 	private ScannerManager scannerManager;
 
@@ -190,9 +191,9 @@ public class HaskellSourceViewerConfiguration extends SourceViewerConfiguration 
 		  codeScanner=((HaskellDocumentPartitioner)dp).getScanner();
 		}
 
-		if (codeScanner==null){
+		//if (codeScanner==null){
 		  codeScanner=new ScionTokenScanner(getScannerManager(), file);
-		}
+		//}
 		if (editor!=null){
 		  editor.setTokenScanner( codeScanner );
 		}

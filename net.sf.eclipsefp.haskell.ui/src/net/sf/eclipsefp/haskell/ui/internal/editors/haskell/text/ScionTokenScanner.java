@@ -538,6 +538,9 @@ public class ScionTokenScanner implements IPartitionTokenScanner, IEditorPrefere
 
   public void dispose(){
     HaskellUIPlugin.getDefault().getPreferenceStore().removePropertyChangeListener( this );
+    if (man!=null){
+      man.dispose();
+    }
   }
 
   private void getTags(){
@@ -560,6 +563,7 @@ public class ScionTokenScanner implements IPartitionTokenScanner, IEditorPrefere
    */
   @Override
   public void propertyChange( final PropertyChangeEvent arg0 ) {
+    man.propertyChange( arg0 );
     // listen to relevant property changes and update ourselves
     if (arg0.getProperty().equals( EDITOR_TASK_TAGS )){
       getTags();
@@ -567,6 +571,7 @@ public class ScionTokenScanner implements IPartitionTokenScanner, IEditorPrefere
       getCaseS();
     }
     buildTokenTypes();
+
   }
 
 

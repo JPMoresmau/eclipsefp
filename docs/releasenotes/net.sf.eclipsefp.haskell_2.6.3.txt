@@ -14,7 +14,7 @@ Fixes:
 	- Do not install SourceGraph automatically, really.
 	- Ensure all created files have the same encoding as the project. (https://github.com/JPMoresmau/eclipsefp/issues/247)
 	- Fix Hoogle path resolution in sandbox (https://sourceforge.net/p/eclipsefp/discussion/371922/thread/23cda54e/?limit=25#04b6)
-	- Fix syntax color preview (colors didn't change automatically)
+	- Fix syntax color preview (colors didn't change automatically) and application on opened editors (https://github.com/JPMoresmau/eclipsefp/issues/255)
 	- Quick fix shortcut works on any issue on same line (https://github.com/JPMoresmau/eclipsefp/issues/249)
 
 Features:

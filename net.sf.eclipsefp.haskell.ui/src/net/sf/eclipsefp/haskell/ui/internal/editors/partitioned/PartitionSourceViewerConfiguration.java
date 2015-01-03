@@ -34,7 +34,7 @@ public class PartitionSourceViewerConfiguration extends
   /** The associated editor */
   protected final PartitionEditor editor;
   /** The plugin's preference store */
-  protected IPreferenceStore prefStore;
+  protected IPreferenceStore prefStore=HaskellUIPlugin.getEditorPreferenceStore();
   /** The syntax highlighting and other content management container */
   protected ScannerManager scannerManager;
 

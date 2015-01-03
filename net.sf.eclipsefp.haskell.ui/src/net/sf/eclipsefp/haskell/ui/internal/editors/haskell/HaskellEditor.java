@@ -62,7 +62,6 @@ import org.eclipse.jface.action.IMenuListener;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.Separator;
-import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.ITextSelection;
@@ -89,10 +88,8 @@ import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.contexts.IContextService;
-import org.eclipse.ui.editors.text.EditorsUI;
 import org.eclipse.ui.editors.text.TextEditor;
 import org.eclipse.ui.progress.UIJob;
-import org.eclipse.ui.texteditor.ChainedPreferenceStore;
 import org.eclipse.ui.texteditor.GotoAnnotationAction;
 import org.eclipse.ui.texteditor.IDocumentProvider;
 import org.eclipse.ui.texteditor.ITextEditorActionConstants;
@@ -242,10 +239,7 @@ public class HaskellEditor extends TextEditor implements IEditorPreferenceNames,
     super.initializeEditor();
     setSourceViewerConfiguration( new HaskellSourceViewerConfiguration( this ) );
     setEditorContextMenuId( "#" + SIMPLE_CONTEXT_ID );  //$NON-NLS-1$
-    // we configure the preferences ourselves
-    IPreferenceStore generalTextStore= EditorsUI.getPreferenceStore();
-    IPreferenceStore combinedPreferenceStore= new ChainedPreferenceStore(new IPreferenceStore[] {generalTextStore, HaskellUIPlugin.getDefault().getPreferenceStore() });
-    setPreferenceStore( combinedPreferenceStore);
+    setPreferenceStore( HaskellUIPlugin.getEditorPreferenceStore());
     initMarkOccurrences();
     foldingStructureProvider = new HaskellFoldingStructureProvider( this );
   }
@@ -253,6 +247,16 @@ public class HaskellEditor extends TextEditor implements IEditorPreferenceNames,
 
   public HaskellFoldingStructureProvider getFoldingStructureProvider() {
     return foldingStructureProvider;
+  }
+
+  /* (non-Javadoc)
+   * @see org.eclipse.ui.editors.text.TextEditor#handlePreferenceStoreChanged(org.eclipse.jface.util.PropertyChangeEvent)
+   */
+  @Override
+  protected void handlePreferenceStoreChanged( final PropertyChangeEvent event ) {
+    // ensure token scanner is updated first
+    tokenScanner.propertyChange( event );
+    super.handlePreferenceStoreChanged( event );
   }
 
   @Override
