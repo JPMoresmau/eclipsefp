@@ -69,6 +69,7 @@ import org.eclipse.jface.text.Position;
 import org.eclipse.jface.text.source.Annotation;
 import org.eclipse.jface.text.source.DefaultCharacterPairMatcher;
 import org.eclipse.jface.text.source.ISourceViewer;
+import org.eclipse.jface.text.source.ISourceViewerExtension2;
 import org.eclipse.jface.text.source.IVerticalRuler;
 import org.eclipse.jface.text.source.IVerticalRulerInfo;
 import org.eclipse.jface.text.source.projection.ProjectionSupport;
@@ -257,6 +258,17 @@ public class HaskellEditor extends TextEditor implements IEditorPreferenceNames,
     // ensure token scanner is updated first
     tokenScanner.propertyChange( event );
     super.handlePreferenceStoreChanged( event );
+    if (event.getProperty().equals( EDITOR_TAB_WIDTH )){
+      /*getSourceViewer().getTextWidget().setTabs((Integer)event.getNewValue());
+      for (String t : getSourceViewerConfiguration().getConfiguredContentTypes(getSourceViewer())) {
+        getSourceViewer().setAutoEditStrategies(getSourceViewerConfiguration().getAutoEditStrategies(getSourceViewer(), t), t);
+      }
+      */
+      ISourceViewer viewer=getSourceViewer();
+      ((ISourceViewerExtension2)viewer).unconfigure();
+      viewer.configure(getSourceViewerConfiguration());
+
+    }
   }
 
   @Override
@@ -688,7 +700,8 @@ public class HaskellEditor extends TextEditor implements IEditorPreferenceNames,
         || property.equals( EDITOR_CPP_COLOR )
         || property.equals( EDITOR_CPP_BOLD )
         || property.equals( EDITOR_TH_COLOR )
-        || property.equals( EDITOR_TH_BOLD );
+        || property.equals( EDITOR_TH_BOLD )
+        || property.equals( EDITOR_TAB_WIDTH );
   }
 
 
