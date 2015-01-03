@@ -10,8 +10,6 @@ import net.sf.eclipsefp.haskell.ui.internal.preferences.IPreferenceConstants;
 import net.sf.eclipsefp.haskell.ui.util.HaskellUIImages;
 import net.sf.eclipsefp.haskell.ui.util.IImageNames;
 import net.sf.eclipsefp.haskell.util.FileUtil;
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.console.ConsolePlugin;
 import org.eclipse.ui.console.IConsole;
 import org.eclipse.ui.console.IConsoleManager;
@@ -43,14 +41,14 @@ public class HaskellConsole extends IOConsole {
     // using internals
     outputStream.setActivateOnWrite( HaskellUIPlugin.getDefault().getPreferenceStore().getBoolean( IPreferenceConstants.HASKELL_CONSOLE_ACTIVATE_ON_WRITE ) );
     streams.add(outputStream);
-    final Display stdDisplay = HaskellUIPlugin.getStandardDisplay();
+    /*final Display stdDisplay = HaskellUIPlugin.getStandardDisplay();
     stdDisplay.syncExec( new Runnable() {
       @Override
       public void run() {
         // JP likes blue for the console's text color.
         outputStream.setColor(stdDisplay.getSystemColor( SWT.COLOR_BLUE ));
       }
-    });
+    });*/
     try {
       return new OutputStreamWriter(outputStream,FileUtil.UTF8);
     } catch (UnsupportedEncodingException ioo){
