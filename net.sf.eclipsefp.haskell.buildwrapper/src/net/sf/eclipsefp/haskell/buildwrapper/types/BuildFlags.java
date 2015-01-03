@@ -17,7 +17,9 @@ import org.json.JSONObject;
  *
  */
 public class BuildFlags {
-	List<String> ghcFlags=new LinkedList<>();
+	private List<String> ghcFlags=new LinkedList<>();
+	private String module;
+	private String component;
 	
 	public BuildFlags(JSONObject obj){
 		JSONArray arr=obj.optJSONArray("a");
@@ -29,6 +31,8 @@ public class BuildFlags {
 				}
 			}
 		}
+		module=obj.optString("m");
+		component=obj.optString("c");
 	}
 	
 	/**
@@ -36,5 +40,19 @@ public class BuildFlags {
 	 */
 	public List<String> getGhcFlags() {
 		return ghcFlags;
+	}
+	
+	/**
+	 * @return the module
+	 */
+	public String getModule() {
+		return module;
+	}
+	
+	/**
+	 * @return the component
+	 */
+	public String getComponent() {
+		return component;
 	}
 }

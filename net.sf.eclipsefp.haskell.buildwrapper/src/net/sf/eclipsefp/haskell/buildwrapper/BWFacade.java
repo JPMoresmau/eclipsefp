@@ -25,6 +25,9 @@ import java.util.Set;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicLong;
 
+import net.sf.eclipsefp.haskell.buildwrapper.types.BWFileInfo;
+import net.sf.eclipsefp.haskell.buildwrapper.types.BWProcessInfo;
+import net.sf.eclipsefp.haskell.buildwrapper.types.BWProcessManager;
 import net.sf.eclipsefp.haskell.buildwrapper.types.BuildFlags;
 import net.sf.eclipsefp.haskell.buildwrapper.types.BuildOptions;
 import net.sf.eclipsefp.haskell.buildwrapper.types.CabalImplDetails;
@@ -119,10 +122,8 @@ public class BWFacade {
 	 */
 	public static final boolean logBuildTimes=false;
 	
-	/**
-	 * the processes running, by thread, so we can kill them when cancelling
-	 */
-	private Map<Thread,Process> runningProcesses=Collections.synchronizedMap(new HashMap<Thread,Process>());
+	private BWProcessManager processManager=new BWProcessManager();
+	
 	/**
 	 * the progress monitor for the current thread, so we don't need to pass it everywhere
 	 */
@@ -142,8 +143,7 @@ public class BWFacade {
 	 * where ever we come from, we only launch one synchronize operation per file at a time, and lose the intermediate operations
 	 */
 	private Map<IFile,SingleJobQueue> syncEditorJobQueue=new HashMap<>();
-	private Map<IFile,Process> buildProcesses=Collections.synchronizedMap(new HashMap<IFile, Process>());
-	private Set<IFile> runningFiles=Collections.synchronizedSet(new HashSet<IFile>());
+
 	/**
 	 * query for thing at point for a given file, so that we never have more than two jobs at one time
 	 */
@@ -159,6 +159,7 @@ public class BWFacade {
 	 */
 	//private Map<IFile, BuildFlagInfo> flagInfos=new HashMap<IFile, BuildFlagInfo>();
 	
+	private Map<IFile,String> moduleCache=Collections.synchronizedMap(new HashMap<IFile,String>());
 	
 	/**
 	 * do we need to set derived on dist dir?
@@ -320,15 +321,48 @@ public class BWFacade {
 //		return flag;
 //	}
 	
-	private void addEditorStanza(IFile file,List<String> command){
+	/**
+	 * Get the editor stanza
+	 * @param file
+	 * @return
+	 */
+	public String getEditorStanza(IFile file){
 		try {
-			String editor=file.getPersistentProperty(BuildWrapperPlugin.EDITORSTANZA_PROPERTY);
-			if (editor!=null){
-				command.add("--component="+editor);
+			String s= file.getPersistentProperty(BuildWrapperPlugin.EDITORSTANZA_PROPERTY);
+			if (s!=null){
+				return s;
 			}
 		} catch (CoreException ce){
 			BuildWrapperPlugin.logError(ce.getLocalizedMessage(), ce);
 		}
+		BuildFlags bf=getBuildFlags(file, false);
+		if(bf!=null){
+			String s=bf.getComponent();
+			if (s!=null){
+				try {
+					file.setPersistentProperty(BuildWrapperPlugin.EDITORSTANZA_PROPERTY,s);
+				} catch (CoreException ce){
+					BuildWrapperPlugin.logError(ce.getLocalizedMessage(), ce);
+				}
+				
+				return s;
+			}
+		}
+		
+		return null;
+	}
+	
+	/**
+	 * add editor stanza name to command
+	 * @param file
+	 * @param command
+	 */
+	private void addEditorStanza(IFile file,List<String> command){
+		String editor=getEditorStanza(file);
+		if (editor!=null){
+			command.add("--component="+editor);
+		}
+		
 	}
 	
 	/**
@@ -391,6 +425,10 @@ public class BWFacade {
 		}
 	}
 	
+	private BWFileInfo getFileInfo(IFile file){
+		return new BWFileInfo(file, getEditorStanza(file));
+	}
+	
 	public Collection<NameDef> build1LongRunning(IFile file,IDocument d,boolean end){
 		//BuildFlagInfo i=getBuildFlags(file);
 		// avoid "Too late for parseStaticFlags: call it before newSession"
@@ -407,17 +445,13 @@ public class BWFacade {
 			return new ArrayList<>();
 		}
 		showedNoExeError=false;
-		while (!runningFiles.add(file)){
-			try {
-				Thread.sleep(100);
-			} catch (InterruptedException ignore){
-				// noop
-			}
-		}
+		BWFileInfo bfi=getFileInfo(file);
+		processManager.startRunningFileWait(bfi);
 		JSONArray arr=null;
 		//BuildWrapperPlugin.logInfo("build1 longrunning start");
 		try {
-			Process p=buildProcesses.get(file);
+			BWProcessInfo bpi=processManager.getProcess(bfi);
+			Process p=bpi!=null?bpi.getProcess():null;
 			if (p==null){
 			
 				String path=file.getProjectRelativePath().toOSString();
@@ -446,14 +480,17 @@ public class BWFacade {
 					ow.addMessage(LangUtil.join(command, " "));
 				}				
 				p=pb.start();
-				buildProcesses.put(file,p);
+				processManager.registerProcess(bfi,p);
 			} else {
-				p.getOutputStream().write(contCommand);
+				if (switchProcess(bpi, bfi, false)){
+					p.getOutputStream().write(contCommand);
+				}
+				
 				try {
 					p.getOutputStream().flush();
 				} catch (IOException ignore){
 					// process has died
-					buildProcesses.remove(file);
+					processManager.removeProcessForce(bfi);
 					end=false; // process already dead
 				}
 			}
@@ -461,22 +498,17 @@ public class BWFacade {
 			arr=readArrayBW(p);
 
 			// check if process has ended because of some uncaught error in buildwrapper
-			try {
-				p.exitValue();
-				buildProcesses.remove(file);
-				end=false; // process already dead
-			} catch (IllegalThreadStateException itse){
-				// noop
+			if (processManager.hasEnded(bfi)){
+				end=false;
 			}
-			
-			if (end){
+						
+			if (end && processManager.removeProcess(bfi)){
 				p.getOutputStream().write(endCommand);
 				try {
 					p.getOutputStream().flush();
 				} catch (IOException ignore){
 					// noop: flush fails if the process closed properly because write flush
 				}
-				buildProcesses.remove(file);
 			}
 			if (logBuildTimes){
 				long t1=System.currentTimeMillis();
@@ -484,9 +516,9 @@ public class BWFacade {
 			}
 		} catch (IOException ioe){
 			BuildWrapperPlugin.logError(BWText.process_launch_error, ioe);
-			buildProcesses.remove(file);
+			processManager.removeProcessForce(bfi);
 		} finally {
-			runningFiles.remove(file);
+			processManager.stopRunningFile(bfi);
 			//BuildWrapperPlugin.logInfo("build1 longrunning end");
 		}
 
@@ -519,8 +551,42 @@ public class BWFacade {
 		return null;
 	}
 	
+	private boolean switchProcess(BWProcessInfo bpi,BWFileInfo bfi,boolean readResults) throws IOException{
+		if (bfi.getFile().equals(bpi.getCurrentFile())){
+			return true;
+		}
+		bpi.setCurrentFile(bfi.getFile());
+		bpi.getFiles().add(bfi.getFile());
+		String path=bfi.getFile().getProjectRelativePath().toOSString();
+		String m=getModuleName(bfi);
+		
+		String expression="(\""+path+"\",\""+m+"\")";
+		String command="c"+expression;
+		Process p=bpi.getProcess();
+		p.getOutputStream().write((command+PlatformUtil.NL).getBytes(FileUtil.UTF8));
+		p.getOutputStream().flush();
+		if (readResults){
+			parseBuildResult(readArrayBW(p));
+		}
+		return false;
+	}
+	
+	
+	private String getModuleName(BWFileInfo bfi){
+		String m=moduleCache.get(bfi.getFile());
+		if (m==null){
+			m="";
+			BuildFlags bf=getBuildFlags(bfi.getFile());
+			if (bf!=null){
+				m= bf.getModule();
+			}
+			moduleCache.put(bfi.getFile(), m);
+		}
+        return m;
+	}
+	
 	private JSONArray readArrayBW(Process p) throws IOException{
-		registerProcess(p);
+		processManager.registerProcess(p);
 		try {
 			JSONArray arr=null;
 			BufferedReader br=new BufferedReader(new InputStreamReader(p.getInputStream(),FileUtil.UTF8));
@@ -550,7 +616,7 @@ public class BWFacade {
 			}
 			return arr;
 		} finally {
-			unregisterProcess();
+			processManager.unregisterProcess();
 		}
 	}
 	
@@ -559,32 +625,35 @@ public class BWFacade {
 	 * @param file
 	 */
 	public void endLongRunning(IFile file){
-		Process p=buildProcesses.remove(file);
-		if (p!=null){
-			while (runningFiles.contains(file)){
-				try {
-					Thread.sleep(100);
-				} catch (InterruptedException ignore){
-					// noop
-				}
-			}
+		BWFileInfo bfi=getFileInfo(file);
+		BWProcessInfo bpi=processManager.getProcess(bfi);
+		if (bpi!=null && processManager.removeProcess(bfi)){
+			processManager.startRunningFileWait(bfi);
 			try {
-				p.getOutputStream().write(endCommand);
-				try {
-					p.getOutputStream().flush();
-				} catch (IOException ignore) {
-					// noop: flush fails if the process already exited due to write
-				}
-				try {
-					// wait for exit to prevent subsequent file locking issues
-					p.waitFor();
-				} catch (InterruptedException ignore){
-				}
-			} catch (IOException ioe){
-				BuildWrapperPlugin.logError(BWText.process_launch_error, ioe);
-			} 
+				endProcess(bpi.getProcess());
+			} finally {
+				processManager.stopRunningFile(bfi);
+			}
 		}
 		
+	}
+	
+	public static void endProcess(Process p){
+		try {
+			p.getOutputStream().write(endCommand);
+			try {
+				p.getOutputStream().flush();
+			} catch (IOException ignore) {
+				// noop: flush fails if the process already exited due to write
+			}
+			try {
+				// wait for exit to prevent subsequent file locking issues
+				p.waitFor();
+			} catch (InterruptedException ignore){
+			}
+		} catch (IOException ioe){
+			BuildWrapperPlugin.logError(BWText.process_launch_error, ioe);
+		}
 	}
 	
 //	public BuildFlagInfo getBuildFlags(IFile file){
@@ -910,21 +979,23 @@ public class BWFacade {
 	public List<TokenDef> tokenTypes(IFile file){
 		//long t0=System.currentTimeMillis();
 		JSONArray arr=null;
-		if (runningFiles.add(file)){
-			Process p=buildProcesses.get(file);
+		BWFileInfo bfi=getFileInfo(file);
+		if (processManager.startRunningFile(bfi)){
+			BWProcessInfo bpi=processManager.getProcess(bfi);
 			try {
-				if (p!=null){
+				if (bpi!=null){
+					switchProcess(bpi, bfi, true);
 					//BuildWrapperPlugin.logInfo("tokenTypes longrunning start");
-					p.getOutputStream().write(tokenTypesCommand);
-					p.getOutputStream().flush();
-					arr=readArrayBW(p);
+					bpi.getProcess().getOutputStream().write(tokenTypesCommand);
+					bpi.getProcess().getOutputStream().flush();
+					arr=readArrayBW(bpi.getProcess());
 				}
 				//BuildWrapperPlugin.logInfo("tokenTypes longrunning");
 			} catch (IOException ioe){
 				//BuildWrapperPlugin.logError(BWText.process_launch_error, ioe);
 			} finally {
 				//BuildWrapperPlugin.logInfo("tokenTypes longrunning end");
-				runningFiles.remove(file);
+				processManager.stopRunningFile(bfi);
 			}
 		} 
 		if (arr==null){
@@ -991,11 +1062,17 @@ public class BWFacade {
 	}
 	
 	public BuildFlags getBuildFlags(IFile file){
+		return getBuildFlags(file,true);
+	}
+	
+	public BuildFlags getBuildFlags(IFile file,boolean withStanza){
 		String path=file.getProjectRelativePath().toOSString();
 		LinkedList<String> command=new LinkedList<>();
 		command.add("getbuildflags");
 		command.add("--file="+path);
-		addEditorStanza(file,command);
+		if (withStanza){
+			addEditorStanza(file,command);
+		}
 		JSONArray arr=run(command,ARRAY);
 		if (arr!=null){
 			if (arr.length()>1){
@@ -1083,12 +1160,14 @@ public class BWFacade {
 	public ThingAtPoint getThingAtPoint(IFile file,Location location){
 		//BuildFlagInfo i=getBuildFlags(file);
 		//long t0=System.currentTimeMillis();
-		
+		BWFileInfo bfi=getFileInfo(file);
 		JSONArray arr=null;
-		if (runningFiles.add(file)){
+		if (processManager.startRunningFile(bfi)){
 			try {
-				Process p=buildProcesses.get(file);
-				if (p!=null){
+				BWProcessInfo bpi=processManager.getProcess(bfi);
+				if (bpi!=null){
+					switchProcess(bpi, bfi, true);
+					Process p=bpi.getProcess();
 					//BuildWrapperPlugin.logInfo("getThingAtPoint longrunning start");
 					String command="p("+location.getStartLine()+","+(location.getStartColumn()+1)+")";
 					p.getOutputStream().write((command+PlatformUtil.NL).getBytes(FileUtil.UTF8));
@@ -1099,7 +1178,7 @@ public class BWFacade {
 				BuildWrapperPlugin.logError(BWText.process_launch_error, ioe);
 			} finally {
 				//BuildWrapperPlugin.logInfo("getThingAtPoint longrunning end");
-				runningFiles.remove(file);
+				processManager.stopRunningFile(bfi);
 			}
 		} 
 		if (arr==null){
@@ -1143,11 +1222,14 @@ public class BWFacade {
 	public List<ThingAtPoint> getLocals(IFile file,Location location){
 		//long t0=System.currentTimeMillis();
 		JSONArray arr=null;
+		BWFileInfo bfi=getFileInfo(file);
 		//boolean run=false;
-		if (runningFiles.add(file)){
+		if (processManager.startRunningFile(bfi)){
 			try {
-				Process p=buildProcesses.get(file);
-				if (p!=null){
+				BWProcessInfo bpi=processManager.getProcess(bfi);
+				if (bpi!=null){
+					switchProcess(bpi, bfi, true);
+					Process p=bpi.getProcess();
 					//BuildWrapperPlugin.logInfo("getThingAtPoint longrunning start");
 					String command="l("+location.getStartLine()+","+(location.getStartColumn()+1)+","+location.getEndLine()+","+(location.getEndColumn()+1)+")";
 					p.getOutputStream().write((command+PlatformUtil.NL).getBytes(FileUtil.UTF8));
@@ -1159,7 +1241,7 @@ public class BWFacade {
 				BuildWrapperPlugin.logError(BWText.process_launch_error, ioe);
 			} finally {
 				//BuildWrapperPlugin.logInfo("getThingAtPoint longrunning end");
-				runningFiles.remove(file);
+				processManager.stopRunningFile(bfi);
 			}
 		} 
 		if (arr==null){
@@ -1450,7 +1532,7 @@ public class BWFacade {
 		}
 		try {
 			Process p=pb.start();
-			registerProcess(p);
+			processManager.registerProcess(p);
 			
 			BufferedReader br=new BufferedReader(new InputStreamReader(p.getInputStream(),FileUtil.UTF8));
 			//long t0=System.currentTimeMillis();
@@ -1493,7 +1575,7 @@ public class BWFacade {
 					l=br.readLine();
 				}
 			}
-			unregisterProcess();
+			processManager.unregisterProcess();
 			if (isCanceled()){
 				return obj;
 			}
@@ -1528,7 +1610,7 @@ public class BWFacade {
 			//long t1=System.currentTimeMillis();
 			//BuildWrapperPlugin.logInfo("read run:"+(t1-t0)+"ms");
 		} catch (IOException ioe){
-			unregisterProcess();
+			processManager.unregisterProcess();
 			if (!isCanceled()){
 				BuildWrapperPlugin.logError(BWText.process_launch_error, ioe);
 			}
@@ -1597,7 +1679,7 @@ public class BWFacade {
 		}
 		try {
 			Process p=pb.start();
-			registerProcess(p);
+			processManager.registerProcess(p);
 			try {
 				BufferedReader br=new BufferedReader(new InputStreamReader(p.getInputStream()));
 				//long t0=System.currentTimeMillis();
@@ -1613,7 +1695,7 @@ public class BWFacade {
 					setDerived();
 				}
 			} finally {
-				unregisterProcess();
+				processManager.unregisterProcess();
 			}
 			
 			//long t1=System.currentTimeMillis();
@@ -1795,9 +1877,9 @@ public class BWFacade {
 							if (mon.isCanceled() || expired ){
 								//BuildWrapperPlugin.logInfo("canceled");
 								// do we have a process?
-								Process p=runningProcesses.remove(jobThread);
+								Process p=processManager.unregisterProcess(jobThread);
 								if (p!=null){
-									buildProcesses.values().remove(p);
+									//buildProcesses.values().remove(p);
 									
 									//BuildWrapperPlugin.logInfo("destroy");
 									p.destroy(); // destroy the process
@@ -1889,12 +1971,7 @@ public class BWFacade {
 	 * close all long running processes
 	 */
 	public void closeAllProcesses(){
-		// copy since endLongRunning removes from the map
-		IFile[] fs=buildProcesses.keySet().toArray(new IFile[buildProcesses.size()]);
-		for (IFile f:fs){
-			endLongRunning(f);
-		}
-		buildProcesses.clear();
+		processManager.closeAll();
 	}
 	
 	public void cleanGenerated(){
@@ -2008,14 +2085,7 @@ public class BWFacade {
 		this.cabalImplDetails = cabalImplDetails;
 		this.addSourceProjects.clear();
 	}
-	
-	private void registerProcess(Process p){
-		runningProcesses.put(Thread.currentThread(), p);
-	}
-	
-	private void unregisterProcess(){
-		runningProcesses.remove(Thread.currentThread());
-	}
+
 	
 	public boolean isCanceled(){
 		IProgressMonitor mon=monitor.get();
@@ -2051,10 +2121,13 @@ public class BWFacade {
 		long t0=System.currentTimeMillis();
 		expression=expression.replace('\n', ' ').replace('\r',' ');
 		JSONArray arr=null;
-		if (runningFiles.add(file)){
+		BWFileInfo bfi=getFileInfo(file);
+		if (processManager.startRunningFile(bfi)){
 			try {
-				Process p=buildProcesses.get(file);
-				if (p!=null){
+				BWProcessInfo bpi=processManager.getProcess(bfi);
+				if (bpi!=null){
+					switchProcess(bpi, bfi, true);
+					Process p=bpi.getProcess();
 					//BuildWrapperPlugin.logInfo("getThingAtPoint longrunning start");
 					String command="e "+expression;
 					p.getOutputStream().write((command+PlatformUtil.NL).getBytes(FileUtil.UTF8));
@@ -2066,7 +2139,7 @@ public class BWFacade {
 				return Collections.emptyList();
 			} finally {
 				//BuildWrapperPlugin.logInfo("getThingAtPoint longrunning end");
-				runningFiles.remove(file);
+				processManager.stopRunningFile(bfi);
 			}
 		} 
 		if (arr==null){
