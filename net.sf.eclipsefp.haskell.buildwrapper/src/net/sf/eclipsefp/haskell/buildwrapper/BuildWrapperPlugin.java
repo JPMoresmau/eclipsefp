@@ -295,7 +295,7 @@ public class BuildWrapperPlugin extends AbstractUIPlugin {
 	  /**
 	   * cache project cabal file if cabal file doesn't have same name than project
 	   */
-	  private static Map<IProject,IFile> m=new HashMap<>();
+	  private static Map<IProject,IFile> cabalFileCache=new HashMap<>();
 	  
 	  /**
 	   * get the cabal file path
@@ -339,8 +339,8 @@ public class BuildWrapperPlugin extends AbstractUIPlugin {
 	  public static IFile getCabalFile(final IProject project) {
 	    IFile f=project.getFile(new Path(project.getName()).addFileExtension(FileUtil.EXTENSION_CABAL));
 	    if (f==null || !f.exists()){ // oh oh
-	    	IFile f2=m.get(project);
-	    	if (f2==null){
+	    	IFile f2=cabalFileCache.get(project);
+	    	if (f2==null || !f2.exists()){
 	    		try {
 	    			// find a cabal file
 		    		IResource[] children=project.members();
@@ -359,7 +359,7 @@ public class BuildWrapperPlugin extends AbstractUIPlugin {
 		    			// log error, we've taken a random cabal file
 		    			logError(NLS.bind(BWText.project_cabal_duplicate, project.getName()),null);
 		    		}
-		    		m.put(project, f);
+		    		cabalFileCache.put(project, f);
 		    	} catch (CoreException ce){
 		    		logError(NLS.bind(BWText.project_members_list_error, project.getName()), ce);
 		    	}
