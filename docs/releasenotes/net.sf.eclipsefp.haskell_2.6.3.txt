@@ -17,6 +17,7 @@ Fixes:
 	- Fix syntax color preview (colors didn't change automatically) and application on opened editors (https://github.com/JPMoresmau/eclipsefp/issues/255)
 	- Quick fix shortcut works on any issue on same line (https://github.com/JPMoresmau/eclipsefp/issues/249)
 	- Do not force console text color (https://github.com/JPMoresmau/eclipsefp/issues/256)
+	- Detect executables in sandbox bin folder (https://github.com/JPMoresmau/eclipsefp/issues/221)
 
 Features:
 	- Hoogle search is done in a job, doesn't freeze the UI

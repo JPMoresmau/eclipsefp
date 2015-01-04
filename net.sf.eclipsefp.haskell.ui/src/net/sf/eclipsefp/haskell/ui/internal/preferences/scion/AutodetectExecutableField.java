@@ -8,6 +8,7 @@ package net.sf.eclipsefp.haskell.ui.internal.preferences.scion;
 
 import java.io.File;
 import net.sf.eclipsefp.haskell.ui.HaskellUIPlugin;
+import net.sf.eclipsefp.haskell.ui.internal.backend.BackendManager;
 import net.sf.eclipsefp.haskell.ui.internal.backend.InstallExecutableRunnable;
 import net.sf.eclipsefp.haskell.ui.internal.util.UITexts;
 import net.sf.eclipsefp.haskell.ui.util.HaskellUIImages;
@@ -263,7 +264,7 @@ public class AutodetectExecutableField {
   }
 
   private void doDetect(){
-    File f=FileUtil.findExecutableInPath( fullExeName );
+    File f=FileUtil.findExecutableInPath( fullExeName,BackendManager.getToolSandboxBin() );
 
     if (f == null) {
       MessageDialog.openError(shell,

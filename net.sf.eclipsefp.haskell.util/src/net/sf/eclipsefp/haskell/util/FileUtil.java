@@ -13,6 +13,7 @@ import java.io.InputStream;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Locale;
 import java.util.Map;
@@ -228,8 +229,8 @@ public class FileUtil {
     return false;
   }
 
-  public static File findExecutableInPath(final String shortFileName) {
-    return findInPath(makeExecutableName(shortFileName), new FileFilter() {
+  public static File findExecutableInPath(final String shortFileName,final File... extraBins) {
+    return findInPath(makeExecutableName(shortFileName),extraBins, new FileFilter() {
 
 	@Override
 	public boolean accept(final File pathname) {
@@ -238,18 +239,21 @@ public class FileUtil {
     });
   }
 
-  public static File findInPath(final String shortFileName, final FileFilter ff) {
+  public static File findInPath(final String shortFileName,final File[] extraBins,final FileFilter ff) {
     // Shallow copy is sufficient in this case
-    ArrayList<File> candidates = new ArrayList<>(candidateLocations);
+    ArrayList<File> candidates = new ArrayList<>();
 
     // Add the current working directory, since it might change.
     String pwd = System.getProperty("user.dir"); //$NON-NLS-1$
+    candidates.addAll(Arrays.asList(extraBins));
     candidates.add(new File(pwd));
-
+    candidates.addAll(candidateLocations);
     for (File candidate : candidates) {
-      File file = new File(candidate, shortFileName);
-      if (file.exists() && (ff == null || ff.accept(file))) {
-        return file;
+      if (candidate!=null){
+	      File file = new File(candidate, shortFileName);
+	      if (file.exists() && (ff == null || ff.accept(file))) {
+	        return file;
+	      }
       }
     }
     return null;
