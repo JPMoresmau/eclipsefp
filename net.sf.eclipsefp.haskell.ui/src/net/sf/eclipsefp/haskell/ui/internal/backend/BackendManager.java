@@ -1108,7 +1108,7 @@ public class BackendManager implements IResourceChangeListener {
    */
   public static void addCabalInstallOptions(final List<String> options){
     //https://github.com/JPMoresmau/eclipsefp/issues/107
-    if (CabalImplementationManager.getCabalLibraryVersion().compareTo( new Version(1,16,0) )>=0){
+    if (CabalImplementationManager.getCabalLibraryVersion()!=null && CabalImplementationManager.getCabalLibraryVersion().compareTo( new Version(1,16,0) )>=0){
       options.add( "-j" );
     }
     options.add( "--with-ghc="+CompilerManager.getCompilerExecutable() );
