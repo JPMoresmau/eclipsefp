@@ -5,6 +5,7 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 import java.io.InputStream;
+import java.io.StringReader;
 import java.util.List;
 
 import net.sf.eclipsefp.haskell.hlint.CodeModificationText;
@@ -97,5 +98,29 @@ public class OutputParserTest {
 			assertNotNull(sugs);
 			assertEquals(0, sugs.size());
 		}
+	}
+	
+	@Test
+	public void testIgnored() throws Exception {
+		OutputParser p=new OutputParser(new StringReader("No suggestions (2 ignored)"));
+		List<Suggestion> sugs=p.suggestions();
+		assertNotNull(sugs);
+		assertEquals(0, sugs.size());
+		p=new OutputParser(new StringReader("No suggestions (2 ignored)\n"));
+		sugs=p.suggestions();
+		assertNotNull(sugs);
+		assertEquals(0, sugs.size());
+	}
+	
+	@Test
+	public void testNone() throws Exception {
+		OutputParser p=new OutputParser(new StringReader("No suggestions"));
+		List<Suggestion> sugs=p.suggestions();
+		assertNotNull(sugs);
+		assertEquals(0, sugs.size());
+		p=new OutputParser(new StringReader("No suggestions\n"));
+		sugs=p.suggestions();
+		assertNotNull(sugs);
+		assertEquals(0, sugs.size());
 	}
 }

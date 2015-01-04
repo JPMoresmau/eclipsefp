@@ -37,16 +37,26 @@ List<Suggestion> suggestions() :
 		  < INTEGER >
 		  string_until_eol()
 	  ) |
-	  ("No suggestions"
-	  < EOL >	  )
+	  none()
   )
-  
-	  
   
   < EOF >
   {    return sugs;
   }
 }
+void none():
+{
+}
+{"No suggestions"
+ (    < SPACE >
+  < OTHER_CHAR >
+  < INTEGER >
+  < SPACE >
+  "ignored)"
+)?
+(  < EOL >)?
+}
+
 void error() :
 {
 }
