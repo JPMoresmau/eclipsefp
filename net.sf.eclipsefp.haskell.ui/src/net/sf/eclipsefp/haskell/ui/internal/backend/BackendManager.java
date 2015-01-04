@@ -125,7 +125,7 @@ public class BackendManager implements IResourceChangeListener {
         return f.getAbsolutePath();
       }
     }
-    File exeF=FileUtil.findExecutableInPath( exeName );
+    File exeF=FileUtil.findExecutableInPath( exeName, getToolSandboxBin());
     if (exeF!=null){
       HaskellUIPlugin.getDefault().getPreferenceStore().setValue(preference,exeF.getAbsolutePath());
       return exeF.getAbsolutePath();
@@ -281,7 +281,7 @@ public class BackendManager implements IResourceChangeListener {
     CabalImplDetails d=getCabalImplDetails();
     BrowserPlugin.setSandboxPath(d.isSandboxed() && d.isUniqueSandbox()?d.getSandboxPath():null );
 
-    
+
     File sandbox=getToolSandbox();
     if (sandbox!=null){
       BrowserPlugin.setToolSandboxPath(sandbox.getAbsolutePath());
@@ -1090,6 +1090,14 @@ public class BackendManager implements IResourceChangeListener {
       File folder=new File(HaskellUIPlugin.getDefault().getStateLocation().append( "sandbox" ).toOSString());
       folder.mkdirs();
       return folder;
+    }
+    return null;
+  }
+
+  public static File getToolSandboxBin(){
+    File f=getToolSandbox();
+    if (f!=null){
+      return new File(f,"bin");
     }
     return null;
   }
