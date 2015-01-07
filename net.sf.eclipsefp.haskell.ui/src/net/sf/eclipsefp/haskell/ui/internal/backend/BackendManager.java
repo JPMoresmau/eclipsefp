@@ -1082,14 +1082,36 @@ public class BackendManager implements IResourceChangeListener {
   }
 
   /**
+   * get the home of EclipseFP, for files common to all workspaces
+   * @return
+   */
+  public static File getEclipseFPHome(){
+    try {
+      File folder=new File(System.getProperty( "user.dir" ),".eclipsefp");
+      folder.mkdirs();
+      return folder;
+    } catch (Exception e){
+      HaskellUIPlugin.log( e );
+    }
+    return null;
+  }
+
+  /**
    * get the location of the sandbox for tools, or null if our Cabal doesn't support it
    * @return
    */
   public static File getToolSandbox(){
     if (CabalImplementationManager.getInstance().getDefaultCabalImplementation().allowsSandbox()){
-      File folder=new File(HaskellUIPlugin.getDefault().getStateLocation().append( "sandbox" ).toOSString());
-      folder.mkdirs();
-      return folder;
+      File home=getEclipseFPHome();
+      if (home!=null){
+        File folder=new File(home, "sandbox" );
+        folder.mkdirs();
+        return folder;
+      } else {
+        File folder=new File(HaskellUIPlugin.getDefault().getStateLocation().append( "sandbox" ).toOSString());
+        folder.mkdirs();
+        return folder;
+      }
     }
     return null;
   }
