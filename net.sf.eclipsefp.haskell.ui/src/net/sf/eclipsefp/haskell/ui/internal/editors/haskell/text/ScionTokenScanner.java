@@ -425,7 +425,7 @@ public class ScionTokenScanner implements IPartitionTokenScanner, IEditorPrefere
       if( lTokenDefs != null) {
         lMergedTokenDefs=mergeTokens( lTokenDefs);
       }
-    } else if (offset == this.offset+this.length){
+    } else if (offset == this.offset+this.length && tokenDefs.hasPrevious()){
       this.offset = offset;
       this.length = length;
       tokenDefs.previous();
