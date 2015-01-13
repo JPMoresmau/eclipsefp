@@ -241,9 +241,10 @@ public class Commands {
 		return o;
 	}
 	
-	public static JSONObject createCheckHoogleData(String sandbox) throws JSONException {
+	public static JSONObject createCheckHoogleData(String path,String sandbox) throws JSONException {
 		JSONObject o = new JSONObject();
 		o.put("command", "hoogle-check");
+		o.put("filepath", path);
 		if (sandbox!=null){
 			o.put("sandbox", sandbox);
 		}
