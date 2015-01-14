@@ -66,9 +66,9 @@ public class HaskellReconcilingStrategy extends SpellingReconcileStrategy {
 
       IAnnotationModel model = getAnnotationModel();
       if (region.getOffset() == 0 && region.getLength() == document.getLength()) {
-      //reconciling whole document
-      super.reconcile(region);
-      deleteUnwantedAnnotations();
+        //reconciling whole document
+        super.reconcile(region);
+        deleteUnwantedAnnotations();
       } else {
        //partial reconciliation
        //preserve spelling annotations first
@@ -82,7 +82,7 @@ public class HaskellReconcilingStrategy extends SpellingReconcileStrategy {
          Position position = model.getPosition(spellingAnnotation);
          String contentType = docPartitioner.getContentType(position.getOffset());
 
-         if (HaskellEditor.TEXT_CONTENTTYPE.equalsIgnoreCase(contentType)) {
+         if (!position.overlapsWith( region.getOffset(), region.getLength() ) && HaskellEditor.TEXT_CONTENTTYPE.equalsIgnoreCase(contentType)) {
           spellingErrors.put(spellingAnnotation, position);
          }
         }
