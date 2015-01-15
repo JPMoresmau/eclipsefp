@@ -434,6 +434,8 @@ public final class UITexts extends NLS {
   public static String preferences_editor_typing_tab_width;
   public static String preferences_editor_typing_cabal_tab_width;
 
+  public static String preferences_editor_fixes_version;
+
   public static String preferences_debug_title;
   public static String preferences_debug_description;
   public static String preferences_debug_break_on_error;

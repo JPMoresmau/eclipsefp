@@ -9,6 +9,7 @@ import java.util.Set;
 import net.sf.eclipsefp.haskell.browser.util.ImageCache;
 import net.sf.eclipsefp.haskell.buildwrapper.BuildWrapperPlugin;
 import net.sf.eclipsefp.haskell.core.cabal.CabalPackageVersion;
+import net.sf.eclipsefp.haskell.core.cabal.CabalPackageVersion.Restriction;
 import net.sf.eclipsefp.haskell.core.cabalmodel.CabalSyntax;
 import net.sf.eclipsefp.haskell.core.cabalmodel.PackageDescription;
 import net.sf.eclipsefp.haskell.core.cabalmodel.PackageDescriptionLoader;
@@ -17,6 +18,7 @@ import net.sf.eclipsefp.haskell.core.cabalmodel.RealValuePosition;
 import net.sf.eclipsefp.haskell.core.util.ResourceUtil;
 import net.sf.eclipsefp.haskell.ui.HaskellUIPlugin;
 import net.sf.eclipsefp.haskell.ui.internal.backend.CabalPackageHelper;
+import net.sf.eclipsefp.haskell.ui.internal.preferences.editor.IEditorPreferenceNames;
 import net.sf.eclipsefp.haskell.ui.internal.util.UITexts;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IMarker;
@@ -66,7 +68,11 @@ public class AddPackageDependencyProposal implements ICompletionProposal {
       String fullVersion=getValue();
       String v=CabalPackageHelper.getInstance().getLastInstalledVersion( getValue());
       if (v!=null){
-        fullVersion=getValue()+ " "+ CabalPackageVersion.getMajorRange( v );
+        String s=HaskellUIPlugin.getEditorPreferenceStore().getString( IEditorPreferenceNames.EDITOR_FIXES_PACKAGE_RESTRICTION );
+
+        Restriction r=Restriction.valueOf( s );
+        fullVersion=CabalPackageVersion.getRange( getValue(), v, r );
+        //fullVersion=getValue()+ " "+ CabalPackageVersion.getMajorRange( v );
       }
 
       // find applicable stanzas if any, to not modify all of the cabal stanzas
@@ -88,7 +94,7 @@ public class AddPackageDependencyProposal implements ICompletionProposal {
       int length=pd.getStanzas().size();
       for (int a=0;a<length;a++){
         PackageDescriptionStanza pds=pd.getStanzas().get(a);
-        CabalSyntax cs=pds.getType();
+        //CabalSyntax cs=pds.getType();
         if (appNames.isEmpty() || appNames.contains( pds.toTypeName() )){
           if (pds.isSourceStanza()){
             RealValuePosition rvp=update(pds);

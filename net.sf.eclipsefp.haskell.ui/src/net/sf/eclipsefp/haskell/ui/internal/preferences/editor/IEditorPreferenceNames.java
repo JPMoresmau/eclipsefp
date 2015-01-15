@@ -86,6 +86,8 @@ public interface IEditorPreferenceNames {
   String EDITOR_TASK_TAGS_LOW              = "low";  //$NON-NLS-1$
   String EDITOR_TASK_TAGS_CASE             = "taskTagsCase";  //$NON-NLS-1$
 
+  String EDITOR_FIXES_PACKAGE_RESTRICTION  = "versionRestriction"; //$NON-NLS-1$
+
   String EDITOR_COLORING_THREAD_THRESHOLD  = "coloringThreadThreshold"; //$NON-NLS-1$
 
   //String CA_AUTOACTIVATION          = "contentAssistAutoActivation";  //$NON-NLS-1$

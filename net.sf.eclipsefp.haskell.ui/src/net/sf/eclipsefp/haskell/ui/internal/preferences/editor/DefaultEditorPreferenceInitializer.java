@@ -1,6 +1,7 @@
 // Copyright (c) 2003-2005 by Leif Frenzel - see http://leiffrenzel.de
 package net.sf.eclipsefp.haskell.ui.internal.preferences.editor;
 
+import net.sf.eclipsefp.haskell.core.cabal.CabalPackageVersion.Restriction;
 import net.sf.eclipsefp.haskell.ui.HaskellUIPlugin;
 import net.sf.eclipsefp.haskell.ui.internal.editors.haskell.text.ColorProvider;
 import org.eclipse.jface.preference.IPreferenceStore;
@@ -29,6 +30,8 @@ class DefaultEditorPreferenceInitializer implements IEditorPreferenceNames {
     initTyping( store );
 
     initTaskTags(store);
+
+    store.setDefault( EDITOR_FIXES_PACKAGE_RESTRICTION, Restriction.NONE.name() );
 
   }
 

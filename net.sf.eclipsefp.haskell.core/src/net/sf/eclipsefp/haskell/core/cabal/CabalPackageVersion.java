@@ -13,6 +13,14 @@ import net.sf.eclipsefp.haskell.core.HaskellCorePlugin;
  *
  */
 public class CabalPackageVersion implements Comparable<CabalPackageVersion> {
+
+  public static enum Restriction {
+    NONE,
+    MAJOR,
+    MAJOR_FROM_MINOR,
+    MINOR
+  };
+
   private final CabalPackageRef ref;
   private final int index;
   /**
@@ -127,6 +135,26 @@ public class CabalPackageVersion implements Comparable<CabalPackageVersion> {
       return getMajorRange( s1 );
     }
     return "";
+  }
+
+  /**
+   * get the package name + range version
+   * @param name
+   * @param version
+   * @param r
+   * @return
+   */
+  public static String getRange (final String name,final String version,final Restriction r){
+    switch( r ) {
+      case MAJOR:
+        return name+" "+getMajorRange( version );
+      case MAJOR_FROM_MINOR:
+        return name+" "+getMajorRangeFromMinor( version );
+      case MINOR:
+        return name+" "+getMinorRange( version );
+      default:
+        return name;
+    }
   }
 
   public boolean isInstalled() {
