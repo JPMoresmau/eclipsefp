@@ -635,15 +635,15 @@ public class BackendManager implements IResourceChangeListener {
 
   void checkHoogleDataIsPresent(final String extraHooglePath) {
 //    boolean rebuild = false;
-//    try {
-//      // Set extra paths if needed
-//     if (extraHooglePath != null && extraHooglePath.length() > 0) {
-//        BrowserPlugin.getSharedInstance().setExtraHooglePath( extraHooglePath );
-//      }
+    try {
+      // Set extra paths if needed
+     if (extraHooglePath != null && extraHooglePath.length() > 0) {
+        BrowserPlugin.getSharedInstance().setExtraHooglePath( extraHooglePath );
+      }
 //      rebuild = HoogleStatus.ERROR.equals(BrowserPlugin.getSharedInstance().checkHoogle());
-//    } catch( Exception e ) {
-//      // ignore
-//    }
+    } catch( Exception e ) {
+      // ignore
+    }
 //    if( rebuild ) {
 //      // There is no "fmap", we don't have a database
 //      final Display display = Display.getDefault();
