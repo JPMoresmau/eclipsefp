@@ -11,6 +11,7 @@ Necessary Haskell packages:
 
 Fixes:
 	- NPE fixed on create new project (https://github.com/JPMoresmau/eclipsefp/issues/268)
+	- Pass path to Hoogle to scion-browser (https://github.com/JPMoresmau/scion-class-browser/issues/17)
 
 Features:
 	- Preference to specify version constraint when a package is added via quick fix.
