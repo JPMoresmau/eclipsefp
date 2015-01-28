@@ -207,7 +207,7 @@ public class BackendManager implements IResourceChangeListener {
       boolean ignore=HaskellUIPlugin.getDefault().getPreferenceStore().getBoolean( IPreferenceConstants.IGNORE_MISSING_EXECUTABLE );
       if (!ignore){
         if (sandboxed){
-          installAll();
+          installAll(true,true);
           hasInstalledAll=true;
         } else {
           final Display display = HaskellUIPlugin.getStandardDisplay();
@@ -238,7 +238,7 @@ public class BackendManager implements IResourceChangeListener {
       doBrowserSetup=browserVersionOK;// do not launch if too old
       if (!buildwrapperVersionOK || !browserVersionOK){
         if (sandboxed){
-          installAll();
+          installAll(!buildwrapperVersionOK,!browserVersionOK);
         } else {
           final Display display = HaskellUIPlugin.getStandardDisplay();
           display.asyncExec( new Runnable() {
@@ -306,10 +306,14 @@ public class BackendManager implements IResourceChangeListener {
   /**
    *
    */
-  private void installAll() {
+  private void installAll(final boolean buildWrapper,final boolean scionbrowser) {
     final InstallExecutableRunnable j=new InstallExecutableRunnable();
-    j.getPackages().add( new InstallExecutableRunnable.Package( "buildwrapper", IPreferenceConstants.BUILDWRAPPER_EXECUTABLE) );
-    j.getPackages().add( new InstallExecutableRunnable.Package( "scion-browser", IPreferenceConstants.SCION_BROWSER_SERVER_EXECUTABLE) );
+    if (buildWrapper){
+      j.getPackages().add( new InstallExecutableRunnable.Package( "buildwrapper", IPreferenceConstants.BUILDWRAPPER_EXECUTABLE) );
+    }
+    if (scionbrowser){
+      j.getPackages().add( new InstallExecutableRunnable.Package( "scion-browser", IPreferenceConstants.SCION_BROWSER_SERVER_EXECUTABLE) );
+    }
     j.getPackages().addAll (InstallExecutableDialog.getExtras());
     j.setCabalUpdate( true );
     j.setGlobal( false );
