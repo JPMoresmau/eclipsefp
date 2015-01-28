@@ -504,10 +504,11 @@ public class PackageDescriptionStanza {
    * @return
    */
   public boolean isSourceStanza(){
-    return getType().equals( CabalSyntax.SECTION_EXECUTABLE)
+    return getType()!=null &&
+        (   getType().equals( CabalSyntax.SECTION_EXECUTABLE)
         || getType().equals( CabalSyntax.SECTION_LIBRARY)
         || getType().equals( CabalSyntax.SECTION_TESTSUITE)
-        || getType().equals( CabalSyntax.SECTION_BENCHMARK);
+        || getType().equals( CabalSyntax.SECTION_BENCHMARK));
   }
 
   /**
@@ -515,9 +516,10 @@ public class PackageDescriptionStanza {
    * @return
    */
   public boolean isMainStanza(){
-    return getType().equals( CabalSyntax.SECTION_EXECUTABLE)
+    return getType()!=null &&
+        (   getType().equals( CabalSyntax.SECTION_EXECUTABLE)
         || getType().equals( CabalSyntax.SECTION_TESTSUITE)
-        || getType().equals( CabalSyntax.SECTION_BENCHMARK);
+        || getType().equals( CabalSyntax.SECTION_BENCHMARK));
   }
 
   public Collection<String> getNonHaskellFiles(){

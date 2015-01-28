@@ -10,7 +10,7 @@ Necessary Haskell packages:
 
 
 Fixes:
-
+	- NPE fixed on create new project (https://github.com/JPMoresmau/eclipsefp/issues/268)
 
 Features:
 	- Preference to specify version constraint when a package is added via quick fix.
