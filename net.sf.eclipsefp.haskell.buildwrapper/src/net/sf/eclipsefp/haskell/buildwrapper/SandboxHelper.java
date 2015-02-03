@@ -47,6 +47,38 @@ public class SandboxHelper {
 		installDeps(f, new HashSet<BWFacade>());
 	}
 	
+	/**
+	 * install a sandbox if needed
+	 * @param f
+	 */
+	public static void install(BWFacade f){
+		SandboxType st=f.getCabalImplDetails().getType();
+		if (SandboxType.CABAL.equals(st)){
+			IProject p=f.getProject();
+			// init unique sandbox
+			if (f.getCabalImplDetails().isUniqueSandbox() && !f.getSandboxPath().exists()){
+				LinkedList<String> args=new LinkedList<>();
+				args.add("sandbox");
+				args.add("init");
+				args.add("--sandbox="+ f.getSandboxPath());
+				f.runCabal(args,"",f.getSandboxPath());
+				// just in case it's pointing to something else
+				try {
+					p.getFile("cabal.sandbox.config").delete(true, new NullProgressMonitor());
+				} catch (CoreException ce){
+					// noop
+				}
+			}
+			if (!p.getFile("cabal.sandbox.config").exists()){
+				LinkedList<String> args=new LinkedList<>();
+				args.add("sandbox");
+				args.add("init");
+				args.addAll(f.getCabalImplDetails().getInitOptions());
+				f.runCabal(args,"",null);
+			}
+		}
+	}
+	
 	public static void installDeps(BWFacade f,Set<BWFacade> processedFacades) throws CoreException{
 		
 		if (f!=null && processedFacades.add(f)){
@@ -79,22 +111,7 @@ public class SandboxHelper {
 				}
 				case CABAL:
 				{
-					// init unique sandbox
-					if (f.getCabalImplDetails().isUniqueSandbox() && !f.getSandboxPath().exists()){
-						LinkedList<String> args=new LinkedList<>();
-						args.add("sandbox");
-						args.add("init");
-						args.add("--sandbox="+ f.getSandboxPath());
-						f.runCabal(args,"",f.getSandboxPath());
-						
-					}
-					if (!p.getFile("cabal.sandbox.config").exists()){
-						LinkedList<String> args=new LinkedList<>();
-						args.add("sandbox");
-						args.add("init");
-						args.addAll(f.getCabalImplDetails().getInitOptions());
-						f.runCabal(args,"",null);
-					}
+					install(f);
 					
 					//if (!f.getCabalImplDetails().isUniqueSandbox()){
 						Set<IProject> processed=new HashSet<>();

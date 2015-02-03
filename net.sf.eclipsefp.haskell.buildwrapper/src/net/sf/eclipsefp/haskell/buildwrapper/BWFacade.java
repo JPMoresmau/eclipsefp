@@ -692,7 +692,16 @@ public class BWFacade {
 		return null;
 	}
 	
+	/**
+	 * synchronize the project
+	 * @param force overwrite files even if source files are not newer
+	 */
 	public void synchronize(boolean force){
+		// if sandbox is missing, cabal operations will fail!
+		if (SandboxHelper.isSandboxed(this) && !SandboxHelper.sandboxExists(this)){
+			SandboxHelper.install(this);
+		}
+		
 		LinkedList<String> command=new LinkedList<>();
 		command.add("synchronize");
 		command.add("--force="+force);
