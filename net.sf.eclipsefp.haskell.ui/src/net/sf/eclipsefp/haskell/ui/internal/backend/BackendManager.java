@@ -1105,7 +1105,7 @@ public class BackendManager implements IResourceChangeListener {
    * @return
    */
   public static File getToolSandbox(){
-    if (CabalImplementationManager.getInstance().getDefaultCabalImplementation().allowsSandbox()){
+    if (CabalImplementationManager.getInstance().getDefaultCabalImplementation()!=null && CabalImplementationManager.getInstance().getDefaultCabalImplementation().allowsSandbox()){
       File home=getEclipseFPHome();
       if (home!=null){
         File folder=new File(home, "sandbox" );
