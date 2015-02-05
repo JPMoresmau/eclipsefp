@@ -1091,7 +1091,7 @@ public class BackendManager implements IResourceChangeListener {
    */
   public static File getEclipseFPHome(){
     try {
-      File folder=new File(System.getProperty( "user.dir" ),".eclipsefp");
+      File folder=new File(System.getProperty( "user.home" ),".eclipsefp");
       folder.mkdirs();
       return folder;
     } catch (Exception e){
