@@ -698,7 +698,7 @@ public class BWFacade {
 	 */
 	public void synchronize(boolean force){
 		// if sandbox is missing, cabal operations will fail!
-		if (SandboxHelper.isSandboxed(this) && !SandboxHelper.sandboxExists(this)){
+		if (SandboxHelper.isSandboxed(this) && (!SandboxHelper.sandboxExists(this) || !SandboxHelper.referencesSandbox(this))){
 			SandboxHelper.install(this);
 		}
 		
@@ -747,7 +747,7 @@ public class BWFacade {
 			}
 		}
 		if (ok){
-			if (SandboxHelper.isSandboxed(this) && !SandboxHelper.sandboxExists(this)){
+			if (SandboxHelper.isSandboxed(this) && (!SandboxHelper.sandboxExists(this) || !SandboxHelper.referencesSandbox(this))){
 				try {
 					SandboxHelper.installDeps(this);
 				} catch (CoreException ce){

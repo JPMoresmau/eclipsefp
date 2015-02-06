@@ -400,6 +400,21 @@ public class SandboxHelper {
 		return false;
 	}
 	
+	/**
+	 * do we have the proper reference to the sandbox?
+	 * @param f
+	 * @return
+	 */
+	public static boolean referencesSandbox(BWFacade f){
+		if (f!=null){
+			SandboxType st=f.getCabalImplDetails().getType();
+			if (SandboxType.CABAL.equals(st)){
+				return f.getProject().getFile("cabal.sandbox.config").exists();
+			}
+		}
+		return true;
+	}
+	
 	public static void sandboxLocationChanged(BWFacade f){
 		if (f!=null){
 			SandboxType st=f.getCabalImplDetails().getType();
