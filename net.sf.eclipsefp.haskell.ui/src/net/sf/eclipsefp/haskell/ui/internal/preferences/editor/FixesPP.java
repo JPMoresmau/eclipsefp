@@ -88,6 +88,8 @@ public class FixesPP extends AbstractEditorPP {
         return UITexts.cabalEditor_dependencyVersionCurrent;
       case MINOR:
         return UITexts.cabalEditor_dependencyVersionMinor;
+      case FROM_MAJOR:
+        return UITexts.cabalEditor_dependencyVersionFromMajor;
       default:
         return UITexts.cabalEditor_dependencyVersionNone;
     }

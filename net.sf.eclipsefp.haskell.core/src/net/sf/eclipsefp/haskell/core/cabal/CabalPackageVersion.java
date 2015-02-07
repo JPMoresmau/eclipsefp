@@ -18,7 +18,8 @@ public class CabalPackageVersion implements Comparable<CabalPackageVersion> {
     NONE,
     MAJOR,
     MAJOR_FROM_MINOR,
-    MINOR
+    MINOR,
+    FROM_MAJOR
   };
 
   private final CabalPackageRef ref;
@@ -96,6 +97,23 @@ public class CabalPackageVersion implements Comparable<CabalPackageVersion> {
   }
 
   /**
+   * get the range including all the versions that have the same major components or above
+   * @param s1 the precise version we want to get the full range for
+   * @return the range ins Cabal syntax
+   */
+  public static String getFromMajorRange(final String s1){
+    String[] ss1=s1.split( "\\." ); //$NON-NLS-1$
+    if (ss1.length>1){
+      try {
+        return ">="+ ss1[0]+"."+ss1[1];
+      } catch (NumberFormatException nfe){
+        HaskellCorePlugin.log( nfe );
+      }
+    }
+    return "";
+  }
+
+  /**
    * get the range including all the versions that have the same minor components
    * @param s1 the precise version we want to get the full range for
    * @return the range ins Cabal syntax
@@ -152,6 +170,8 @@ public class CabalPackageVersion implements Comparable<CabalPackageVersion> {
         return name+" "+getMajorRangeFromMinor( version );
       case MINOR:
         return name+" "+getMinorRange( version );
+      case FROM_MAJOR:
+        return name+" "+getFromMajorRange( version );
       default:
         return name;
     }

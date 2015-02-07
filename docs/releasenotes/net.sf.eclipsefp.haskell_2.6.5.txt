@@ -14,6 +14,7 @@ Fixes:
 
 Features:
 	- Tools are installed in $user.home/.eclipsefp, not $user.dir/.eclipsefp (always installed in a common folder, not matter from where Eclipse is launched from) (https://github.com/JPMoresmau/eclipsefp/issues/270)
+	- Additional version range option: from current major version (no upper bound)
 
 Internal:
 

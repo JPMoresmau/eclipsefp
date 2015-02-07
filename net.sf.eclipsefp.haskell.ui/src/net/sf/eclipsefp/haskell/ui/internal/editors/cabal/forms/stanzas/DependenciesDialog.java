@@ -9,6 +9,9 @@ import java.util.List;
 import net.sf.eclipsefp.haskell.browser.items.HaskellPackage;
 import net.sf.eclipsefp.haskell.browser.util.HtmlUtil;
 import net.sf.eclipsefp.haskell.core.cabal.CabalPackageVersion;
+import net.sf.eclipsefp.haskell.core.cabal.CabalPackageVersion.Restriction;
+import net.sf.eclipsefp.haskell.ui.HaskellUIPlugin;
+import net.sf.eclipsefp.haskell.ui.internal.preferences.editor.IEditorPreferenceNames;
 import net.sf.eclipsefp.haskell.ui.internal.util.UITexts;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.viewers.DoubleClickEvent;
@@ -61,6 +64,7 @@ public class DependenciesDialog extends Dialog implements
   private Button versionMajor;
   private Button versionCurrent;
   private Button versionMinor;
+  private Button versionFromMajor;
 
   protected DependenciesDialog( final IShellProvider provider,
       final List<String> alreadySelected,final String projectName ) {
@@ -147,25 +151,33 @@ public class DependenciesDialog extends Dialog implements
          packageName.setText( computeValue() );
       }
     };
+    String s=HaskellUIPlugin.getEditorPreferenceStore().getString( IEditorPreferenceNames.EDITOR_FIXES_PACKAGE_RESTRICTION );
+    Restriction r=Restriction.valueOf( s );
 
     versionNone=new Button(versionGroup,SWT.RADIO);
     versionNone.setText( UITexts.cabalEditor_dependencyVersionNone );
-
     versionNone.addSelectionListener( sa );
+    versionNone.setSelection( Restriction.NONE.equals( r ) );
 
     versionMajor=new Button(versionGroup,SWT.RADIO);
     versionMajor.setText( UITexts.cabalEditor_dependencyVersionMajor );
     versionMajor.addSelectionListener( sa );
-    versionMajor.setSelection( true );
+    versionMajor.setSelection( Restriction.MAJOR.equals( r ) );
 
     versionCurrent=new Button(versionGroup,SWT.RADIO);
     versionCurrent.setText( UITexts.cabalEditor_dependencyVersionCurrent);
     versionCurrent.addSelectionListener( sa );
+    versionCurrent.setSelection( Restriction.MAJOR_FROM_MINOR.equals( r ) );
 
     versionMinor=new Button(versionGroup,SWT.RADIO);
     versionMinor.setText( UITexts.cabalEditor_dependencyVersionMinor);
     versionMinor.addSelectionListener( sa );
+    versionMinor.setSelection( Restriction.MINOR.equals( r ) );
 
+    versionFromMajor=new Button(versionGroup,SWT.RADIO);
+    versionFromMajor.setText( UITexts.cabalEditor_dependencyVersionFromMajor );
+    versionFromMajor.addSelectionListener( sa );
+    versionFromMajor.setSelection( Restriction.FROM_MAJOR.equals( r ) );
 
     return composite;
   }
@@ -211,6 +223,8 @@ public class DependenciesDialog extends Dialog implements
         di.setVersion(CabalPackageVersion.getMajorRangeFromMinor( hp.getIdentifier().getVersion() ));
       } else if (versionMinor.getSelection()){
         di.setVersion(CabalPackageVersion.getMinorRange( hp.getIdentifier().getVersion() ));
+      } else if (versionFromMajor.getSelection()){
+        di.setVersion(CabalPackageVersion.getFromMajorRange( hp.getIdentifier().getVersion() ));
       }
       selectedItems.add( di );
       sb.append(di.toString());
