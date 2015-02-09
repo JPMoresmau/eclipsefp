@@ -69,7 +69,12 @@ public class CabalInstallDependenciesAction extends CabalInstallAction {
     if (cid.isSandboxed() && cid.isUniqueSandbox()){
       JobFacade.installDeps( projects );
       HaskellUIPlugin.getDefault().getBackendManager().rebuildBrowser();
-
+      for(IProject p:projects){
+        Runnable r=getAfter( p );
+        if (r!=null){
+          r.run();
+        }
+      }
       return;
     }
     super.run( arg0 );
