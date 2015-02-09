@@ -1,7 +1,7 @@
 package net.sf.eclipsefp.haskell.core.cabal;
 
 import java.util.ArrayList;
-import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -20,7 +20,7 @@ public class CabalPackageRef {
   /**
    * versions installed
    */
-  private final Set<String> installed=new HashSet<>();
+  private final Set<String> installed=new LinkedHashSet<>();
 
   public String getName() {
     return name;

@@ -5,6 +5,7 @@
 package net.sf.eclipsefp.haskell.ui.internal.editors.cabal.forms.stanzas;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -45,18 +46,28 @@ public class DependenciesDialogContentProvider implements ITreeContentProvider {
         }
 
       }
+      // if we don't have Hackage loaded, ask Cabal for all packages
+      boolean hasHackage=BrowserPlugin.getSharedInstance().isHackageDatabaseLoaded();
+      List<CabalPackageRef> cabalPkgs=hasHackage
+            ?CabalPackageHelper.getInstance().getInstalled()
+            :CabalPackageHelper.getInstance().getAll();
 
-      /**
+      /*
        * we may have installed packages not from hackage!
        */
-      for (CabalPackageRef r:CabalPackageHelper.getInstance().getInstalled()){
+      for (CabalPackageRef r:cabalPkgs){
         if (!names.contains( r.getName() )) {
-          HaskellPackage pkg=new HaskellPackage( "", new PackageIdentifier( r.getName(), r.getInstalled().iterator().next() ) ) ;
+          List<String> versions=new ArrayList<String>(hasHackage
+              ?r.getInstalled()
+              :r.getVersions());
+          Collections.reverse(versions);
+          HaskellPackage pkg=new HaskellPackage( "", new PackageIdentifier( r.getName(), versions.iterator().next() ) ) ;
           pkgs.add(pkg );
           names.add( r.getName() );
         }
 
       }
+
 
       for (HaskellPackage pkg:BackendManager.listProjectPackages()){
         // we can reference ourselves, or reference other projects if we're sandboxed
