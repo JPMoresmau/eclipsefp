@@ -130,10 +130,22 @@ public abstract class BrowserServer {
 		return isLocalDatabaseLoaded() || isHackageDatabaseLoaded();
 	}
 
+	/**
+	 * have we successfully loaded the local database?
+	 * @return
+	 */
 	public abstract boolean isLocalDatabaseLoaded();
 	
+	/**
+	 * have we successfullly loaded the hackage database
+	 * @return
+	 */
 	public abstract boolean isHackageDatabaseLoaded();
 
+	/**
+	 * have we successfully initialized Hoogle?
+	 * @return
+	 */
 	public abstract boolean isHoogleLoaded();
 
 	protected abstract void loadLocalDatabaseInternal(String path, boolean rebuild) throws IOException, JSONException;
