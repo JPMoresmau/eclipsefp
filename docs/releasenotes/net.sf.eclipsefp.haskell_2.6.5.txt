@@ -15,6 +15,9 @@ Fixes:
 Features:
 	- Tools are installed in $user.home/.eclipsefp, not $user.dir/.eclipsefp (always installed in a common folder, not matter from where Eclipse is launched from) (https://github.com/JPMoresmau/eclipsefp/issues/270)
 	- Additional version range option: from current major version (no upper bound)
+	- Cabal editor
+		- add dependency list all Hackage packages even if Hackage is not indexed by scion-browser
+		- Cabal version drop down goes up to the currently used version of Cabal
 
 Internal:
 
