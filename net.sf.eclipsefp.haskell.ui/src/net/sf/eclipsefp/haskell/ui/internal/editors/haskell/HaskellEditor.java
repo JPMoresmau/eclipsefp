@@ -454,18 +454,22 @@ public class HaskellEditor extends TextEditor implements IEditorPreferenceNames,
         @Override
         public void selectionChanged( final SelectionChangedEvent event ) {
           IDocument doc = getSourceViewer().getDocument();
-          markOccurrencesComputer.setDocument( doc );
-          if (previous!=null){
-            previous.cancel();
+          if( markOccurrencesComputer != null ) {
+            markOccurrencesComputer.setDocument( doc );
+            if (previous!=null){
+              previous.cancel();
+            }
+            previous=new UIJob(UITexts.editor_occurrences_job) {
+              @Override
+              public IStatus runInUIThread(final IProgressMonitor monitor) {
+                if( markOccurrencesComputer != null ) {
+                  markOccurrencesComputer.compute(monitor);
+                }
+                return Status.OK_STATUS;
+             }
+            };
+            previous.schedule();
           }
-          previous=new UIJob(UITexts.editor_occurrences_job) {
-            @Override
-            public IStatus runInUIThread(final IProgressMonitor monitor) {
-              markOccurrencesComputer.compute(monitor);
-              return Status.OK_STATUS;
-           }
-          };
-          previous.schedule();
         }
       };
       projectionViewer.addPostSelectionChangedListener( listener );
