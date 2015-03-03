@@ -99,14 +99,7 @@ public class CabalInstallDependenciesAction extends CabalInstallAction {
           @Override
           protected IStatus run( final IProgressMonitor mon ) {
             try {
-              p.build( IncrementalProjectBuilder.CLEAN_BUILD , mon );
-              if (ResourcesPlugin.getWorkspace().isAutoBuilding()){
-                if (mon!=null){
-                  mon.setTaskName( NLS.bind(BWText.job_build, p.getName()) );
-                }
-                p.build( IncrementalProjectBuilder.FULL_BUILD , mon );
-              }
-              HaskellUIPlugin.getDefault().getBackendManager().rebuildBrowser();
+              afterDependencies(p,mon);
 
             } catch (CoreException ce){
               return new Status( IStatus.ERROR, HaskellUIPlugin.getPluginId(), ce.getLocalizedMessage(),ce);
@@ -121,5 +114,16 @@ public class CabalInstallDependenciesAction extends CabalInstallAction {
     return r;
 
 
+  }
+
+  public static void afterDependencies(final IProject p,final IProgressMonitor mon ) throws CoreException {
+    p.build( IncrementalProjectBuilder.CLEAN_BUILD , mon );
+    if (ResourcesPlugin.getWorkspace().isAutoBuilding()){
+      if (mon!=null){
+        mon.setTaskName( NLS.bind(BWText.job_build, p.getName()) );
+      }
+      p.build( IncrementalProjectBuilder.FULL_BUILD , mon );
+    }
+    HaskellUIPlugin.getDefault().getBackendManager().rebuildBrowser();
   }
 }

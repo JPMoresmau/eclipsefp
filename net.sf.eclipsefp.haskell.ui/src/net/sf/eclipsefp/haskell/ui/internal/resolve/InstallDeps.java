@@ -10,8 +10,9 @@ import net.sf.eclipsefp.haskell.buildwrapper.BuildWrapperPlugin;
 import net.sf.eclipsefp.haskell.buildwrapper.SandboxHelper;
 import net.sf.eclipsefp.haskell.core.cabal.CabalImplementationManager;
 import net.sf.eclipsefp.haskell.ui.HaskellUIPlugin;
-import net.sf.eclipsefp.haskell.ui.internal.backend.CabalFileChangeListenerManager;
+import net.sf.eclipsefp.haskell.ui.actions.CabalInstallDependenciesAction;
 import net.sf.eclipsefp.haskell.ui.internal.backend.BackendManager;
+import net.sf.eclipsefp.haskell.ui.internal.backend.CabalFileChangeListenerManager;
 import net.sf.eclipsefp.haskell.ui.internal.util.UITexts;
 import net.sf.eclipsefp.haskell.ui.util.CabalFileChangeListener;
 import org.eclipse.core.resources.IFile;
@@ -104,6 +105,7 @@ public class InstallDeps extends MarkerCompletion {
                   for (CabalFileChangeListener l:CabalFileChangeListenerManager.getListeners()){
                     l.cabalFileChanged( cabalF );
                   }
+                  CabalInstallDependenciesAction.afterDependencies( project, monitor );
                 }
               }
               return Status.OK_STATUS;
