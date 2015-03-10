@@ -11,6 +11,7 @@ Necessary Haskell packages:
 
 Fixes:
 	- NPE fixed on startup if no Cabal is present (https://github.com/JPMoresmau/eclipsefp/issues/269)
+	- Remove quotes around GHC suggestion quick fix (https://github.com/JPMoresmau/eclipsefp/issues/275)
 
 Features:
 	- Tools are installed in $user.home/.eclipsefp, not $user.dir/.eclipsefp (always installed in a common folder, not matter from where Eclipse is launched from) (https://github.com/JPMoresmau/eclipsefp/issues/270)

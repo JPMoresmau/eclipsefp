@@ -93,6 +93,9 @@ public class ReplaceTextResolution extends MarkerCompletion {
       if (sug.startsWith( "`") && sug.endsWith( "'" )){
         sug=sug.substring( 1,sug.length()-1 );
       }
+      if (sug.startsWith( "‘") && sug.endsWith( "’" )){
+        sug=sug.substring( 1,sug.length()-1 );
+      }
       suggestions.add(sug);
       int closeParensIx=msg.indexOf( ')',openParensIx );
       if (closeParensIx>-1){

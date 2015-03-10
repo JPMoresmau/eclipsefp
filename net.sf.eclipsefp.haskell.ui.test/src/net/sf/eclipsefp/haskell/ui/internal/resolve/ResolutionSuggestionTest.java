@@ -61,10 +61,31 @@ public class ResolutionSuggestionTest {
      assertTrue(ix>-1);
      ResolutionSuggestion s=new ResolutionSuggestion( msg, ix,msgL );
      assertEquals(3,s.getSuggestions().size());
+     assertEquals("foldr",s.getSuggestions().get( 0 ));
+     assertEquals("DM.foldr",s.getSuggestions().get( 1 ));
+     assertEquals("foldl'",s.getSuggestions().get( 2 ));
      assertEquals("foldM",s.getOutOfScope());
      assertEquals("foldM",s.getOutOfScopeName());
      assertNull(s.getOutOfScopeQualifier());
    }
+
+   @Test
+   public void testQuotes(){
+     String msg="Not in scope: type constructor or class ‘ByteString’\n"+
+         "Perhaps you meant ‘BS.ByteString’ (imported from Data.ByteString.Lazy)\n";
+     String msgL=msg.toLowerCase(Locale.ENGLISH);
+     int ix=msgL.indexOf( GhcMessages.NOT_IN_SCOPE_START);
+     assertTrue(ix>-1);
+     ResolutionSuggestion s=new ResolutionSuggestion( msg, ix,msgL );
+     assertEquals(1,s.getSuggestions().size());
+     assertEquals("BS.ByteString",s.getSuggestions().get( 0 ));
+     assertEquals("ByteString",s.getOutOfScope());
+     assertEquals("ByteString",s.getOutOfScopeName());
+     assertNull(s.getOutOfScopeQualifier());
+   }
+
+
+
 
    @Test
    public void testNone(){
