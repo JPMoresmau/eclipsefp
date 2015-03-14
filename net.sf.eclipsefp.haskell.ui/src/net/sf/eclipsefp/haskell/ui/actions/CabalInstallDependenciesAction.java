@@ -66,7 +66,7 @@ public class CabalInstallDependenciesAction extends CabalInstallAction {
   public void run( final IAction arg0 ) {
     CabalImplDetails cid=BackendManager.getCabalImplDetails();
     // install via sandboxhelper that will install deps of top level projects to keep consistency
-    if (cid.isSandboxed() && cid.isUniqueSandbox()){
+    if (cid.isSandboxed()){
       JobFacade.installDeps( projects );
       HaskellUIPlugin.getDefault().getBackendManager().rebuildBrowser();
       for(IProject p:projects){
