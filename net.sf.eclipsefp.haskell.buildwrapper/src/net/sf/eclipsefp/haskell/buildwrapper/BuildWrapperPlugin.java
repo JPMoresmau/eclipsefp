@@ -80,7 +80,10 @@ public class BuildWrapperPlugin extends AbstractUIPlugin {
 		public void resourceChanged(IResourceChangeEvent event) {
 			IProject project = (IProject) event.getResource();
 			// close all processes to prevent file-locking issues
-			getFacade(project).closeAllProcesses();
+			BWFacade f=getFacade(project);
+			if (f!=null){
+				f.closeAllProcesses();
+			}
 		}
 	};
 	
