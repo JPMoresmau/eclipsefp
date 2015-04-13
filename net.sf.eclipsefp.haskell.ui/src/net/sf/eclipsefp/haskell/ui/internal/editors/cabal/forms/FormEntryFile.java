@@ -72,18 +72,17 @@ public class FormEntryFile extends FormEntry implements ICheckStateListener {
   @Override
   public void setValue( final String value, final boolean blockNotification ) {
     String newValue = ( value == null ) ? "" : value;
-    String oldValue = this.getValue();
-    if( newValue.equals( oldValue ) ) {
-      return;
-    }
-
-    ignoreModify = true;
+    Set<String> oldValues = this.getValues();
     String[] elements = newValue.split( "," );
     Set<String> ss=new HashSet<>();
 
     for (String element : elements) {
       ss.add(element.trim());
     }
+    if (ss.equals( oldValues )){
+      return;
+    }
+    ignoreModify = true;
 
     setValues(ss);
     ignoreModify = false;
@@ -124,6 +123,17 @@ public class FormEntryFile extends FormEntry implements ICheckStateListener {
   @Override
   public String getValue() {
     StringBuilder builder = new StringBuilder();
+    for (String s:getValues()){
+      if( builder.length() > 0 ) {
+        builder.append( ", "+PlatformUtil.NL);
+      }
+      builder.append( s );
+    }
+    return builder.toString();
+  }
+
+  private Set<String> getValues(){
+    Set<String> vals=new HashSet<String>();
     for( Object o: treeField.getCheckedElements() ) {
       IResource res = ( IResource )o;
       if ((typeFields & DIRECTORIES)==0){
@@ -138,12 +148,9 @@ public class FormEntryFile extends FormEntry implements ICheckStateListener {
       }
       IPath path = res.getProjectRelativePath();
 
-      if( builder.length() > 0 ) {
-        builder.append( ", "+PlatformUtil.NL);
-      }
-      builder.append( path.toString() );
+      vals.add( path.toString() );
     }
-    return builder.toString();
+    return vals;
   }
 
   @Override
