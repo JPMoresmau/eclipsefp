@@ -37,7 +37,7 @@ public class CabalHaddockOptionsPage extends WizardPage  {
   private static String colourSrcCss="";
 
   private static boolean doHtml=false;
-  private static String html="http://hackage.haskell.org/packages/archive/$pkg/latest/doc/html";
+  private static String html="https://hackage.haskell.org/packages/archive/$pkg/latest/doc/html";
 
   private DistFolder dFolder;
   private final Collection<IProject> projects;

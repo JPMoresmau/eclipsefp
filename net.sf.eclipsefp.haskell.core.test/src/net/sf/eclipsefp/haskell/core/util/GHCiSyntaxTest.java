@@ -24,7 +24,7 @@ public class GHCiSyntaxTest extends TestCase {
   }
 
   public void testBreakpointPatternLong(){
-    String s="GHCi, version 6.10.4: http://www.haskell.org/ghc/  :? for help"+PlatformUtil.NL+
+    String s="GHCi, version 6.10.4: https://www.haskell.org/ghc/  :? for help"+PlatformUtil.NL+
     "  Loading package ghc-prim ... linking ... done."+PlatformUtil.NL+
     "  Loading package integer ... linking ... done."+PlatformUtil.NL+
     "  Loading package base ... linking ... done."+PlatformUtil.NL+
