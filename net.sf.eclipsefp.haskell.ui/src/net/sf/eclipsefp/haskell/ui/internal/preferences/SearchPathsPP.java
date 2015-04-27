@@ -23,11 +23,11 @@ public class SearchPathsPP extends FieldEditorPreferencePage implements IWorkben
   private static final String[] defaults=new String[]{
     "file://${IMPL_BIN}/../doc/html/libraries/${PACKAGE_NAME}-${PACKAGE_VERSION}/${MODULE_HTML}#${ANCHOR}",
     "file://${IMPL_BIN}/../doc/html/libraries/${PACKAGE_NAME}-${PACKAGE_VERSION}/src/${MODULE_HTML}#${NAME}",
-    "http://hackage.haskell.org/package/${PACKAGE_NAME}-${PACKAGE_VERSION}/docs/${MODULE_HTML}#${ANCHOR}",
-    "http://hackage.haskell.org/packages/archive/${PACKAGE_NAME}/${PACKAGE_VERSION}/doc/html/${MODULE_HTML}#${ANCHOR}",
-    "http://hackage.haskell.org/package/${PACKAGE_NAME}-${PACKAGE_VERSION}",
-    "http://www.haskell.org/ghc/docs/${PACKAGE_VERSION}/html/libraries/${PACKAGE_NAME}/",
-    "http://www.haskell.org/haskellwiki/Keywords#${NAME}"
+    "https://hackage.haskell.org/package/${PACKAGE_NAME}-${PACKAGE_VERSION}/docs/${MODULE_HTML}#${ANCHOR}",
+    "https://hackage.haskell.org/packages/archive/${PACKAGE_NAME}/${PACKAGE_VERSION}/doc/html/${MODULE_HTML}#${ANCHOR}",
+    "https://hackage.haskell.org/package/${PACKAGE_NAME}-${PACKAGE_VERSION}",
+    "https://www.haskell.org/ghc/docs/${PACKAGE_VERSION}/html/libraries/${PACKAGE_NAME}/",
+    "https://www.haskell.org/haskellwiki/Keywords#${NAME}"
 
 } ;
 

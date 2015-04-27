@@ -79,9 +79,9 @@ types of parameters?
 	- ask which cabal component to take
 	- what about conditional in cabal (like scion: if ghc impl...)
 	- remove inproper options
-	- ignore .ghci file option? (http://www.haskell.org/ghc/docs/latest/html/users_guide/ghci-dot-files.html -ignore-dot-ghci)
+	- ignore .ghci file option? (https://www.haskell.org/ghc/docs/latest/html/users_guide/ghci-dot-files.html -ignore-dot-ghci)
 
-.ghci file parsing/editor?? (http://www.haskell.org/ghc/docs/latest/html/users_guide/ghci-dot-files.html http://neilmitchell.blogspot.com/2010/01/using-ghci-files-to-run-projects.html http://neilmitchell.blogspot.com/2010/01/better-ghci-files.html)
+.ghci file parsing/editor?? (https://www.haskell.org/ghc/docs/latest/html/users_guide/ghci-dot-files.html http://neilmitchell.blogspot.com/2010/01/using-ghci-files-to-run-projects.html http://neilmitchell.blogspot.com/2010/01/better-ghci-files.html)
 
 - integrate with packagedeps
 - integrate with hspec
@@ -99,5 +99,5 @@ types of parameters?
 - project rename
 - module rename (rename file + module name + imports ) (in cabal already done) -> done, to check
 
-- CAPRI http://www.haskell.org/haskellwiki/Capri to install scion
+- CAPRI https://www.haskell.org/haskellwiki/Capri to install scion
 	- built-in -> install global/local/project

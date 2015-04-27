@@ -15,7 +15,7 @@ import org.osgi.util.tracker.ServiceTracker;
  *
  */
 public class NetworkUtil {
-	public static final String HACKAGE_URL="http://hackage.haskell.org";
+	public static final String HACKAGE_URL="https://hackage.haskell.org";
 	private static ServiceTracker proxyTracker;
 	static {
 		/**

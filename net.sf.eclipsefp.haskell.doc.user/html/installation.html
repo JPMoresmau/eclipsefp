@@ -14,13 +14,13 @@ However there may still be some configuration steps to be done before you can us
 <h3>GHC configuration</h3>
 <p>
 EclipseFP requires GHC to compile Haskell source files. 
-We recommend installing the <a href="http://hackage.haskell.org/platform/">Haskell Platform</a> that comes with all required libraries bundled in a installer for your platform.
+We recommend installing the <a href="https://hackage.haskell.org/platform/">Haskell Platform</a> that comes with all required libraries bundled in a installer for your platform.
 You can configure GHC by opening the Eclipse Preferences and going to <a href='javascript:executeCommand("org.eclipse.ui.window.preferences(preferencePageId=net.sf.eclipsefp.haskell.ui.internal.preferences.hsimpls.InstalledImplementationsPP)")'>Haskell &gt; Haskell implementations</a>. If a GHC is in your PATH you should see it in the list. Otherwise you can manually add a GHC installation.
 </p>
 
 <h3>Cabal configuration</h3>
 <p>
-EclipseFP also requires a working Cabal. <a href="http://www.haskell.org/haskellwiki/Cabal">Cabal</a> is a build management tool for Haskell. Similarly, the Haskell Platform contains a version of Cabal compatible with the GHC it ships with.
+EclipseFP also requires a working Cabal. <a href="https://www.haskell.org/haskellwiki/Cabal">Cabal</a> is a build management tool for Haskell. Similarly, the Haskell Platform contains a version of Cabal compatible with the GHC it ships with.
 You can configure Cabal in the Eclipse Preferences under <a href='javascript:executeCommand("org.eclipse.ui.window.preferences(preferencePageId=net.sf.eclipsefp.haskell.ui.internal.preferences.scion.ScionPP)")'>Haskell &gt; Helper executables</a>. By default EclipseFP will have looked in your PATH and use any Cabal installation it can find there.
 </p>
 
@@ -44,13 +44,13 @@ This will ensure your Cabal knows about the latest versions of libraries availab
 <p>
 You will get extra functionality if you install several Haskell programs. To be more concrete:
 <ul>
-<li>If you install <a href="http://www.haskell.org/hoogle/">Hoogle</a>, you will be able to search functions or types in your installed packages. To get it, run <code>cabal install hoogle</code>
+<li>If you install <a href="https://www.haskell.org/hoogle/">Hoogle</a>, you will be able to search functions or types in your installed packages. To get it, run <code>cabal install hoogle</code>
 in a console. The next time EclipseFP starts, it will detect and configure it for use.</li>
 <li>If you install <a href="http://community.haskell.org/~ndm/hlint/">HLint</a>, suggestions for improving your code will appear in the Haskell editor. Install it running 
 <code>cabal install hlint</code>.</li>
-<li>EclipseFP can run unit tests created with <a href="http://batterseapower.github.com/test-framework/">Test-framework</a>. You can install it running
+<li>EclipseFP can run unit tests created with <a href="https://batterseapower.github.io/test-framework/">Test-framework</a>. You can install it running
 <code>cabal install test-framework test-framework-quickcheck2 test-framework-hunit</code> (to be able to use QuickCheck and HUnit tests).</li>
-<li>You can produce information about your modules using <a href="http://hackage.haskell.org/package/SourceGraph">SourceGraph</a>. Get it executing <code>cabal install SourceGraph</code>.</li>
+<li>You can produce information about your modules using <a href="https://hackage.haskell.org/package/SourceGraph">SourceGraph</a>. Get it executing <code>cabal install SourceGraph</code>.</li>
 
 </ul>
 <i>Note: You can of course install these programs from inside EclipseFP through the <a href='javascript:executeCommand("org.eclipse.ui.views.showView(org.eclipse.ui.views.showView.viewId=net.sf.eclipsefp.haskell.ui.views.CabalPackagesView)")'>Cabal Packages</a> view.</i>
