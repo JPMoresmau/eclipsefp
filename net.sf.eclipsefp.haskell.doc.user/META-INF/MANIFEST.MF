@@ -1,7 +1,7 @@
 Manifest-Version: 1.0
 Bundle-Name: %bundleName
 Bundle-SymbolicName: net.sf.eclipsefp.haskell.doc.user;singleton:=true
-Bundle-Version: 2.6.1.qualifier
+Bundle-Version: 2.6.5.qualifier
 Bundle-Vendor: %bundleVendor
 Bundle-Localization: plugin
 Bundle-ActivationPolicy: lazy
