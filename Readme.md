@@ -1,6 +1,8 @@
 # EclipseFP
 
-EclipseFP is a set of plugins for Eclipse that add support for the Haskell programming language. 
+EclipseFP is a set of plugins for Eclipse that add support for the Haskell programming language.
+
+EclipseFP is currently NOT maintained anymore. Feel free to fork and take up maintainership!
 
 This file is at the root of the project, and below it you should see all the plugins that make up EclipseFP. Most of current plugins that are part of the EclipseFP installation, some are just test plugins that contains, er, tests on other classes.
 
@@ -31,4 +33,3 @@ This file is at the root of the project, and below it you should see all the plu
 * [net.sf.eclipsefp.haskell.util](https://github.com/JPMoresmau/eclipsefp/tree/master/net.sf.eclipsefp.haskell.util) utilities methods
 * [net.sf.eclipsefp.haskell.util.test](https://github.com/JPMoresmau/eclipsefp/tree/master/net.sf.eclipsefp.haskell.util.test) tests for utilities
 * [net.sf.eclipsefp.haskell.visual](https://github.com/JPMoresmau/eclipsefp/tree/master/net.sf.eclipsefp.haskell.visual) dabbling with visual programming, not working
-
